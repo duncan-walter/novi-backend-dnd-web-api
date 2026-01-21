@@ -4,9 +4,9 @@ public abstract class GameInformationResponseDto {
     private final String name;
     private final String description;
     private final int valueInCopperPieces;
-    private final int weightInLbs;
+    private final double weightInLbs;
 
-    public GameInformationResponseDto(String name, String description, int valueInCopperPieces, int weightInLbs) {
+    public GameInformationResponseDto(String name, String description, int valueInCopperPieces, double weightInLbs) {
         this.name = name;
         this.description = description;
         this.valueInCopperPieces = valueInCopperPieces;
@@ -25,7 +25,7 @@ public abstract class GameInformationResponseDto {
         return this.valueInCopperPieces;
     }
 
-    public int getWeightInLbs() {
+    public double getWeightInLbs() {
         return this.weightInLbs;
     }
 }

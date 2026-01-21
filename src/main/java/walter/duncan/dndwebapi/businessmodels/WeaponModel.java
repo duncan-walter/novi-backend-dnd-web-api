@@ -42,7 +42,7 @@ public final class WeaponModel extends GameInformationModel {
         return this.rangeLong;
     }
 
-    public boolean isTwoHanded() {
+    public boolean getIsTwoHanded() {
         return this.isTwoHanded;
     }
 }

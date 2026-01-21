@@ -8,6 +8,7 @@ public final class WeaponModel extends GameInformationModel {
     private final boolean isTwoHanded;
 
     public WeaponModel(
+            Long id,
             String name,
             String description,
             int valueInCopperPieces,
@@ -18,7 +19,7 @@ public final class WeaponModel extends GameInformationModel {
             int rangeLong,
             boolean isTwoHanded
     ) {
-        super(name, description, valueInCopperPieces, weightInLbs);
+        super(id, name, description, valueInCopperPieces, weightInLbs);
         this.damageDice = damageDice;
         this.damageType = damageType;
         this.rangeNormal = rangeNormal;

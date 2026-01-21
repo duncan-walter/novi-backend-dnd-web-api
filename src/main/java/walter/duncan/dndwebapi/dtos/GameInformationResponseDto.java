@@ -1,16 +1,22 @@
 package walter.duncan.dndwebapi.dtos;
 
 public abstract class GameInformationResponseDto {
+    private final Long id;
     private final String name;
     private final String description;
     private final int valueInCopperPieces;
     private final double weightInLbs;
 
-    public GameInformationResponseDto(String name, String description, int valueInCopperPieces, double weightInLbs) {
+    public GameInformationResponseDto(Long id, String name, String description, int valueInCopperPieces, double weightInLbs) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.valueInCopperPieces = valueInCopperPieces;
         this.weightInLbs = weightInLbs;
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     public String getName() {

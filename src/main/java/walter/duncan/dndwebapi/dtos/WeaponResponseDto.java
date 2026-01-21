@@ -11,7 +11,7 @@ public final class WeaponResponseDto extends GameInformationResponseDto {
             String name,
             String description,
             int valueInCopperPieces,
-            int weightInLbs,
+            double weightInLbs,
             String damageDice,
             String damageType,
             int rangeNormal,

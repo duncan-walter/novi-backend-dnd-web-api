@@ -16,7 +16,7 @@ public abstract class GameInformationRequestDto {
     private int valueInCopperPieces;
 
     @Positive
-    private int weightInLbs;
+    private double weightInLbs;
 
     public String getName() {
         return this.name;
@@ -30,7 +30,7 @@ public abstract class GameInformationRequestDto {
         return this.valueInCopperPieces;
     }
 
-    public int getWeightInLbs() {
+    public double getWeightInLbs() {
         return this.weightInLbs;
     }
 }

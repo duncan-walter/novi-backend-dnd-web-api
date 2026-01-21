@@ -4,9 +4,9 @@ public abstract class GameInformationModel {
     private final String name;
     private final String description;
     private final int valueInCopperPieces;
-    private final int weightInLbs;
+    private final double weightInLbs;
 
-    public GameInformationModel(String name, String description, int valueInCopperPieces, int weightInLbs) {
+    public GameInformationModel(String name, String description, int valueInCopperPieces, double weightInLbs) {
         this.name = name;
         this.description = description;
         this.valueInCopperPieces = valueInCopperPieces;
@@ -14,18 +14,18 @@ public abstract class GameInformationModel {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public int getValueInCopperPieces() {
-        return valueInCopperPieces;
+        return this.valueInCopperPieces;
     }
 
-    public int getWeightInLbs() {
-        return weightInLbs;
+    public double getWeightInLbs() {
+        return this.weightInLbs;
     }
 }

@@ -14,7 +14,7 @@ public abstract class GameInformationEntity extends BaseEntity {
 
     @Column(name = "value_in_copper_pieces")
     @Min(0)
-    private double valueInCopperPieces;
+    private int valueInCopperPieces;
 
     @Column(name = "weight_in_lbs")
     @Min(0)
@@ -37,11 +37,11 @@ public abstract class GameInformationEntity extends BaseEntity {
         this.description = description;
     }
 
-    public double getValueInCopperPieces() {
+    public int getValueInCopperPieces() {
         return this.valueInCopperPieces;
     }
 
-    public void setValueInCopperPieces(double valueInCopperPieces) {
+    public void setValueInCopperPieces(int valueInCopperPieces) {
         this.valueInCopperPieces = valueInCopperPieces;
     }
 

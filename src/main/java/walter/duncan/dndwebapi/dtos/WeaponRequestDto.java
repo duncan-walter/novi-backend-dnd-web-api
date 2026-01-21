@@ -33,4 +33,8 @@ public final class WeaponRequestDto extends GameInformationRequestDto {
     public int getRangeLong() {
         return this.rangeLong;
     }
+
+    public boolean getIsTwoHanded() {
+        return this.isTwoHanded;
+    }
 }

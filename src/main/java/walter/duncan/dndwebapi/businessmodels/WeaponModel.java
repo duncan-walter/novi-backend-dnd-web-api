@@ -1,5 +1,8 @@
 package walter.duncan.dndwebapi.businessmodels;
 
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
+
 public final class WeaponModel extends GameInformationModel {
     private String damageDice;
     private String damageType;
@@ -105,7 +108,10 @@ public final class WeaponModel extends GameInformationModel {
 
     public void setRangeNormal(int rangeNormal) {
         if (rangeNormal > this.rangeLong && this.rangeLong != 0) {
-            throw new RuntimeException("Normal range cannot be longer than long range."); // TODO: Change the business rule violation exception
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.WEAPON_NORMAL_RANGE_EXCEEDS_LONG_RANGE,
+                    "Weapon normal range cannot exceed long range."
+            );
         }
 
         this.rangeNormal = rangeNormal;
@@ -113,7 +119,10 @@ public final class WeaponModel extends GameInformationModel {
 
     public void setRangeLong(int rangeLong) {
         if (rangeLong < this.rangeNormal && this.rangeNormal != 0) {
-            throw new RuntimeException("Long range cannot be shorter than short range."); // TODO: Change the business rule violation exception
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.WEAPON_LONG_RANGE_LESS_THAN_NORMAL_RANGE,
+                    "Weapon long range cannot be less than normal range."
+            );
         }
 
         this.rangeLong = rangeLong;

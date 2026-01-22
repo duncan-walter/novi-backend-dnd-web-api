@@ -9,11 +9,28 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import tools.jackson.databind.exc.MismatchedInputException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    // Spring boot wraps the MismatchedInputException in a HttpMessageNotReadableException exception. This took some time to figure out...
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    public ResponseEntity<@NonNull ProblemDetail> typeMismatchExceptionHandler(HttpMessageNotReadableException exception) {
+        var problemDetail = this.createProblemDetailBase(HttpStatus.BAD_REQUEST);
+        problemDetail.setType(URI.create("urn:dnd:api:problem:type-mismatch"));
+
+        if (exception.getMostSpecificCause() instanceof MismatchedInputException mismatchedInputException) {
+            problemDetail.setDetail(this.getTypeMismatchMessage(mismatchedInputException));
+        } else {
+            return this.uncaughtExceptionHandler(exception);
+        }
+
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
+
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<@NonNull ProblemDetail> resourceNotFoundExceptionHandler(ResourceNotFoundException exception) {
         var problemDetail = this.createProblemDetailBase(HttpStatus.NOT_FOUND);
@@ -52,6 +69,18 @@ public class GlobalExceptionHandler {
         problemDetail.setDetail("An internal server error occurred while processing your request. Please contact support if the issue persists.");
 
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
+
+    private String getTypeMismatchMessage(MismatchedInputException exception) {
+        String field = exception.getPath().isEmpty()
+                ? "unknown"
+                : exception.getPath().getFirst().getPropertyName();
+
+        String expectedType = exception.getTargetType() != null
+                ? exception.getTargetType().getSimpleName()
+                : "unknown";
+
+        return String.format("Field '%s' must be of type %s.", field, expectedType);
     }
 
     private ProblemDetail createProblemDetailBase(HttpStatus httpStatus) {

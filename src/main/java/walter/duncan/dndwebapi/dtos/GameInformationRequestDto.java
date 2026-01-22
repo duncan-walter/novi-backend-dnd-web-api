@@ -1,7 +1,7 @@
 package walter.duncan.dndwebapi.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 public abstract class GameInformationRequestDto {
@@ -12,10 +12,10 @@ public abstract class GameInformationRequestDto {
     @Size(max = 2500)
     private String description;
 
-    @Positive
+    @PositiveOrZero
     private int valueInCopperPieces;
 
-    @Positive
+    @PositiveOrZero
     private double weightInLbs;
 
     public String getName() {

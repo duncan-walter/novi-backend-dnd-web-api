@@ -1,6 +1,6 @@
 package walter.duncan.dndwebapi.dtos;
 
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 public final class WeaponRequestDto extends GameInformationRequestDto {
@@ -10,10 +10,10 @@ public final class WeaponRequestDto extends GameInformationRequestDto {
     @Size(max = 50)
     private String damageType;
 
-    @Positive
+    @PositiveOrZero
     private int rangeNormal;
 
-    @Positive
+    @PositiveOrZero
     private int rangeLong;
 
     private boolean isTwoHanded;

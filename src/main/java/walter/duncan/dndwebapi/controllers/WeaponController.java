@@ -26,21 +26,21 @@ public class WeaponController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<@NonNull WeaponResponseDto> getAlbumById(@PathVariable Long id) {
+    public ResponseEntity<@NonNull WeaponResponseDto> getById(@PathVariable Long id) {
         var responseDto = this.mapper.toDto(this.weaponService.findById(id));
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping
-    public ResponseEntity<@NonNull List<WeaponResponseDto>> getAlbums() {
+    public ResponseEntity<@NonNull List<WeaponResponseDto>> get() {
         var responseDtos = this.mapper.toDtos(this.weaponService.findAll());
 
         return ResponseEntity.ok(responseDtos);
     }
 
     @PostMapping
-    public ResponseEntity<@NonNull WeaponResponseDto> createAlbum(@RequestBody @Valid WeaponRequestDto requestDto) {
+    public ResponseEntity<@NonNull WeaponResponseDto> create(@RequestBody @Valid WeaponRequestDto requestDto) {
         var responseDto = this.mapper.toDto(this.weaponService.create(requestDto));
         var location = this.urlHelper.getResourceUri(responseDto.getId());
 
@@ -50,7 +50,7 @@ public class WeaponController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<@NonNull WeaponResponseDto> updateAlbum(@PathVariable Long id, @RequestBody @Valid WeaponRequestDto requestDto) {
+    public ResponseEntity<@NonNull WeaponResponseDto> update(@PathVariable Long id, @RequestBody @Valid WeaponRequestDto requestDto) {
         var responseDto = this.mapper.toDto(this.weaponService.update(id, requestDto));
         var location = this.urlHelper.getResourceUri(responseDto.getId());
 
@@ -61,7 +61,7 @@ public class WeaponController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<@NonNull Object> deleteAlbum(@PathVariable Long id) {
+    public ResponseEntity<@NonNull Object> delete(@PathVariable Long id) {
         this.weaponService.deleteById(id);
 
         return ResponseEntity.noContent().build();

@@ -10,23 +10,51 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import tools.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    // Spring boot wraps the MismatchedInputException in a HttpMessageNotReadableException exception. This took some time to figure out...
+    // Spring boot wraps the MismatchedInputException & UnrecognizedPropertyException (Jackson) in a HttpMessageNotReadableException exception.
+    // This took some time to figure out...
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity<@NonNull ProblemDetail> typeMismatchExceptionHandler(HttpMessageNotReadableException exception) {
         var problemDetail = this.createProblemDetailBase(HttpStatus.BAD_REQUEST);
-        problemDetail.setType(URI.create("urn:dnd:api:problem:type-mismatch"));
 
-        if (exception.getMostSpecificCause() instanceof MismatchedInputException mismatchedInputException) {
-            problemDetail.setDetail(this.getTypeMismatchMessage(mismatchedInputException));
-        } else {
-            return this.uncaughtExceptionHandler(exception);
+        switch (exception.getMostSpecificCause()) {
+            case UnrecognizedPropertyException ex -> {
+                problemDetail.setType(URI.create("urn:dnd:api:problem:unrecognized-field"));
+                problemDetail.setDetail(String.format("Field '%s' is unrecognized.", ex.getPropertyName()));
+            }
+            case MismatchedInputException ex -> {
+                problemDetail.setType(URI.create("urn:dnd:api:problem:type-mismatch"));
+                problemDetail.setDetail(this.getTypeMismatchMessage(ex));
+            }
+            default -> this.uncaughtExceptionHandler(exception);
         }
+
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<@NonNull ProblemDetail> requestValidationExceptionHandler(MethodArgumentNotValidException exception) {
+        var problemDetail = this.createProblemDetailBase(HttpStatus.BAD_REQUEST);
+        problemDetail.setType(URI.create("urn:dnd:api:problem:validation-error"));
+        problemDetail.setDetail("One or more validation errors occurred.");
+
+        Map<String, String> validationErrors = new HashMap<>();
+        exception.getBindingResult()
+                .getFieldErrors()
+                .forEach(fieldError -> validationErrors.put(fieldError.getField(), this.getRequestValidationErrorMessage(fieldError)));
+
+        Map<String, Map<String, String>> errors = new HashMap<>();
+        errors.put("validation", validationErrors);
+
+        problemDetail.setProperty("errors", errors);
 
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
@@ -81,6 +109,27 @@ public class GlobalExceptionHandler {
                 : "unknown";
 
         return String.format("Field '%s' must be of type %s.", field, expectedType);
+    }
+
+    private String getRequestValidationErrorMessage(FieldError fieldError) {
+        switch (fieldError.getCode()) {
+            case "NotBlank":
+                return "must not be empty";
+            case "NotNull":
+                return "must not be null";
+            case "Size":
+                var max = (Integer)fieldError.getArguments()[1];
+                var min = (Integer)fieldError.getArguments()[2];
+                return "must be between " + min + " and " + max + " characters";
+            case "Min":
+                return "must be greater than or equal to " + fieldError.getArguments()[1];
+            case "Max":
+                return "must be less than or equal to " + fieldError.getArguments()[1];
+            case "PositiveOrZero":
+                return "must be positive or 0";
+            case null:
+            default: return fieldError.getDefaultMessage();
+        }
     }
 
     private ProblemDetail createProblemDetailBase(HttpStatus httpStatus) {

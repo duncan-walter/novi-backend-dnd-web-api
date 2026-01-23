@@ -1,9 +1,10 @@
-package walter.duncan.dndwebapi.mappers;
+package walter.duncan.dndwebapi.mappers.gameinformation.equipment;
 
 import org.springframework.stereotype.Component;
 
-import walter.duncan.dndwebapi.businessmodels.EquipmentModel;
-import walter.duncan.dndwebapi.dtos.EquipmentResponseDto;
+import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
+import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentResponseDto;
+import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
 
 @Component
 public class EquipmentResponseMapper extends BaseResponseMapper<EquipmentResponseDto, EquipmentModel> {

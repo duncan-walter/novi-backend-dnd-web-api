@@ -1,12 +1,12 @@
-package walter.duncan.dndwebapi.businessmodels;
+package walter.duncan.dndwebapi.businessmodels.gameinformation;
 
 public final class EquipmentModel extends GameInformationModel {
     private EquipmentModel(
             Long id,
             String name,
             String description,
-            int valueInCopperPieces,
-            double weightInLbs
+            Long valueInCopperPieces,
+            Double weightInLbs
     ) {
         super(id, name, description, valueInCopperPieces, weightInLbs);
     }
@@ -14,8 +14,8 @@ public final class EquipmentModel extends GameInformationModel {
     public static EquipmentModel create(
             String name,
             String description,
-            int valueInCopperPieces,
-            double weightInLbs
+            Long valueInCopperPieces,
+            Double weightInLbs
     ) {
         return new EquipmentModel(null, name, description, valueInCopperPieces, weightInLbs);
     }
@@ -24,8 +24,8 @@ public final class EquipmentModel extends GameInformationModel {
             Long id,
             String name,
             String description,
-            int valueInCopperPieces,
-            double weightInLbs
+            Long valueInCopperPieces,
+            Double weightInLbs
     ) {
         return new EquipmentModel(id, name, description, valueInCopperPieces, weightInLbs);
     }

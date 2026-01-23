@@ -1,7 +1,9 @@
-package walter.duncan.dndwebapi.dtos;
+package walter.duncan.dndwebapi.dtos.gameinformation.weapon;
 
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+
+import walter.duncan.dndwebapi.dtos.gameinformation.GameInformationRequestDto;
 
 public final class WeaponRequestDto extends GameInformationRequestDto {
     @Size(max = 50)
@@ -11,12 +13,12 @@ public final class WeaponRequestDto extends GameInformationRequestDto {
     private String damageType;
 
     @PositiveOrZero
-    private int rangeNormal;
+    private Integer rangeNormal;
 
     @PositiveOrZero
-    private int rangeLong;
+    private Integer rangeLong;
 
-    private boolean isTwoHanded;
+    private Boolean isTwoHanded;
 
     public String getDamageDice() {
         return this.damageDice;
@@ -26,15 +28,15 @@ public final class WeaponRequestDto extends GameInformationRequestDto {
         return this.damageType;
     }
 
-    public int getRangeNormal() {
+    public Integer getRangeNormal() {
         return this.rangeNormal;
     }
 
-    public int getRangeLong() {
+    public Integer getRangeLong() {
         return this.rangeLong;
     }
 
-    public boolean getIsTwoHanded() {
+    public Boolean getIsTwoHanded() {
         return this.isTwoHanded;
     }
 }

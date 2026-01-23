@@ -1,13 +1,13 @@
-package walter.duncan.dndwebapi.dtos;
+package walter.duncan.dndwebapi.businessmodels.gameinformation;
 
-public abstract class GameInformationResponseDto {
+public abstract class GameInformationModel {
     private final Long id;
     private final String name;
     private final String description;
-    private final int valueInCopperPieces;
-    private final double weightInLbs;
+    private final Long valueInCopperPieces;
+    private final Double weightInLbs;
 
-    public GameInformationResponseDto(Long id, String name, String description, int valueInCopperPieces, double weightInLbs) {
+    public GameInformationModel(Long id, String name, String description, Long valueInCopperPieces, Double weightInLbs) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -27,11 +27,11 @@ public abstract class GameInformationResponseDto {
         return this.description;
     }
 
-    public int getValueInCopperPieces() {
+    public Long getValueInCopperPieces() {
         return this.valueInCopperPieces;
     }
 
-    public double getWeightInLbs() {
+    public Double getWeightInLbs() {
         return this.weightInLbs;
     }
 }

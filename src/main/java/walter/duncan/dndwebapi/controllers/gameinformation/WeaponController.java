@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.controllers;
+package walter.duncan.dndwebapi.controllers.gameinformation;
 
 import java.util.List;
 import jakarta.validation.Valid;
@@ -6,11 +6,11 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import walter.duncan.dndwebapi.dtos.WeaponRequestDto;
-import walter.duncan.dndwebapi.dtos.WeaponResponseDto;
+import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
+import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponResponseDto;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
-import walter.duncan.dndwebapi.mappers.WeaponResponseMapper;
-import walter.duncan.dndwebapi.services.WeaponService;
+import walter.duncan.dndwebapi.mappers.gameinformation.weapon.WeaponResponseMapper;
+import walter.duncan.dndwebapi.services.gameinformation.WeaponService;
 
 @RestController
 @RequestMapping("/weapons")

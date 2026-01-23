@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.entities;
+package walter.duncan.dndwebapi.entities.gameinformation;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

@@ -1,13 +1,14 @@
-package walter.duncan.dndwebapi.services;
+package walter.duncan.dndwebapi.services.gameinformation;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-import walter.duncan.dndwebapi.businessmodels.WeaponModel;
-import walter.duncan.dndwebapi.dtos.WeaponRequestDto;
-import walter.duncan.dndwebapi.entities.WeaponEntity;
-import walter.duncan.dndwebapi.mappers.WeaponPersistenceMapper;
-import walter.duncan.dndwebapi.repositories.WeaponRepository;
+import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
+import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
+import walter.duncan.dndwebapi.entities.gameinformation.WeaponEntity;
+import walter.duncan.dndwebapi.mappers.gameinformation.weapon.WeaponPersistenceMapper;
+import walter.duncan.dndwebapi.repositories.gameinformation.WeaponRepository;
+import walter.duncan.dndwebapi.services.BaseService;
 
 @Service
 public class WeaponService extends BaseService<WeaponEntity, Long, WeaponRepository> {
@@ -27,7 +28,7 @@ public class WeaponService extends BaseService<WeaponEntity, Long, WeaponReposit
     }
 
     public WeaponModel create(WeaponRequestDto requestDto) {
-        var model = this.requestDtoToModel(requestDto);
+        var model = this.createWeaponModel(requestDto);
         var persistedEntity = this.repository.save(this.mapper.toEntity(model));
 
         return this.mapper.toModel(persistedEntity);
@@ -35,7 +36,7 @@ public class WeaponService extends BaseService<WeaponEntity, Long, WeaponReposit
 
     public WeaponModel update(Long id, WeaponRequestDto requestDto) {
         var persistedEntity = this.findByIdOrThrow(id);
-        var model = this.requestDtoToModel(requestDto);
+        var model = this.createWeaponModel(requestDto);
 
         this.mapper.updateEntityFromModel(model, persistedEntity);
 
@@ -47,7 +48,7 @@ public class WeaponService extends BaseService<WeaponEntity, Long, WeaponReposit
         this.repository.deleteById(id);
     }
 
-    private WeaponModel requestDtoToModel(WeaponRequestDto requestDto) {
+    private WeaponModel createWeaponModel(WeaponRequestDto requestDto) {
         return WeaponModel.create(
                 requestDto.getName(),
                 requestDto.getDescription(),

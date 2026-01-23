@@ -1,9 +1,10 @@
-package walter.duncan.dndwebapi.mappers;
+package walter.duncan.dndwebapi.mappers.gameinformation.weapon;
 
 import org.springframework.stereotype.Component;
 
-import walter.duncan.dndwebapi.businessmodels.WeaponModel;
-import walter.duncan.dndwebapi.entities.WeaponEntity;
+import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
+import walter.duncan.dndwebapi.entities.gameinformation.WeaponEntity;
+import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 
 @Component
 public final class WeaponPersistenceMapper extends BasePersistenceMapper<WeaponModel, WeaponEntity> {

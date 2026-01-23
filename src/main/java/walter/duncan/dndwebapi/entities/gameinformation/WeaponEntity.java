@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.entities;
+package walter.duncan.dndwebapi.entities.gameinformation;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,14 +16,14 @@ public final class WeaponEntity extends GameInformationEntity {
 
     @Column(name = "range_normal")
     @Min(0)
-    private int rangeNormal;
+    private Integer rangeNormal;
 
     @Column(name = "range_long")
     @Min(0)
-    private int rangeLong;
+    private Integer rangeLong;
 
     @Column(name = "is_two_handed")
-    private boolean isTwoHanded = false;
+    private Boolean isTwoHanded = false;
 
     // Getters and setters
     public String getDamageDice() {
@@ -42,27 +42,27 @@ public final class WeaponEntity extends GameInformationEntity {
         this.damageType = damageType;
     }
 
-    public int getRangeNormal() {
+    public Integer getRangeNormal() {
         return this.rangeNormal;
     }
 
-    public void setRangeNormal(int rangeNormal) {
+    public void setRangeNormal(Integer rangeNormal) {
         this.rangeNormal = rangeNormal;
     }
 
-    public int getRangeLong() {
+    public Integer getRangeLong() {
         return this.rangeLong;
     }
 
-    public void setRangeLong(int rangeLong) {
+    public void setRangeLong(Integer rangeLong) {
         this.rangeLong = rangeLong;
     }
 
-    public boolean getIsTwoHanded() {
+    public Boolean getIsTwoHanded() {
         return this.isTwoHanded;
     }
 
-    public void setIsTwoHanded(boolean isTwoHanded) {
+    public void setIsTwoHanded(Boolean isTwoHanded) {
         this.isTwoHanded = isTwoHanded;
     }
 }

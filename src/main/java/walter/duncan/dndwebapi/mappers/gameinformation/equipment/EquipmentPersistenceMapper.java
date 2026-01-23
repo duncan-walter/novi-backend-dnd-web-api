@@ -1,9 +1,10 @@
-package walter.duncan.dndwebapi.mappers;
+package walter.duncan.dndwebapi.mappers.gameinformation.equipment;
 
 import org.springframework.stereotype.Component;
 
-import walter.duncan.dndwebapi.businessmodels.EquipmentModel;
-import walter.duncan.dndwebapi.entities.EquipmentEntity;
+import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
+import walter.duncan.dndwebapi.entities.gameinformation.EquipmentEntity;
+import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 
 @Component
 public final class EquipmentPersistenceMapper extends BasePersistenceMapper<EquipmentModel, EquipmentEntity> {

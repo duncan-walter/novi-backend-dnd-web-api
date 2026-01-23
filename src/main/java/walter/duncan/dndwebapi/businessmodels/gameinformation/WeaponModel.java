@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.businessmodels;
+package walter.duncan.dndwebapi.businessmodels.gameinformation;
 
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
@@ -6,16 +6,16 @@ import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 public final class WeaponModel extends GameInformationModel {
     private String damageDice;
     private String damageType;
-    private int rangeNormal;
-    private int rangeLong;
-    private boolean isTwoHanded;
+    private Integer rangeNormal;
+    private Integer rangeLong;
+    private Boolean isTwoHanded;
 
     private WeaponModel(
             Long id,
             String name,
             String description,
-            int valueInCopperPieces,
-            double weightInLbs
+            Long valueInCopperPieces,
+            Double weightInLbs
     ) {
         super(id, name, description, valueInCopperPieces, weightInLbs);
     }
@@ -24,13 +24,13 @@ public final class WeaponModel extends GameInformationModel {
             Long id,
             String name,
             String description,
-            int valueInCopperPieces,
-            double weightInLbs,
+            Long valueInCopperPieces,
+            Double weightInLbs,
             String damageDice,
             String damageType,
-            int rangeNormal,
-            int rangeLong,
-            boolean isTwoHanded
+            Integer rangeNormal,
+            Integer rangeLong,
+            Boolean isTwoHanded
     ) {
         super(id, name, description, valueInCopperPieces, weightInLbs);
         this.damageDice = damageDice;
@@ -43,13 +43,13 @@ public final class WeaponModel extends GameInformationModel {
     public static WeaponModel create(
             String name,
             String description,
-            int valueInCopperPieces,
-            double weightInLbs,
+            Long valueInCopperPieces,
+            Double weightInLbs,
             String damageDice,
             String damageType,
-            int rangeNormal,
-            int rangeLong,
-            boolean isTwoHanded
+            Integer rangeNormal,
+            Integer rangeLong,
+            Boolean isTwoHanded
     ) {
         var model = new WeaponModel(null, name, description, valueInCopperPieces, weightInLbs);
         model.setDamageDice(damageDice);
@@ -65,13 +65,13 @@ public final class WeaponModel extends GameInformationModel {
             Long id,
             String name,
             String description,
-            int valueInCopperPieces,
-            double weightInLbs,
+            Long valueInCopperPieces,
+            Double weightInLbs,
             String damageDice,
             String damageType,
-            int rangeNormal,
-            int rangeLong,
-            boolean isTwoHanded
+            Integer rangeNormal,
+            Integer rangeLong,
+            Boolean isTwoHanded
     ) {
         return new WeaponModel(id, name, description, valueInCopperPieces, weightInLbs, damageDice, damageType, rangeNormal, rangeLong, isTwoHanded);
     }
@@ -85,15 +85,15 @@ public final class WeaponModel extends GameInformationModel {
         return this.damageType;
     }
 
-    public int getRangeNormal() {
+    public Integer getRangeNormal() {
         return this.rangeNormal;
     }
 
-    public int getRangeLong() {
+    public Integer getRangeLong() {
         return this.rangeLong;
     }
 
-    public boolean getIsTwoHanded() {
+    public Boolean getIsTwoHanded() {
         return this.isTwoHanded;
     }
 
@@ -106,8 +106,8 @@ public final class WeaponModel extends GameInformationModel {
         this.damageType = damageType;
     }
 
-    public void setRangeNormal(int rangeNormal) {
-        if (rangeNormal > this.rangeLong && this.rangeLong != 0) {
+    public void setRangeNormal(Integer rangeNormal) {
+        if (this.rangeLong != null && rangeNormal > this.rangeLong) {
             throw new BusinessRuleViolationException(
                     BusinessRuleViolation.WEAPON_NORMAL_RANGE_EXCEEDS_LONG_RANGE,
                     "Weapon normal range cannot exceed long range."
@@ -117,8 +117,8 @@ public final class WeaponModel extends GameInformationModel {
         this.rangeNormal = rangeNormal;
     }
 
-    public void setRangeLong(int rangeLong) {
-        if (rangeLong < this.rangeNormal && this.rangeNormal != 0) {
+    public void setRangeLong(Integer rangeLong) {
+        if (this.rangeNormal != null && rangeLong < this.rangeNormal) {
             throw new BusinessRuleViolationException(
                     BusinessRuleViolation.WEAPON_LONG_RANGE_LESS_THAN_NORMAL_RANGE,
                     "Weapon long range cannot be less than normal range."
@@ -128,7 +128,7 @@ public final class WeaponModel extends GameInformationModel {
         this.rangeLong = rangeLong;
     }
 
-    public void setIsTwoHanded(boolean isTwoHanded) {
+    public void setIsTwoHanded(Boolean isTwoHanded) {
         this.isTwoHanded = isTwoHanded;
     }
 }

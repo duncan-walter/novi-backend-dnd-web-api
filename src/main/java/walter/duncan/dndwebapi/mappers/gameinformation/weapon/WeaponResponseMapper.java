@@ -1,12 +1,13 @@
-package walter.duncan.dndwebapi.mappers;
+package walter.duncan.dndwebapi.mappers.gameinformation.weapon;
 
 import org.springframework.stereotype.Component;
 
-import walter.duncan.dndwebapi.businessmodels.WeaponModel;
-import walter.duncan.dndwebapi.dtos.WeaponResponseDto;
+import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
+import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponResponseDto;
+import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
 
 @Component
-public final class WeaponResponseMapper extends BaseResponseMapper<WeaponResponseDto, WeaponModel>{
+public final class WeaponResponseMapper extends BaseResponseMapper<WeaponResponseDto, WeaponModel> {
     @Override
     public WeaponResponseDto toDto(WeaponModel model) {
         return new WeaponResponseDto(

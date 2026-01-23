@@ -1,14 +1,14 @@
-package walter.duncan.dndwebapi.controllers;
+package walter.duncan.dndwebapi.controllers.gameinformation;
 
 import jakarta.validation.Valid;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import walter.duncan.dndwebapi.dtos.EquipmentRequestDto;
-import walter.duncan.dndwebapi.dtos.EquipmentResponseDto;
+import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentRequestDto;
+import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentResponseDto;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
-import walter.duncan.dndwebapi.mappers.EquipmentResponseMapper;
-import walter.duncan.dndwebapi.services.EquipmentService;
+import walter.duncan.dndwebapi.mappers.gameinformation.equipment.EquipmentResponseMapper;
+import walter.duncan.dndwebapi.services.gameinformation.EquipmentService;
 
 import java.util.List;
 

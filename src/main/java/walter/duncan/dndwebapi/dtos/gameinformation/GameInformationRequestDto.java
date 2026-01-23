@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.dtos;
+package walter.duncan.dndwebapi.dtos.gameinformation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -13,10 +13,10 @@ public abstract class GameInformationRequestDto {
     private String description;
 
     @PositiveOrZero
-    private int valueInCopperPieces;
+    private Long valueInCopperPieces;
 
     @PositiveOrZero
-    private double weightInLbs;
+    private Double weightInLbs;
 
     public String getName() {
         return this.name;
@@ -26,11 +26,11 @@ public abstract class GameInformationRequestDto {
         return this.description;
     }
 
-    public int getValueInCopperPieces() {
+    public Long getValueInCopperPieces() {
         return this.valueInCopperPieces;
     }
 
-    public double getWeightInLbs() {
+    public Double getWeightInLbs() {
         return this.weightInLbs;
     }
 }

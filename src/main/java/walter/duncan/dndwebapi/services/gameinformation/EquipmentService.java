@@ -1,13 +1,14 @@
-package walter.duncan.dndwebapi.services;
+package walter.duncan.dndwebapi.services.gameinformation;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-import walter.duncan.dndwebapi.businessmodels.EquipmentModel;
-import walter.duncan.dndwebapi.dtos.EquipmentRequestDto;
-import walter.duncan.dndwebapi.entities.EquipmentEntity;
-import walter.duncan.dndwebapi.mappers.EquipmentPersistenceMapper;
-import walter.duncan.dndwebapi.repositories.EquipmentRepository;
+import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
+import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentRequestDto;
+import walter.duncan.dndwebapi.entities.gameinformation.EquipmentEntity;
+import walter.duncan.dndwebapi.mappers.gameinformation.equipment.EquipmentPersistenceMapper;
+import walter.duncan.dndwebapi.repositories.gameinformation.EquipmentRepository;
+import walter.duncan.dndwebapi.services.BaseService;
 
 @Service
 public class EquipmentService extends BaseService<EquipmentEntity, Long, EquipmentRepository> {
@@ -27,7 +28,7 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
     }
 
     public EquipmentModel create(EquipmentRequestDto requestDto) {
-        var model = this.requestDtoToModel(requestDto);
+        var model = this.createEquipmentModel(requestDto);
         var persistedEntity = this.repository.save(this.mapper.toEntity(model));
 
         return this.mapper.toModel(persistedEntity);
@@ -35,7 +36,7 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
 
     public EquipmentModel update(Long id, EquipmentRequestDto requestDto) {
         var persistedEntity = this.findByIdOrThrow(id);
-        var model = this.requestDtoToModel(requestDto);
+        var model = this.createEquipmentModel(requestDto);
 
         this.mapper.updateEntityFromModel(model, persistedEntity);
 
@@ -47,7 +48,7 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
         this.repository.deleteById(id);
     }
 
-    private EquipmentModel requestDtoToModel(EquipmentRequestDto requestDto) {
+    private EquipmentModel createEquipmentModel(EquipmentRequestDto requestDto) {
         return EquipmentModel.create(
                 requestDto.getName(),
                 requestDto.getDescription(),

@@ -1,0 +1,299 @@
+{
+  "info": {
+    "_postman_id": "b239493a-00d3-47ef-91ee-798e903728e1",
+    "name": "DnD web-API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50199064",
+    "_collection_link": "https://go.postman.co/collection/50199064-b239493a-00d3-47ef-91ee-798e903728e1?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Weapons",
+      "item": [
+        {
+          "name": "Get all weapons",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/weapons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "weapons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get weapon by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/weapons/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "weapons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create weapon",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Light Crossbow\",\r\n    \"description\": \"A mechanical ranged weapon that fires bolts with high accuracy and stopping power.\",\r\n    \"valueInCopperPieces\": 2500,\r\n    \"weightInLbs\": 5.0,\r\n    \"damageDice\": \"1d8\",\r\n    \"damageType\": \"piercing\",\r\n    \"rangeNormal\": 80,\r\n    \"rangeLong\": 320,\r\n    \"isTwoHanded\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/weapons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "weapons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update weapon",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Longsword +1\",\r\n    \"description\": \"A finely crafted longsword imbued with minor enchantments that enhance its accuracy and lethality.\",\r\n    \"valueInCopperPieces\": 30000,\r\n    \"weightInLbs\": 3.0,\r\n    \"damageDice\": \"1d8\",\r\n    \"damageType\": \"slashing\",\r\n    \"rangeNormal\": null,\r\n    \"rangeLong\": null,\r\n    \"isTwoHanded\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/weapons/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "weapons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete weapon",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/weapons/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "weapons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Equipment",
+      "item": [
+        {
+          "name": "Get all equipment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get equipment by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipment/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipment",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create equipment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Crowbar\",\r\n    \"description\": \"A sturdy iron bar used for prying open crates, doors, and other heavy objects.\",\r\n    \"valueInCopperPieces\": 200,\r\n    \"weightInLbs\": 5.0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/equipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update equipment",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Torch\",\r\n    \"description\": \"A wooden torch that burns for about one hour, providing bright light and can be used to ignite flammable objects.\",\r\n    \"valueInCopperPieces\": 10\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/equipment/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipment",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete equipment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipment/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipment",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}

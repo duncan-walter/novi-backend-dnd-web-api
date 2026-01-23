@@ -23,7 +23,7 @@ public final class WeaponEntity extends GameInformationEntity {
     private Integer rangeLong;
 
     @Column(name = "is_two_handed")
-    private Boolean isTwoHanded = false;
+    private Boolean isTwoHanded;
 
     // Getters and setters
     public String getDamageDice() {

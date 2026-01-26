@@ -3,10 +3,12 @@ package walter.duncan.dndwebapi.entities.charactermanagement;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.Immutable;
 
 import walter.duncan.dndwebapi.entities.BaseEntity;
 
-@Entity()
+@Entity
+@Immutable
 @Table(name = "character_types")
 public final class CharacterTypeEntity extends BaseEntity {
     @Column(name = "name", length = 50)

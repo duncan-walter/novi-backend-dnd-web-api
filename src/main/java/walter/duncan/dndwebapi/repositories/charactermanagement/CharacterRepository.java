@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.repositories.gameinformation;
+package walter.duncan.dndwebapi.repositories.charactermanagement;
 
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;

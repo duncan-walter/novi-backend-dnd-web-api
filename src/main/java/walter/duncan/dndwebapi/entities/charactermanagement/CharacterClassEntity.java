@@ -14,4 +14,22 @@ public final class CharacterClassEntity extends BaseEntity {
 
     @Column(name = "hit_die")
     private int hitDie;
+
+    //region Getters & Setters
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getHitDie() {
+        return this.hitDie;
+    }
+
+    public void setHitDie(int hitDie) {
+        this.hitDie = hitDie;
+    }
+    //endregion
 }

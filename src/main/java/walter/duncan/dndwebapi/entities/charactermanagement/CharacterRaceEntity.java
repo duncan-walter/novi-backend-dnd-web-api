@@ -17,4 +17,30 @@ public final class CharacterRaceEntity extends BaseEntity {
 
     @Column(name = "speed")
     private int speed;
+
+    //region Getters & Setters
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getSpeed() {
+        return this.speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+    //endregion
 }

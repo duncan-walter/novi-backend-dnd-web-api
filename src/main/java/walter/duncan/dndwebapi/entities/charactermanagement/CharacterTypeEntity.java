@@ -14,4 +14,22 @@ public final class CharacterTypeEntity extends BaseEntity {
 
     @Column(name = "color", length = 7)
     private String color;
+
+    //region Getters & Setters
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getColor() {
+        return this.color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+    //endregion
 }

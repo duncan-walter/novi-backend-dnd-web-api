@@ -95,7 +95,7 @@ public final class CharacterEntity extends BaseEntity {
     private CharacterClassEntity characterClass;
 
     @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CharacterInventoryItem> inventory = new ArrayList<>();
+    private List<CharacterInventoryItemEntity> inventory = new ArrayList<>();
 
     //region Getters & Setters
     public String getName() {
@@ -264,6 +264,14 @@ public final class CharacterEntity extends BaseEntity {
 
     public void setCharacterClass(CharacterClassEntity characterClass) {
         this.characterClass = characterClass;
+    }
+
+    public List<CharacterInventoryItemEntity> getInventory() {
+        return this.inventory;
+    }
+
+    public void setInventory(List<CharacterInventoryItemEntity> inventory) {
+        this.inventory = inventory;
     }
     //endregion
 }

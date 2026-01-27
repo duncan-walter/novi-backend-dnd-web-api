@@ -79,15 +79,15 @@ public final class CharacterEntity extends BaseEntity {
     @Column(name = "alignment", nullable = false)
     private CharacterAlignment alignment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id", nullable = false)
     private CharacterTypeEntity type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "race_id", nullable = false)
     private CharacterRaceEntity race;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "class_id", nullable = false)
     private CharacterClassEntity characterClass;
 

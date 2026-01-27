@@ -43,3 +43,10 @@ VALUES ('Gandalf the Grey', 18, 16, 14, 20, 12, 19, 60, 60, 9000, 'Medium', 20, 
        ('Legolas Greenleaf', 16, 14, 20, 13, 14, 16, 65, 65, 8200, 'Medium', 40, 60, 0, 120, 1, 'An elven prince with unmatched eyesight and deadly precision with the bow.', 2, (SELECT id FROM character_types WHERE name = 'Player'), (SELECT id FROM character_races WHERE name = 'Elf'), (SELECT id FROM character_classes WHERE name = 'Fighter'), NOW(), NOW()),
        ('Gimli son of Gloin', 14, 20, 12, 11, 19, 13, 80, 80, 7800, 'Medium', 200, 40, 0, 100, 1, 'A proud dwarf warrior whose axe is as unyielding as his loyalty.', 1, (SELECT id FROM character_types WHERE name = 'Player'), (SELECT id FROM character_races WHERE name = 'Dwarf'), (SELECT id FROM character_classes WHERE name = 'Fighter'), NOW(), NOW()),
        ('Frodo of the Shire', 15, 14, 16, 12, 9, 17, 45, 45, 7000, 'Small', 30, 80, 0, 60, 0, 'A small hobbit burdened with a task that will decide the fate of the world.', 2, (SELECT id FROM character_types WHERE name = 'Player'), (SELECT id FROM character_races WHERE name = 'Halfling'), (SELECT id FROM character_classes WHERE name = 'Rogue'), NOW(), NOW());
+
+INSERT INTO character_inventory_items(reference_id, type, quantity, character_id, created_at, updated_at)
+VALUES ((SELECT id FROM weapons WHERE name = 'Dagger'), 'weapon', 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM weapons WHERE name = 'Longsword'), 'weapon', 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM weapons WHERE name = 'Great Axe'), 'weapon', 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM equipment WHERE name = 'Torch'), 'equipment', 5, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM equipment WHERE name = 'Bedroll'), 'equipment', 2, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW());

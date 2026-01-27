@@ -1,11 +1,14 @@
 package walter.duncan.dndwebapi.businessmodels.charactermanagement;
 
 public final class CharacterRaceModel {
+    //region Fields
     private final Long id;
     private String name;
     private String description;
     private int speed;
+    //endregion
 
+    //region Constructors
     private CharacterRaceModel(Long id) {
         this.id = id;
     }
@@ -16,7 +19,9 @@ public final class CharacterRaceModel {
         this.description = description;
         this.speed = speed;
     }
+    //endregion
 
+    //region Factory methods
     public static CharacterRaceModel create(String name, String description, int speed) {
         var model = new CharacterRaceModel(null);
         model.setName(name);
@@ -29,6 +34,7 @@ public final class CharacterRaceModel {
     public static CharacterRaceModel restore(Long id, String name, String description, int speed) {
         return new CharacterRaceModel(id, name, description, speed);
     }
+    //endregion
 
     //region Getters
     public Long getId() {
@@ -48,7 +54,7 @@ public final class CharacterRaceModel {
     }
     //endregion
 
-    //region Setters with validation
+    //region Setters
     public void setName(String name) {
         this.name = name;
     }

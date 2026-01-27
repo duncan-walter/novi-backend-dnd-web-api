@@ -6,10 +6,13 @@ import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
 public final class CharacterTypeModel {
+    //region Fields
     private final Long id;
     private String name;
     private String color;
+    //endregion
 
+    //region Constructors
     private CharacterTypeModel(Long id) {
         this.id = id;
     }
@@ -19,7 +22,9 @@ public final class CharacterTypeModel {
         this.name = name;
         this.color = color;
     }
+    //endregion
 
+    //region Factory methods
     public static CharacterTypeModel create(String name, String color) {
         var model = new CharacterTypeModel(null);
         model.setName(name);
@@ -31,6 +36,7 @@ public final class CharacterTypeModel {
     public static CharacterTypeModel restore(Long id, String name, String color) {
         return new CharacterTypeModel(id, name, color);
     }
+    //endregion
 
     //region Getters
     public Long getId() {
@@ -46,7 +52,7 @@ public final class CharacterTypeModel {
     }
     //endregion
 
-    //region Setters with validation
+    //region Setters
     public void setName(String name) {
         this.name = name;
     }

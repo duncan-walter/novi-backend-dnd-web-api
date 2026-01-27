@@ -4,6 +4,7 @@ import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
 public final class CharacterModel {
+    //region Fields
     private final Long id;
     private String name;
     private int charisma;
@@ -26,7 +27,9 @@ public final class CharacterModel {
     private CharacterTypeModel type;
     private CharacterRaceModel race;
     private CharacterClassModel characterClass;
+    //endregion
 
+    //region Constructors
     private CharacterModel(Long id) {
         this.id = id;
     }
@@ -60,7 +63,9 @@ public final class CharacterModel {
         this.race = race;
         this.characterClass = characterClass;
     }
+    //endregion
 
+    //region Factory methods
     public static CharacterModel create(
             String name, int charisma, int constitution, int dexterity, int intelligence, int strength, int wisdom,
             int maxHitPoints, int currentHitPoints, int experiencePoints, String size, Integer copperPieces, Integer silverPieces,
@@ -105,6 +110,7 @@ public final class CharacterModel {
                 alignment, type, race, characterClass
         );
     }
+    //endregion
 
     //region Getters
     public Long getId() {
@@ -196,7 +202,7 @@ public final class CharacterModel {
     }
     //endregion
 
-    //region Setters with validation
+    //region Setters
     public void setName(String name) {
         this.name = name;
     }
@@ -302,6 +308,7 @@ public final class CharacterModel {
     }
     //endregion
 
+    //region Validation methods
     private void validateAbilityScore(int abilityScore) {
         if (abilityScore < 1 || abilityScore > 30) {
             throw new BusinessRuleViolationException(
@@ -310,4 +317,5 @@ public final class CharacterModel {
             );
         }
     }
+    //endregion
 }

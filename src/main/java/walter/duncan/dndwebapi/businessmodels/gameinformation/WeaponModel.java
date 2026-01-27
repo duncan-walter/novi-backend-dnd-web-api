@@ -4,12 +4,15 @@ import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
 public final class WeaponModel extends GameInformationModel {
+    //region Fields
     private String damageDice;
     private String damageType;
     private Integer rangeNormal;
     private Integer rangeLong;
     private Boolean isTwoHanded;
+    //endregion
 
+    //region Constructors
     private WeaponModel(
             Long id,
             String name,
@@ -39,7 +42,9 @@ public final class WeaponModel extends GameInformationModel {
         this.rangeLong = rangeLong;
         this.isTwoHanded = isTwoHanded;
     }
+    //endregion
 
+    //region Factory methods
     public static WeaponModel create(
             String name,
             String description,
@@ -75,8 +80,9 @@ public final class WeaponModel extends GameInformationModel {
     ) {
         return new WeaponModel(id, name, description, valueInCopperPieces, weightInLbs, damageDice, damageType, rangeNormal, rangeLong, isTwoHanded);
     }
+    //endregion
 
-    // Getters
+    //region Getters
     public String getDamageDice() {
         return this.damageDice;
     }
@@ -96,8 +102,9 @@ public final class WeaponModel extends GameInformationModel {
     public Boolean getIsTwoHanded() {
         return this.isTwoHanded;
     }
+    //endregion
 
-    // Setters with validation
+    //region Setters
     public void setDamageDice(String damageDice) {
         this.damageDice = damageDice;
     }
@@ -131,4 +138,5 @@ public final class WeaponModel extends GameInformationModel {
     public void setIsTwoHanded(Boolean isTwoHanded) {
         this.isTwoHanded = isTwoHanded;
     }
+    //endregion
 }

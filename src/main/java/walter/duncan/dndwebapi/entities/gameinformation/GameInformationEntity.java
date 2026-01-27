@@ -22,7 +22,7 @@ public abstract class GameInformationEntity extends BaseEntity {
     @Min(0)
     private Double weightInLbs;
 
-    // Getters and setters
+    //region Getters & Setters
     public String getName() {
         return this.name;
     }
@@ -54,4 +54,5 @@ public abstract class GameInformationEntity extends BaseEntity {
     public void setWeightInLbs(Double weightInLbs) {
         this.weightInLbs = weightInLbs;
     }
+    //endregion
 }

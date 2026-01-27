@@ -7,12 +7,15 @@ import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
 public final class CharacterClassModel {
+    //region Fields
     private static final Set<Integer> ALLOWED_HIT_DICE = Set.of(4, 6, 8, 10, 12);
 
     private final Long id;
     private String name;
     private int hitDie;
+    //endregion
 
+    //region Constructors
     private CharacterClassModel(Long id) {
         this.id = id;
     }
@@ -22,7 +25,9 @@ public final class CharacterClassModel {
         this.name = name;
         this.hitDie = hitDie;
     }
+    //endregion
 
+    //region Factory methods
     public static CharacterClassModel create(String name, int hitDie) {
         var model = new CharacterClassModel(null);
         model.setName(name);
@@ -34,6 +39,7 @@ public final class CharacterClassModel {
     public static CharacterClassModel restore(Long id, String name, int hitDie) {
         return new CharacterClassModel(id, name, hitDie);
     }
+    //endregion
 
     //region Getters
     public Long getId() {
@@ -49,7 +55,7 @@ public final class CharacterClassModel {
     }
     //endregion
 
-    //region Setters with validation
+    //region Setters
     public void setName(String name) {
         this.name = name;
     }

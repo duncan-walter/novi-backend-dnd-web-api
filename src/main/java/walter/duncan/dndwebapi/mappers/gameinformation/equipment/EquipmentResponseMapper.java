@@ -7,7 +7,7 @@ import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentResponseD
 import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
 
 @Component
-public class EquipmentResponseMapper extends BaseResponseMapper<EquipmentResponseDto, EquipmentModel> {
+public final class EquipmentResponseMapper extends BaseResponseMapper<EquipmentResponseDto, EquipmentModel> {
     @Override
     public EquipmentResponseDto toDto(EquipmentModel model) {
         return new EquipmentResponseDto(

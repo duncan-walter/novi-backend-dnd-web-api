@@ -7,7 +7,7 @@ import walter.duncan.dndwebapi.entities.charactermanagement.CharacterTypeEntity;
 import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 
 @Component
-public class CharacterTypePersistenceMapper extends BasePersistenceMapper<CharacterTypeModel, CharacterTypeEntity> {
+public final class CharacterTypePersistenceMapper extends BasePersistenceMapper<CharacterTypeModel, CharacterTypeEntity> {
     @Override
     public CharacterTypeModel toModel(CharacterTypeEntity entity) {
         return CharacterTypeModel.restore(

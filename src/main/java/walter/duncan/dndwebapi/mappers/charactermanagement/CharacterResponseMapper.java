@@ -7,13 +7,24 @@ import walter.duncan.dndwebapi.dtos.charactermanagement.*;
 import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
 
 @Component
-public class CharacterResponseMapper extends BaseResponseMapper<CharacterResponseDto, CharacterModel> {
+public final class CharacterResponseMapper extends BaseResponseMapper<CharacterResponseDto, CharacterModel> {
+    private final CharacterTypeResponseMapper characterTypeResponseMapper;
+    private final CharacterRaceResponseMapper characterRaceResponseMapper;
+    private final CharacterClassResponseMapper characterClassResponseMapper;
+
+    public CharacterResponseMapper(
+            CharacterTypeResponseMapper characterTypeResponseMapper,
+            CharacterRaceResponseMapper characterRaceResponseMapper,
+            CharacterClassResponseMapper characterClassResponseMapper
+    ) {
+        this.characterTypeResponseMapper = characterTypeResponseMapper;
+        this.characterRaceResponseMapper = characterRaceResponseMapper;
+        this.characterClassResponseMapper = characterClassResponseMapper;
+    }
+
     @Override
     public CharacterResponseDto toDto(CharacterModel model) {
         var alignment = model.getAlignment();
-        var typeModel = model.getType();
-        var raceModel = model.getRace();
-        var classModel = model.getCharacterClass();
 
         return new CharacterResponseDto(
                 model.getId(),
@@ -38,22 +49,9 @@ public class CharacterResponseMapper extends BaseResponseMapper<CharacterRespons
                         alignment.getCode(),
                         alignment.getName()
                 ),
-                new CharacterTypeResponseDto(
-                        typeModel.getId(),
-                        typeModel.getName(),
-                        typeModel.getColor()
-                ),
-                new CharacterRaceResponseDto(
-                        raceModel.getId(),
-                        raceModel.getName(),
-                        raceModel.getDescription(),
-                        raceModel.getSpeed()
-                ),
-                new CharacterClassResponseDto(
-                        classModel.getId(),
-                        classModel.getName(),
-                        classModel.getHitDie()
-                )
+                this.characterTypeResponseMapper.toDto(model.getType()),
+                this.characterRaceResponseMapper.toDto(model.getRace()),
+                this.characterClassResponseMapper.toDto(model.getCharacterClass())
         );
     }
 }

@@ -1,6 +1,14 @@
 package walter.duncan.dndwebapi.businessmodels.charactermanagement;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
+
 public final class CharacterClassModel {
+    private static final Set<Integer> ALLOWED_HIT_DICE = Set.of(4, 6, 8, 10, 12);
+
     private final Long id;
     private String name;
     private int hitDie;
@@ -47,6 +55,17 @@ public final class CharacterClassModel {
     }
 
     public void setHitDie(int hitDie) {
+        if (!ALLOWED_HIT_DICE.contains(hitDie)) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.CHARACTER_CLASS_ILLEGAL_HIT_DIE,
+                    String.format(
+                            "'%s' is not a valid hit die value. Use one of the following codes: '%s'",
+                            hitDie,
+                            ALLOWED_HIT_DICE.stream().map(String::valueOf).collect(Collectors.joining(", "))
+                    )
+            );
+        }
+
         this.hitDie = hitDie;
     }
     //endregion

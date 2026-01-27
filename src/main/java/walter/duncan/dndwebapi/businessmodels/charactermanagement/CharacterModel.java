@@ -1,5 +1,8 @@
 package walter.duncan.dndwebapi.businessmodels.charactermanagement;
 
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
+
 public final class CharacterModel {
     private final Long id;
     private String name;
@@ -9,8 +12,8 @@ public final class CharacterModel {
     private int intelligence;
     private int strength;
     private int wisdom;
-    private int maxHitPoints;
-    private int currentHitPoints;
+    private Integer maxHitPoints;
+    private Integer currentHitPoints;
     private int experiencePoints;
     private String size;
     private Integer copperPieces;
@@ -199,34 +202,54 @@ public final class CharacterModel {
     }
 
     public void setCharisma(int charisma) {
+        this.validateAbilityScore(charisma);
         this.charisma = charisma;
     }
 
     public void setConstitution(int constitution) {
+        this.validateAbilityScore(constitution);
         this.constitution = constitution;
     }
 
     public void setDexterity(int dexterity) {
+        this.validateAbilityScore(dexterity);
         this.dexterity = dexterity;
     }
 
     public void setIntelligence(int intelligence) {
+        this.validateAbilityScore(intelligence);
         this.intelligence = intelligence;
     }
 
     public void setStrength(int strength) {
+        this.validateAbilityScore(strength);
         this.strength = strength;
     }
 
     public void setWisdom(int wisdom) {
+        this.validateAbilityScore(wisdom);
         this.wisdom = wisdom;
     }
 
     public void setMaxHitPoints(int maxHitPoints) {
+        if (this.currentHitPoints != null && maxHitPoints < this.currentHitPoints) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.CHARACTER_MAX_HIT_POINTS_LESS_THAN_CURRENT_HIT_POINTS,
+                    "Max hit points cannot be less than current hit points."
+            );
+        }
+
         this.maxHitPoints = maxHitPoints;
     }
 
     public void setCurrentHitPoints(int currentHitPoints) {
+        if (this.maxHitPoints != null && currentHitPoints > this.maxHitPoints) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.CHARACTER_CURRENT_HIT_POINTS_EXCEEDS_MAX_HIT_POINTS,
+                    "Current hit points cannot exceed max hit points."
+            );
+        }
+
         this.currentHitPoints = currentHitPoints;
     }
 
@@ -278,4 +301,13 @@ public final class CharacterModel {
         this.characterClass = characterClass;
     }
     //endregion
+
+    private void validateAbilityScore(int abilityScore) {
+        if (abilityScore < 1 || abilityScore > 30) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.CHARACTER_ABILITY_SCORE_OUT_OF_BOUNDS,
+                    "Ability scores must be between 1 and 30."
+            );
+        }
+    }
 }

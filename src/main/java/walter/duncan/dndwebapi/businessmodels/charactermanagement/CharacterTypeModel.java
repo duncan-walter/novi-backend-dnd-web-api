@@ -1,5 +1,10 @@
 package walter.duncan.dndwebapi.businessmodels.charactermanagement;
 
+import java.util.regex.Pattern;
+
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
+
 public final class CharacterTypeModel {
     private final Long id;
     private String name;
@@ -47,6 +52,13 @@ public final class CharacterTypeModel {
     }
 
     public void setColor(String color) {
+        if (color == null || !Pattern.compile("^#([A-Fa-f0-9]{6})$").matcher(color).matches()) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.CHARACTER_TYPE_INCORRECT_COLOR_FORMAT,
+                    "Invalid color code: " + color + ". Must be a hex code like #RRGGBB."
+            );
+        }
+
         this.color = color;
     }
     //endregion

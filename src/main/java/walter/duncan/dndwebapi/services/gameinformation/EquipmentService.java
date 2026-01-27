@@ -2,6 +2,7 @@ package walter.duncan.dndwebapi.services.gameinformation;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
 import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentRequestDto;
@@ -27,6 +28,7 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
         return this.mapper.toModel(this.findByIdOrThrow(id));
     }
 
+    @Transactional
     public EquipmentModel create(EquipmentRequestDto requestDto) {
         var model = this.createEquipmentModel(requestDto);
         var persistedEntity = this.repository.save(this.mapper.toEntity(model));
@@ -34,6 +36,7 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
         return this.mapper.toModel(persistedEntity);
     }
 
+    @Transactional
     public EquipmentModel update(Long id, EquipmentRequestDto requestDto) {
         var persistedEntity = this.findByIdOrThrow(id);
         var model = this.createEquipmentModel(requestDto);
@@ -43,6 +46,7 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
         return this.mapper.toModel(this.repository.save(persistedEntity));
     }
 
+    @Transactional
     public void deleteById(Long id) {
         this.existsByIdOrThrow(id);
         this.repository.deleteById(id);

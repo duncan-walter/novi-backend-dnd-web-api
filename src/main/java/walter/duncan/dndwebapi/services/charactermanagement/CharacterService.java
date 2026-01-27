@@ -2,6 +2,7 @@ package walter.duncan.dndwebapi.services.charactermanagement;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterAlignment;
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
@@ -40,6 +41,7 @@ public class CharacterService extends BaseService<CharacterEntity, Long, Charact
         return this.mapper.toModel(this.findByIdOrThrow(id));
     }
 
+    @Transactional
     public CharacterModel create(CharacterRequestDto requestDto) {
         var model = this.createCharacterModel(requestDto);
         var persistedEntity = this.repository.save(this.mapper.toEntity(model));
@@ -47,6 +49,7 @@ public class CharacterService extends BaseService<CharacterEntity, Long, Charact
         return this.mapper.toModel(persistedEntity);
     }
 
+    @Transactional
     public CharacterModel update(Long id, CharacterRequestDto requestDto) {
         var persistedEntity = this.findByIdOrThrow(id);
         var model = this.createCharacterModel(requestDto);
@@ -56,6 +59,7 @@ public class CharacterService extends BaseService<CharacterEntity, Long, Charact
         return this.mapper.toModel(this.repository.save(persistedEntity));
     }
 
+    @Transactional
     public void deleteById(Long id) {
         this.existsByIdOrThrow(id);
         this.repository.deleteById(id);

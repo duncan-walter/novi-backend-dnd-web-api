@@ -1,25 +1,28 @@
 package walter.duncan.dndwebapi.dtos.charactermanagement;
 
+import jakarta.validation.constraints.*;
+
 public record CharacterRequestDto(
-        String name,
-        int charisma,
-        int constitution,
-        int dexterity,
-        int intelligence,
-        int strength,
-        int wisdom,
-        int maxHitPoints,
-        int currentHitPoints,
-        int experiencePoints,
-        String size,
-        int copperPieces,
-        int silverPieces,
-        int electrumPieces,
-        int goldPieces,
-        int platinumPieces,
-        String notes,
-        String alignmentCode,
-        Long typeId,
-        Long raceId,
-        Long classId
+        @NotBlank
+        @Size(max = 50) String name,
+        @Min(1) @Max(30) int charisma,
+        @Min(1) @Max(30) int constitution,
+        @Min(1) @Max(30) int dexterity,
+        @Min(1) @Max(30) int intelligence,
+        @Min(1) @Max(30) int strength,
+        @Min(1) @Max(30) int wisdom,
+        @Min(1) int maxHitPoints,
+        @Min(1) int currentHitPoints,
+        @PositiveOrZero int experiencePoints,
+        @Size(max = 50) String size,
+        @PositiveOrZero int copperPieces,
+        @PositiveOrZero int silverPieces,
+        @PositiveOrZero int electrumPieces,
+        @PositiveOrZero int goldPieces,
+        @PositiveOrZero int platinumPieces,
+        @Size(max = 5000) String notes,
+        @NotBlank String alignmentCode,
+        @NotNull Long typeId,
+        @NotNull Long raceId,
+        @NotNull Long classId
 ) { }

@@ -42,12 +42,15 @@ public final class CharacterEntity extends BaseEntity {
     @Column(name = "wisdom", nullable = false)
     private int wisdom;
 
+    @Min(1)
     @Column(name = "max_hit_points", nullable = false)
     private int maxHitPoints;
 
+    @Min(1)
     @Column(name = "current_hit_points", nullable = false)
     private int currentHitPoints;
 
+    @Min(0)
     @Column(name = "experience_points", nullable = false)
     private int experiencePoints;
 

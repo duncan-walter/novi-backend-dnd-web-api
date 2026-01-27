@@ -2,6 +2,7 @@ package walter.duncan.dndwebapi.services.gameinformation;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
@@ -27,6 +28,7 @@ public class WeaponService extends BaseService<WeaponEntity, Long, WeaponReposit
         return this.mapper.toModel(this.findByIdOrThrow(id));
     }
 
+    @Transactional
     public WeaponModel create(WeaponRequestDto requestDto) {
         var model = this.createWeaponModel(requestDto);
         var persistedEntity = this.repository.save(this.mapper.toEntity(model));
@@ -34,6 +36,7 @@ public class WeaponService extends BaseService<WeaponEntity, Long, WeaponReposit
         return this.mapper.toModel(persistedEntity);
     }
 
+    @Transactional
     public WeaponModel update(Long id, WeaponRequestDto requestDto) {
         var persistedEntity = this.findByIdOrThrow(id);
         var model = this.createWeaponModel(requestDto);
@@ -43,6 +46,7 @@ public class WeaponService extends BaseService<WeaponEntity, Long, WeaponReposit
         return this.mapper.toModel(this.repository.save(persistedEntity));
     }
 
+    @Transactional
     public void deleteById(Long id) {
         this.existsByIdOrThrow(id);
         this.repository.deleteById(id);

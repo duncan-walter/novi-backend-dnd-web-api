@@ -8,6 +8,135 @@
   },
   "item": [
     {
+      "name": "Characters",
+      "item": [
+        {
+          "name": "Get all characters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/characters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "characters"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get character by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/characters/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "characters",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create character",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Sauron\",\r\n    \"charisma\": 18,\r\n    \"constitution\": 20,\r\n    \"dexterity\": 12,\r\n    \"intelligence\": 20,\r\n    \"strength\": 25,\r\n    \"wisdom\": 18,\r\n    \"maxHitPoints\": 10000,\r\n    \"currentHitPoints\": 10000,\r\n    \"experiencePoints\": 1000000,\r\n    \"size\": \"Huge\",\r\n    \"copperPieces\": 0,\r\n    \"silverPieces\": 1000,\r\n    \"electrumPieces\": 500,\r\n    \"goldPieces\": 10000,\r\n    \"platinumPieces\": 5000,\r\n    \"notes\": \"The Dark Lord, master of Mordor and creator of the One Ring.\",\r\n    \"alignmentCode\": \"LE\",\r\n    \"typeId\": 2,\r\n    \"raceId\": 1,\r\n    \"classId\": 3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/characters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "characters"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update character",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Gandalf the White\",\r\n    \"charisma\": 20,\r\n    \"constitution\": 18,\r\n    \"dexterity\": 14,\r\n    \"intelligence\": 20,\r\n    \"strength\": 14,\r\n    \"wisdom\": 20,\r\n    \"maxHitPoints\": 80,\r\n    \"currentHitPoints\": 80,\r\n    \"experiencePoints\": 12000,\r\n    \"size\": \"Medium\",\r\n    \"copperPieces\": 30,\r\n    \"silverPieces\": 60,\r\n    \"electrumPieces\": 40,\r\n    \"goldPieces\": 250,\r\n    \"platinumPieces\": 10,\r\n    \"notes\": \"Returned more powerful after defeating the Balrog, now leading the fight against Sauron.\",\r\n    \"alignmentCode\": \"LG\",\r\n    \"typeId\": 1,\r\n    \"raceId\": 1,\r\n    \"classId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/characters/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "characters",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete character",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/characters/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "characters",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Weapons",
       "item": [
         {
@@ -293,7 +422,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080"
+      "value": "localhost:8080"
     }
   ]
 }

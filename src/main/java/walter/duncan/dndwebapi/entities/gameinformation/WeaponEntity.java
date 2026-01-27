@@ -25,7 +25,7 @@ public final class WeaponEntity extends GameInformationEntity {
     @Column(name = "is_two_handed")
     private Boolean isTwoHanded;
 
-    // Getters and setters
+    //region Getters & Setters
     public String getDamageDice() {
         return this.damageDice;
     }
@@ -65,4 +65,5 @@ public final class WeaponEntity extends GameInformationEntity {
     public void setIsTwoHanded(Boolean isTwoHanded) {
         this.isTwoHanded = isTwoHanded;
     }
+    //endregion
 }

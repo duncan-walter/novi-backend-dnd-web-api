@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 import walter.duncan.dndwebapi.entities.BaseEntity;
+import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemEntity;
 
 @Entity
 @Table(name = "characters")
@@ -271,7 +272,11 @@ public final class CharacterEntity extends BaseEntity {
     }
 
     public void setInventory(List<CharacterInventoryItemEntity> inventory) {
-        this.inventory = inventory;
+        this.inventory.clear();
+
+        if (inventory != null) {
+            this.inventory.addAll(inventory);
+        }
     }
     //endregion
 }

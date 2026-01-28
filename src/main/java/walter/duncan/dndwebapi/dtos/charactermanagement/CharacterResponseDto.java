@@ -1,6 +1,9 @@
 package walter.duncan.dndwebapi.dtos.charactermanagement;
 
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.CharacterInventoryItemResponseDto;
 
 public record CharacterResponseDto(
         Long id,
@@ -31,5 +34,6 @@ public record CharacterResponseDto(
         CharacterAlignmentResponseDto alignment,
         CharacterTypeResponseDto type,
         CharacterRaceResponseDto race,
-        @JsonProperty("class") CharacterClassResponseDto characterClass
+        @JsonProperty("class") CharacterClassResponseDto characterClass,
+        List<CharacterInventoryItemResponseDto> inventory
 ) { }

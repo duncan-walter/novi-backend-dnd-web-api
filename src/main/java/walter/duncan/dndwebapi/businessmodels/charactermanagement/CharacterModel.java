@@ -1,8 +1,10 @@
 package walter.duncan.dndwebapi.businessmodels.charactermanagement;
 
+import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CharacterInventoryItemModel;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class CharacterModel {
@@ -32,6 +34,7 @@ public final class CharacterModel {
     private CharacterTypeModel type;
     private CharacterRaceModel race;
     private CharacterClassModel characterClass;
+    private List<CharacterInventoryItemModel> inventory = new ArrayList<>();
     //endregion
 
     //region Constructors
@@ -205,6 +208,10 @@ public final class CharacterModel {
     public CharacterClassModel getCharacterClass() {
         return this.characterClass;
     }
+
+    public List<CharacterInventoryItemModel> getInventory() {
+        return this.inventory;
+    }
     //endregion
 
     //region Calculated getters
@@ -349,6 +356,10 @@ public final class CharacterModel {
 
     public void setCharacterClass(CharacterClassModel characterClass) {
         this.characterClass = characterClass;
+    }
+
+    public void setInventory(List<CharacterInventoryItemModel> inventory) {
+        this.inventory = inventory;
     }
     //endregion
 

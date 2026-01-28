@@ -45,8 +45,8 @@ VALUES ('Gandalf the Grey', 18, 16, 14, 20, 12, 19, 60, 60, 9000, 'Medium', 20, 
        ('Frodo of the Shire', 15, 14, 16, 12, 9, 17, 45, 45, 7000, 'Small', 30, 80, 0, 60, 0, 'A small hobbit burdened with a task that will decide the fate of the world.', 2, (SELECT id FROM character_types WHERE name = 'Player'), (SELECT id FROM character_races WHERE name = 'Halfling'), (SELECT id FROM character_classes WHERE name = 'Rogue'), NOW(), NOW());
 
 INSERT INTO character_inventory_items(reference_id, type, quantity, character_id, created_at, updated_at)
-VALUES ((SELECT id FROM weapons WHERE name = 'Dagger'), 'weapon', 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
-       ((SELECT id FROM weapons WHERE name = 'Longsword'), 'weapon', 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
-       ((SELECT id FROM weapons WHERE name = 'Great Axe'), 'weapon', 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
-       ((SELECT id FROM equipment WHERE name = 'Torch'), 'equipment', 5, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
-       ((SELECT id FROM equipment WHERE name = 'Bedroll'), 'equipment', 2, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW());
+VALUES ((SELECT id FROM weapons WHERE name = 'Dagger'), 0, 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM weapons WHERE name = 'Longsword'), 0, 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM weapons WHERE name = 'Great Axe'), 0, 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM equipment WHERE name = 'Torch'), 1, 5, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       ((SELECT id FROM equipment WHERE name = 'Bedroll'), 1, 2, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW());

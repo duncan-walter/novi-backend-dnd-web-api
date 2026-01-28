@@ -28,6 +28,10 @@ public class WeaponService extends BaseService<WeaponEntity, Long, WeaponReposit
         return this.mapper.toModel(this.findByIdOrThrow(id));
     }
 
+    public List<WeaponModel> findByIds(List<Long> ids) {
+        return this.mapper.toModels(this.findByIdsOrThrow(ids));
+    }
+
     @Transactional
     public WeaponModel create(WeaponRequestDto requestDto) {
         var model = this.createWeaponModel(requestDto);

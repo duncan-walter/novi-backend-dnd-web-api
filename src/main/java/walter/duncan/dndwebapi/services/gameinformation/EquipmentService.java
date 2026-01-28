@@ -28,6 +28,10 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
         return this.mapper.toModel(this.findByIdOrThrow(id));
     }
 
+    public List<EquipmentModel> findByIds(List<Long> ids) {
+        return this.mapper.toModels(this.findByIdsOrThrow(ids));
+    }
+
     @Transactional
     public EquipmentModel create(EquipmentRequestDto requestDto) {
         var model = this.createEquipmentModel(requestDto);

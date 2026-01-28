@@ -359,6 +359,15 @@ public final class CharacterModel {
     }
 
     public void setInventory(List<CharacterInventoryItemModel> inventory) {
+        int maxInventorySize = 50;
+
+        if (inventory.size() > maxInventorySize) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.CHARACTER_INVENTORY_TOO_BIG,
+                    String.format("A character's inventory may not include more than %s items.", maxInventorySize)
+            );
+        }
+
         this.inventory = inventory;
     }
     //endregion

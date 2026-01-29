@@ -1,10 +1,14 @@
 package walter.duncan.dndwebapi.entities.charactermanagement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 import walter.duncan.dndwebapi.entities.BaseEntity;
+import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemEntity;
 
 @Entity
 @Table(name = "characters")
@@ -90,6 +94,9 @@ public final class CharacterEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "class_id", nullable = false)
     private CharacterClassEntity characterClass;
+
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CharacterInventoryItemEntity> inventory = new ArrayList<>();
 
     //region Getters & Setters
     public String getName() {
@@ -258,6 +265,18 @@ public final class CharacterEntity extends BaseEntity {
 
     public void setCharacterClass(CharacterClassEntity characterClass) {
         this.characterClass = characterClass;
+    }
+
+    public List<CharacterInventoryItemEntity> getInventory() {
+        return this.inventory;
+    }
+
+    public void setInventory(List<CharacterInventoryItemEntity> inventory) {
+        this.inventory.clear();
+
+        if (inventory != null) {
+            this.inventory.addAll(inventory);
+        }
     }
     //endregion
 }

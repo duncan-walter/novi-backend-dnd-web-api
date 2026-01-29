@@ -5,21 +5,25 @@ import org.springframework.stereotype.Component;
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
 import walter.duncan.dndwebapi.dtos.charactermanagement.*;
 import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
+import walter.duncan.dndwebapi.mappers.charactermanagement.inventory.CharacterInventoryItemResponseMapper;
 
 @Component
 public final class CharacterResponseMapper extends BaseResponseMapper<CharacterResponseDto, CharacterModel> {
     private final CharacterTypeResponseMapper characterTypeResponseMapper;
     private final CharacterRaceResponseMapper characterRaceResponseMapper;
     private final CharacterClassResponseMapper characterClassResponseMapper;
+    private final CharacterInventoryItemResponseMapper characterInventoryItemResponseMapper;
 
     public CharacterResponseMapper(
             CharacterTypeResponseMapper characterTypeResponseMapper,
             CharacterRaceResponseMapper characterRaceResponseMapper,
-            CharacterClassResponseMapper characterClassResponseMapper
+            CharacterClassResponseMapper characterClassResponseMapper,
+            CharacterInventoryItemResponseMapper characterInventoryItemResponseMapper
     ) {
         this.characterTypeResponseMapper = characterTypeResponseMapper;
         this.characterRaceResponseMapper = characterRaceResponseMapper;
         this.characterClassResponseMapper = characterClassResponseMapper;
+        this.characterInventoryItemResponseMapper = characterInventoryItemResponseMapper;
     }
 
     @Override
@@ -58,7 +62,8 @@ public final class CharacterResponseMapper extends BaseResponseMapper<CharacterR
                 ),
                 this.characterTypeResponseMapper.toDto(model.getType()),
                 this.characterRaceResponseMapper.toDto(model.getRace()),
-                this.characterClassResponseMapper.toDto(model.getCharacterClass())
+                this.characterClassResponseMapper.toDto(model.getCharacterClass()),
+                this.characterInventoryItemResponseMapper.toDtos(model.getInventory())
         );
     }
 }

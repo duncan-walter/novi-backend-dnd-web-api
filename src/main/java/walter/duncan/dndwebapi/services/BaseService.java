@@ -1,5 +1,9 @@
 package walter.duncan.dndwebapi.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +18,30 @@ public abstract class BaseService<TEntity extends BaseEntity, @NotNull TId, TRep
     protected BaseService(TRepository repository, Class<TEntity> entityClass) {
         this.repository = repository;
         this.entityClass = entityClass;
+    }
+
+    protected List<TEntity> findByIdsOrThrow(@NonNull List<TId> ids) {
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        var entities = this.repository.findAllById(ids);
+
+        // Note: this is safe in this context since TId is the same as TEntity.getId()
+        @SuppressWarnings("unchecked")
+        Set<TId> foundIds = entities.stream()
+                .map(entity -> (TId) entity.getId())
+                .collect(Collectors.toSet());
+
+        List<TId> missingIds = ids.stream()
+                .filter(id -> !foundIds.contains(id))
+                .toList();
+
+        if (!missingIds.isEmpty()) {
+            throw this.getResourceNotFoundException(missingIds.getFirst());
+        }
+
+        return entities;
     }
 
     protected void existsByIdOrThrow(@NonNull TId id) {

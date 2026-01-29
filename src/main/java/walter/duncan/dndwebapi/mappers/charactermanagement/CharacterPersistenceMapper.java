@@ -5,21 +5,25 @@ import org.springframework.stereotype.Component;
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.*;
 import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
 import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
+import walter.duncan.dndwebapi.mappers.charactermanagement.inventory.CharacterInventoryItemPersistenceMapper;
 
 @Component
 public final class CharacterPersistenceMapper extends BasePersistenceMapper<CharacterModel, CharacterEntity> {
     private final CharacterTypePersistenceMapper characterTypePersistenceMapper;
     private final CharacterRacePersistenceMapper characterRacePersistenceMapper;
     private final CharacterClassPersistenceMapper characterClassPersistenceMapper;
+    private final CharacterInventoryItemPersistenceMapper characterInventoryItemPersistenceMapper;
 
     public CharacterPersistenceMapper(
             CharacterTypePersistenceMapper characterTypePersistenceMapper,
             CharacterRacePersistenceMapper characterRacePersistenceMapper,
-            CharacterClassPersistenceMapper characterClassPersistenceMapper
+            CharacterClassPersistenceMapper characterClassPersistenceMapper,
+            CharacterInventoryItemPersistenceMapper characterInventoryItemPersistenceMapper
     ) {
         this.characterTypePersistenceMapper = characterTypePersistenceMapper;
         this.characterRacePersistenceMapper = characterRacePersistenceMapper;
         this.characterClassPersistenceMapper = characterClassPersistenceMapper;
+        this.characterInventoryItemPersistenceMapper = characterInventoryItemPersistenceMapper;
     }
 
     @Override
@@ -60,6 +64,8 @@ public final class CharacterPersistenceMapper extends BasePersistenceMapper<Char
 
     @Override
     public void updateEntityFromModel(CharacterModel model, CharacterEntity entity) {
+        this.characterInventoryItemPersistenceMapper.setCharacterEntity(entity);
+
         entity.setName(model.getName());
         entity.setCharisma(model.getCharisma());
         entity.setConstitution(model.getConstitution());
@@ -81,6 +87,7 @@ public final class CharacterPersistenceMapper extends BasePersistenceMapper<Char
         entity.setType(this.characterTypePersistenceMapper.toEntity(model.getType()));
         entity.setRace(this.characterRacePersistenceMapper.toEntity(model.getRace()));
         entity.setCharacterClass(this.characterClassPersistenceMapper.toEntity(model.getCharacterClass()));
+        entity.setInventory(this.characterInventoryItemPersistenceMapper.toEntities(model.getInventory()));
     }
 
     private CharacterAlignment mapAlignment(walter.duncan.dndwebapi.entities.charactermanagement.CharacterAlignment persistedAlignment) {

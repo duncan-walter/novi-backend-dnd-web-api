@@ -24,6 +24,12 @@ public class CharacterInventoryItemEntity extends BaseEntity {
     @JoinColumn(name = "character_id", nullable = false)
     private CharacterEntity character;
 
+    // NOTE: Custom item lifecycles are bound to inventory items, meaning they should be deleted when the owning inventory item is deleted.
+    // This is achieved via cascade + orphanRemoval since custom info is not a standalone resource (unlike weapon and equipment)
+    // For inventory item types other than custom, this field will be null.
+    @OneToOne(mappedBy = "inventoryItem", cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+    private CharacterInventoryItemCustomInfoEntity customInfo;
+
     //region Getters & Setters
     public Long getReferenceId() {
         return this.referenceId;
@@ -55,6 +61,16 @@ public class CharacterInventoryItemEntity extends BaseEntity {
 
     public void setCharacter(CharacterEntity character) {
         this.character = character;
+    }
+
+    public CharacterInventoryItemCustomInfoEntity getCustomInfo() {
+        if (this.type != CharacterInventoryItemType.CUSTOM) {
+            throw new IllegalStateException(
+                    "Custom info is only available for custom inventory items."
+            );
+        }
+
+        return this.customInfo;
     }
     //endregion
 }

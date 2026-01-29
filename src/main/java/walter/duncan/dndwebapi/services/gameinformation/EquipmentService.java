@@ -6,18 +6,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
 import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentRequestDto;
+import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemType;
 import walter.duncan.dndwebapi.entities.gameinformation.EquipmentEntity;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 import walter.duncan.dndwebapi.mappers.gameinformation.equipment.EquipmentPersistenceMapper;
+import walter.duncan.dndwebapi.repositories.charactermanagement.CharacterRepository;
 import walter.duncan.dndwebapi.repositories.gameinformation.EquipmentRepository;
 import walter.duncan.dndwebapi.services.BaseService;
 
 @Service
 public class EquipmentService extends BaseService<EquipmentEntity, Long, EquipmentRepository> {
     private final EquipmentPersistenceMapper mapper;
+    private final CharacterRepository characterRepository;
 
-    protected EquipmentService(EquipmentRepository repository, EquipmentPersistenceMapper mapper) {
+    protected EquipmentService(
+            EquipmentRepository repository,
+            EquipmentPersistenceMapper mapper,
+            CharacterRepository characterRepository
+    ) {
         super(repository, EquipmentEntity.class);
         this.mapper = mapper;
+        this.characterRepository = characterRepository;
     }
 
     public List<EquipmentModel> findAll() {
@@ -52,6 +62,13 @@ public class EquipmentService extends BaseService<EquipmentEntity, Long, Equipme
 
     @Transactional
     public void deleteById(Long id) {
+        if (this.characterRepository.existsInventoryItemReference(id, CharacterInventoryItemType.EQUIPMENT)) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.RESOURCE_MAY_NOT_BE_DELETED_WHEN_REFERENCED_IN_INVENTORY,
+                    String.format("Equipment with id %s may not be deleted since it is referenced in a character's inventory.", id)
+            );
+        }
+
         this.existsByIdOrThrow(id);
         this.repository.deleteById(id);
     }

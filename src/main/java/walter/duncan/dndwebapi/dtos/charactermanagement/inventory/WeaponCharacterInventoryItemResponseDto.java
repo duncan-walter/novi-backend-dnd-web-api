@@ -1,6 +1,7 @@
 package walter.duncan.dndwebapi.dtos.charactermanagement.inventory;
 
 public final class WeaponCharacterInventoryItemResponseDto extends CharacterInventoryItemResponseDto {
+    private final Long referenceId;
     private final String damageDice;
     private final String damageType;
     private final Integer rangeNormal;
@@ -22,7 +23,8 @@ public final class WeaponCharacterInventoryItemResponseDto extends CharacterInve
             Integer rangeLong,
             Boolean isTwoHanded
     ) {
-        super(id, referenceId, type, name, description, valueInCopperPieces, weightInLbs, quantity);
+        super(id, type, name, description, valueInCopperPieces, weightInLbs, quantity);
+        this.referenceId = referenceId;
         this.damageDice = damageDice;
         this.damageType = damageType;
         this.rangeNormal = rangeNormal;
@@ -48,5 +50,9 @@ public final class WeaponCharacterInventoryItemResponseDto extends CharacterInve
 
     public Boolean getTwoHanded() {
         return this.isTwoHanded;
+    }
+
+    public Long getReferenceId() {
+        return this.referenceId;
     }
 }

@@ -6,6 +6,7 @@ import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.Char
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CharacterInventoryItemType;
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.WeaponCharacterInventoryItemModel;
 import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.CharacterInventoryItemResponseDto;
+import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.CustomCharacterInventoryItemResponseDto;
 import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.EquipmentCharacterInventoryItemResponseDto;
 import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.WeaponCharacterInventoryItemResponseDto;
 import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
@@ -34,16 +35,24 @@ public class CharacterInventoryItemResponseMapper extends BaseResponseMapper<Cha
                 );
             }
             case CharacterInventoryItemType.EQUIPMENT -> new EquipmentCharacterInventoryItemResponseDto(
-                        model.getId(),
-                        model.getReferenceId(),
-                        model.getType().getTypeString(),
-                        model.getName(),
-                        model.getDescription(),
-                        model.getValueInCopperPieces(),
-                        model.getWeightInLbs(),
-                        model.getQuantity()
+                    model.getId(),
+                    model.getReferenceId(),
+                    model.getType().getTypeString(),
+                    model.getName(),
+                    model.getDescription(),
+                    model.getValueInCopperPieces(),
+                    model.getWeightInLbs(),
+                    model.getQuantity()
                 );
-            case CharacterInventoryItemType.CUSTOM -> null; // TODO: implement
+            case CharacterInventoryItemType.CUSTOM -> new CustomCharacterInventoryItemResponseDto(
+                    model.getId(),
+                    model.getType().getTypeString(),
+                    model.getName(),
+                    model.getDescription(),
+                    model.getValueInCopperPieces(),
+                    model.getWeightInLbs(),
+                    model.getQuantity()
+            );
         };
     }
 }

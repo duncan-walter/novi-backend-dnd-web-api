@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public abstract class CharacterInventoryItemResponseDto {
     private final Long id;
-    private final Long referenceId;
     private final String type;
     private final String name;
     private final String description;
@@ -25,7 +24,6 @@ public abstract class CharacterInventoryItemResponseDto {
 
     protected CharacterInventoryItemResponseDto(
             Long id,
-            Long referenceId,
             String type,
             String name,
             String description,
@@ -34,7 +32,6 @@ public abstract class CharacterInventoryItemResponseDto {
             int quantity
     ) {
         this.id = id;
-        this.referenceId = referenceId;
         this.type = type;
         this.name = name;
         this.description = description;
@@ -45,10 +42,6 @@ public abstract class CharacterInventoryItemResponseDto {
 
     public Long getId() {
         return this.id;
-    }
-
-    public Long getReferenceId() {
-        return this.referenceId;
     }
 
     public String getType() {

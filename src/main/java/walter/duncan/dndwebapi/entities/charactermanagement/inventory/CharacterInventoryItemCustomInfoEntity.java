@@ -61,5 +61,13 @@ public class CharacterInventoryItemCustomInfoEntity extends BaseEntity {
     public void setWeightInLbs(Double weightInLbs) {
         this.weightInLbs = weightInLbs;
     }
+
+    public CharacterInventoryItemEntity getInventoryItem() {
+        return this.inventoryItem;
+    }
+
+    public void setInventoryItem(CharacterInventoryItemEntity inventoryItem) {
+        this.inventoryItem = inventoryItem;
+    }
     //endregion
 }

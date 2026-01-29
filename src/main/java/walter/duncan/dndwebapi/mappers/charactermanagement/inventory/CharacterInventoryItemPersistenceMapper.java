@@ -8,6 +8,7 @@ import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.*;
 import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
 import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
 import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
+import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemCustomInfoEntity;
 import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemEntity;
 import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 
@@ -30,7 +31,19 @@ public class CharacterInventoryItemPersistenceMapper extends BasePersistenceMapp
                     this.equipmentModelById.get(entity.getReferenceId()),
                     entity.getQuantity()
             );
-            case CharacterInventoryItemType.CUSTOM -> null; // TODO: implement
+            case CharacterInventoryItemType.CUSTOM -> {
+                var customInfo = entity.getCustomInfo();
+                yield new CustomCharacterInventoryItemModel(
+                        entity.getId(),
+                        entity.getReferenceId(),
+                        CharacterInventoryItemType.CUSTOM,
+                        customInfo.getName(),
+                        customInfo.getDescription(),
+                        customInfo.getValueInCopperPieces(),
+                        customInfo.getWeightInLbs(),
+                        entity.getQuantity()
+                );
+            }
         };
     }
 
@@ -49,6 +62,16 @@ public class CharacterInventoryItemPersistenceMapper extends BasePersistenceMapp
         entity.setType(this.mapType(model.getType()));
         entity.setQuantity(model.getQuantity());
         entity.setCharacter(this.characterEntity);
+
+        if (model.getType().equals(CharacterInventoryItemType.CUSTOM)) {
+            var customInfo = new CharacterInventoryItemCustomInfoEntity();
+            customInfo.setInventoryItem(entity);
+            customInfo.setName(model.getName());
+            customInfo.setDescription(model.getDescription());
+            customInfo.setValueInCopperPieces(model.getValueInCopperPieces());
+            customInfo.setWeightInLbs(model.getWeightInLbs());
+            entity.setCustomInfo(customInfo);
+        }
     }
 
     private CharacterInventoryItemType mapType(walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemType persistedType) {

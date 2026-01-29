@@ -8,11 +8,15 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CharacterInventoryItemModel;
+import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CustomCharacterInventoryItemModel;
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.EquipmentCharacterInventoryItemModel;
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.WeaponCharacterInventoryItemModel;
 import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
 import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
 import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.CharacterInventoryItemRequestDto;
+import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.CustomCharacterInventoryItemRequestDto;
+import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.EquipmentCharacterInventoryItemRequestDto;
+import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.WeaponCharacterInventoryItemRequestDto;
 import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemEntity;
 import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemType;
 import walter.duncan.dndwebapi.mappers.charactermanagement.inventory.CharacterInventoryItemPersistenceMapper;
@@ -43,7 +47,7 @@ public class CharacterInventoryResolver {
             switch (entity.getType()) {
                 case CharacterInventoryItemType.WEAPON -> weaponIds.add(entity.getReferenceId());
                 case CharacterInventoryItemType.EQUIPMENT -> equipmentIds.add(entity.getReferenceId());
-                case CharacterInventoryItemType.CUSTOM -> { /* TODO: implement */ }
+                default -> { }
             }
         }
 
@@ -67,14 +71,27 @@ public class CharacterInventoryResolver {
     public List<CharacterInventoryItemModel> resolveRequest(List<CharacterInventoryItemRequestDto> requestDtos) {
         List<CharacterInventoryItemModel> characterInventoryItemModels = new ArrayList<>();
 
-        Map<Long, CharacterInventoryItemRequestDto> weaponRequestDtoById = new HashMap<>();
-        Map<Long, CharacterInventoryItemRequestDto> equipmentRequestDtoById = new HashMap<>();
+        Map<Long, WeaponCharacterInventoryItemRequestDto> weaponRequestDtoById = new HashMap<>();
+        Map<Long, EquipmentCharacterInventoryItemRequestDto> equipmentRequestDtoById = new HashMap<>();
 
         for (CharacterInventoryItemRequestDto requestDto : requestDtos) {
-            switch (walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CharacterInventoryItemType.fromTypeString(requestDto.type())) {
-                case WEAPON -> weaponRequestDtoById.put(requestDto.referenceId(), requestDto);
-                case EQUIPMENT -> equipmentRequestDtoById.put(requestDto.referenceId(), requestDto);
-                case CUSTOM -> { /* TODO: implement */ }
+            switch (requestDto) {
+                case WeaponCharacterInventoryItemRequestDto weapon ->
+                        weaponRequestDtoById.put(weapon.referenceId(), weapon);
+                case EquipmentCharacterInventoryItemRequestDto equipment ->
+                        equipmentRequestDtoById.put(equipment.referenceId(), equipment);
+                case CustomCharacterInventoryItemRequestDto custom ->
+                        characterInventoryItemModels.add(new CustomCharacterInventoryItemModel(
+                                null,
+                                null,
+                                walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CharacterInventoryItemType.CUSTOM,
+                                custom.name(),
+                                custom.description(),
+                                custom.valueInCopperPieces(),
+                                custom.weightInLbs(),
+                                custom.quantity()
+                        ));
+
             }
         }
 

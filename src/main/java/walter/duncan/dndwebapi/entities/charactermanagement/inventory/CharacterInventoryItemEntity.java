@@ -9,7 +9,7 @@ import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
 @Entity
 @Table(name = "character_inventory_items")
 public class CharacterInventoryItemEntity extends BaseEntity {
-    @Column(name = "reference_id", nullable = false)
+    @Column(name = "reference_id", nullable = true)
     private Long referenceId;
 
     @Enumerated(EnumType.ORDINAL)
@@ -71,6 +71,10 @@ public class CharacterInventoryItemEntity extends BaseEntity {
         }
 
         return this.customInfo;
+    }
+
+    public void setCustomInfo(CharacterInventoryItemCustomInfoEntity customInfo) {
+        this.customInfo = customInfo;
     }
     //endregion
 }

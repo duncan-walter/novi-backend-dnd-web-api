@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
         property = "type"
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = WeaponCharacterInventoryItemResponseDto.class, name = "weapon"),
-        @JsonSubTypes.Type(value = EquipmentCharacterInventoryItemResponseDto.class, name = "equipment")
+        @JsonSubTypes.Type(value = EquipmentCharacterInventoryItemResponseDto.class, name = "equipment"),
+        @JsonSubTypes.Type(value = CustomCharacterInventoryItemResponseDto.class, name = "custom")
 })
 public abstract class CharacterInventoryItemResponseDto {
     private final Long id;

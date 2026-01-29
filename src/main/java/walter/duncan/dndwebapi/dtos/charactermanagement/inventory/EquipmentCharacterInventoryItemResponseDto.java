@@ -1,10 +1,13 @@
 package walter.duncan.dndwebapi.dtos.charactermanagement.inventory;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+// Looks like duplication compared to Custom and Weapon but cannot be handled in a polymorphic way.
+@JsonPropertyOrder({"type", "name", "description", "valueInCopperPieces", "weightInLbs", "quantity", "referenceId"})
 public final class EquipmentCharacterInventoryItemResponseDto extends CharacterInventoryItemResponseDto {
     private final Long referenceId;
 
     public EquipmentCharacterInventoryItemResponseDto(
-            Long id,
             Long referenceId,
             String type,
             String name,
@@ -13,7 +16,7 @@ public final class EquipmentCharacterInventoryItemResponseDto extends CharacterI
             Double weightInLbs,
             int quantity
     ) {
-        super(id, type, name, description, valueInCopperPieces, weightInLbs, quantity);
+        super(type, name, description, valueInCopperPieces, weightInLbs, quantity);
         this.referenceId = referenceId;
     }
 

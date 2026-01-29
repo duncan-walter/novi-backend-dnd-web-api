@@ -1,8 +1,11 @@
 package walter.duncan.dndwebapi.dtos.charactermanagement.inventory;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+// Even though we define the properties in order in the constructor, Jackson does not parse them that way.
+@JsonPropertyOrder({"type", "name", "description", "valueInCopperPieces", "weightInLbs", "quantity"})
 public final class CustomCharacterInventoryItemResponseDto extends CharacterInventoryItemResponseDto {
     public CustomCharacterInventoryItemResponseDto(
-            Long id,
             String type,
             String name,
             String description,
@@ -10,6 +13,6 @@ public final class CustomCharacterInventoryItemResponseDto extends CharacterInve
             Double weightInLbs,
             int quantity
     ) {
-        super(id, type, name, description, valueInCopperPieces, weightInLbs, quantity);
+        super(type, name, description, valueInCopperPieces, weightInLbs, quantity);
     }
 }

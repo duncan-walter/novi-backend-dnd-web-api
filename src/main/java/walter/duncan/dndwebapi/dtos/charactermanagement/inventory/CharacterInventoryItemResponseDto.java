@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = CustomCharacterInventoryItemResponseDto.class, name = "custom")
 })
 public abstract class CharacterInventoryItemResponseDto {
-    private final Long id;
     private final String type;
     private final String name;
     private final String description;
@@ -23,7 +22,6 @@ public abstract class CharacterInventoryItemResponseDto {
     private final int quantity;
 
     protected CharacterInventoryItemResponseDto(
-            Long id,
             String type,
             String name,
             String description,
@@ -31,17 +29,12 @@ public abstract class CharacterInventoryItemResponseDto {
             Double weightInLbs,
             int quantity
     ) {
-        this.id = id;
         this.type = type;
         this.name = name;
         this.description = description;
         this.valueInCopperPieces = valueInCopperPieces;
         this.weightInLbs = weightInLbs;
         this.quantity = quantity;
-    }
-
-    public Long getId() {
-        return this.id;
     }
 
     public String getType() {

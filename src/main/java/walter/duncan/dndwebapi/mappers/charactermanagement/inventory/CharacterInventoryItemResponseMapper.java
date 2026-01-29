@@ -19,7 +19,6 @@ public class CharacterInventoryItemResponseMapper extends BaseResponseMapper<Cha
             case CharacterInventoryItemType.WEAPON -> {
                 var weaponModel = ((WeaponCharacterInventoryItemModel) model).getWeapon();
                 yield new WeaponCharacterInventoryItemResponseDto(
-                        model.getId(),
                         model.getReferenceId(),
                         model.getType().getTypeString(),
                         model.getName(),
@@ -35,7 +34,6 @@ public class CharacterInventoryItemResponseMapper extends BaseResponseMapper<Cha
                 );
             }
             case CharacterInventoryItemType.EQUIPMENT -> new EquipmentCharacterInventoryItemResponseDto(
-                    model.getId(),
                     model.getReferenceId(),
                     model.getType().getTypeString(),
                     model.getName(),
@@ -45,7 +43,6 @@ public class CharacterInventoryItemResponseMapper extends BaseResponseMapper<Cha
                     model.getQuantity()
                 );
             case CharacterInventoryItemType.CUSTOM -> new CustomCharacterInventoryItemResponseDto(
-                    model.getId(),
                     model.getType().getTypeString(),
                     model.getName(),
                     model.getDescription(),

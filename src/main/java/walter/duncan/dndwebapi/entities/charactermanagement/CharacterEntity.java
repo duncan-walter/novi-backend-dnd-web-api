@@ -79,6 +79,9 @@ public final class CharacterEntity extends BaseEntity {
     @Column(name = "notes", length = 5000)
     private String notes;
 
+    @OneToOne(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CharacterPortraitEntity portrait;
+
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "alignment", nullable = false)
     private CharacterAlignment alignment;
@@ -233,6 +236,14 @@ public final class CharacterEntity extends BaseEntity {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public CharacterPortraitEntity getPortrait() {
+        return this.portrait;
+    }
+
+    public void setPortrait(CharacterPortraitEntity portrait) {
+        this.portrait = portrait;
     }
 
     public CharacterAlignment getAlignment() {

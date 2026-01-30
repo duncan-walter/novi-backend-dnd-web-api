@@ -88,6 +88,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
+    @ExceptionHandler(value = EmptyFileException.class)
+    public ResponseEntity<@NonNull ProblemDetail> emptyFileExceptionHandler(EmptyFileException exception) {
+        var problemDetail = this.createProblemDetailBase(HttpStatus.BAD_REQUEST);
+        problemDetail.setType(URI.create("urn:dnd:api:problem:empty-file"));
+        problemDetail.setDetail(exception.getMessage());
+
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
+
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseEntity<@NonNull ProblemDetail> uncaughtExceptionHandler(RuntimeException exception) {
         // TODO: Log exception stacktrace and other details somewhere so that the application can be improved upon.

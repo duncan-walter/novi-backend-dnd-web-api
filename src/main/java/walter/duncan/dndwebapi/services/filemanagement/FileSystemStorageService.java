@@ -1,14 +1,17 @@
 package walter.duncan.dndwebapi.services.filemanagement;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import walter.duncan.dndwebapi.exceptions.EmptyFileException;
+import walter.duncan.dndwebapi.exceptions.ResourceNotFoundException;
 
 @Service
 public class FileSystemStorageService implements StorageService {
@@ -47,6 +50,32 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public Resource loadFile(String fileName) {
-        throw new UnsupportedOperationException();
+        try {
+            Path path = this.fileSystemRoot.resolve(fileName).normalize();
+            Resource resource = new UrlResource(path.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new ResourceNotFoundException("The file doesn't exist or is not readable: " + fileName);
+            }
+
+            return resource;
+        } catch (MalformedURLException e) {
+            throw new ResourceNotFoundException("Invalid file path: " + fileName);
+        }
+    }
+
+    @Override
+    public void removeFile(String fileName) {
+        try {
+            Path targetPath = this.fileSystemRoot.resolve(fileName).normalize();
+
+            if (!Files.exists(targetPath)) {
+                throw new ResourceNotFoundException("File does not exist: " + fileName);
+            }
+
+            Files.delete(targetPath);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while deleting file: " + fileName, e);
+        }
     }
 }

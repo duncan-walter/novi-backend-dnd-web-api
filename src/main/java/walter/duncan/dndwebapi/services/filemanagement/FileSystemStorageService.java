@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import walter.duncan.dndwebapi.exceptions.EmptyFileException;
@@ -19,7 +20,10 @@ public class FileSystemStorageService implements StorageService {
 
     public FileSystemStorageService(@Value("${file-system-root-location}") String fileSystemRootLocation) {
         this.fileSystemRoot = Paths.get(fileSystemRootLocation).toAbsolutePath().normalize();
+    }
 
+    @Override
+    public void init() {
         try {
             Files.createDirectories(this.fileSystemRoot);
         } catch (IOException e) {
@@ -77,5 +81,10 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e) {
             throw new RuntimeException("Error while deleting file: " + fileName, e);
         }
+    }
+
+    @Override
+    public void removeAll() {
+        FileSystemUtils.deleteRecursively(this.fileSystemRoot.toFile());
     }
 }

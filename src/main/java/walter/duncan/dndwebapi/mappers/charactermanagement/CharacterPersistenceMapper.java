@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.*;
 import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
+import walter.duncan.dndwebapi.entities.charactermanagement.CharacterPortraitEntity;
 import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.inventory.CharacterInventoryItemPersistenceMapper;
 
@@ -47,6 +48,7 @@ public final class CharacterPersistenceMapper extends BasePersistenceMapper<Char
                 entity.getGoldPieces(),
                 entity.getPlatinumPieces(),
                 entity.getNotes(),
+                this.mapPortrait(entity.getPortrait()),
                 this.mapAlignment(entity.getAlignment()),
                 this.characterTypePersistenceMapper.toModel(entity.getType()),
                 this.characterRacePersistenceMapper.toModel(entity.getRace()),
@@ -116,5 +118,15 @@ public final class CharacterPersistenceMapper extends BasePersistenceMapper<Char
             case CharacterAlignment.NEUTRAL_EVIL -> walter.duncan.dndwebapi.entities.charactermanagement.CharacterAlignment.NEUTRAL_EVIL;
             case CharacterAlignment.CHAOTIC_EVIL -> walter.duncan.dndwebapi.entities.charactermanagement.CharacterAlignment.CHAOTIC_EVIL;
         };
+    }
+
+    private CharacterPortraitModel mapPortrait(CharacterPortraitEntity persistedPortrait) {
+        if (persistedPortrait == null) return null;
+
+        return new CharacterPortraitModel(
+                persistedPortrait.getOriginalFileName(),
+                persistedPortrait.getStoredFileName(),
+                persistedPortrait.getMimeType()
+        );
     }
 }

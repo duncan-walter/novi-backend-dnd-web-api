@@ -56,6 +56,7 @@ public final class CharacterResponseMapper extends BaseResponseMapper<CharacterR
                 model.getGoldPieces(),
                 model.getPlatinumPieces(),
                 model.getNotes(),
+                model.getPortrait() != null ? String.format("/characters/" + model.getId() + "/portrait") : null,
                 new CharacterAlignmentResponseDto(
                         alignment.getCode(),
                         alignment.getName()

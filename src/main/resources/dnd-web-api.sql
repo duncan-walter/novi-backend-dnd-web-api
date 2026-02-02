@@ -79,5 +79,5 @@ INSERT INTO encounter_join_requests(state, encounter_id, character_id, created_a
 VALUES (1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()), -- APPROVED
        (1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Aragorn son of Arathorn'), NOW(), NOW()), -- APPROVED
        (1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW()), -- APPROVED
-       (0, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gimli son of Gloin'), NOW(), NOW()), -- REQUESTED
+       (0, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gimli son of Gloin'), NOW(), NOW()), -- PENDING
        (2, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Frodo of the Shire'), NOW(), NOW()); -- DECLINED

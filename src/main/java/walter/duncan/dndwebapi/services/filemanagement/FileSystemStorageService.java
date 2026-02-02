@@ -1,10 +1,12 @@
 package walter.duncan.dndwebapi.services.filemanagement;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,16 @@ public class FileSystemStorageService implements StorageService {
     public void init() {
         try {
             Files.createDirectories(this.fileSystemRoot);
+            var target = this.fileSystemRoot.resolve("Gandalf_the_grey.gif");
+            var resource = new ClassPathResource("character-portraits/Gandalf_the_grey.gif");
+
+            try (InputStream in = resource.getInputStream()) {
+                Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException e) {
-            // TODO: This should never happen under normal circumstances, but if this does happen log it.
+            /* TODO: This should never happen under normal circumstances, but if this does happen log it.
+                We do however catch the exception and just swallow it so the application can still startup without crashing.
+             */
         }
     }
 
@@ -55,8 +65,8 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public Resource loadFile(String fileName) {
         try {
-            Path path = this.fileSystemRoot.resolve(fileName).normalize();
-            Resource resource = new UrlResource(path.toUri());
+            var path = this.fileSystemRoot.resolve(fileName).normalize();
+            var resource = new UrlResource(path.toUri());
 
             if (!resource.exists() || !resource.isReadable()) {
                 throw new ResourceNotFoundException("The file doesn't exist or is not readable: " + fileName);
@@ -71,7 +81,7 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void removeFile(String fileName) {
         try {
-            Path targetPath = this.fileSystemRoot.resolve(fileName).normalize();
+            var targetPath = this.fileSystemRoot.resolve(fileName).normalize();
 
             if (!Files.exists(targetPath)) {
                 throw new ResourceNotFoundException("File does not exist: " + fileName);

@@ -19,4 +19,30 @@ public class EncounterJoinRequestEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "character_id")
     private CharacterEntity character;
+
+    //region Getters & Setters
+    public EncounterJoinRequestState getState() {
+        return this.state;
+    }
+
+    public void setState(EncounterJoinRequestState state) {
+        this.state = state;
+    }
+
+    public EncounterEntity getEncounter() {
+        return this.encounter;
+    }
+
+    public void setEncounter(EncounterEntity encounter) {
+        this.encounter = encounter;
+    }
+
+    public CharacterEntity getCharacter() {
+        return this.character;
+    }
+
+    public void setCharacter(CharacterEntity character) {
+        this.character = character;
+    }
+    //endregion
 }

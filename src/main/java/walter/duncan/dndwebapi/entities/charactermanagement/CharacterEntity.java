@@ -297,5 +297,13 @@ public final class CharacterEntity extends BaseEntity {
             this.inventory.addAll(inventory);
         }
     }
+
+    public List<EncounterParticipantEntity> getEncounterParticipations() {
+        return this.encounterParticipations;
+    }
+
+    public List<EncounterJoinRequestEntity> getEncounterJoinRequests() {
+        return this.encounterJoinRequests;
+    }
     //endregion
 }

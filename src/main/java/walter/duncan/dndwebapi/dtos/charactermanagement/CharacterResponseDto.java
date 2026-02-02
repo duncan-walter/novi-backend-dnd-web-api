@@ -31,6 +31,7 @@ public record CharacterResponseDto(
         Integer goldPieces,
         Integer platinumPieces,
         String notes,
+        @JsonProperty("portrait") String portraitUrl,
         CharacterAlignmentResponseDto alignment,
         CharacterTypeResponseDto type,
         CharacterRaceResponseDto race,

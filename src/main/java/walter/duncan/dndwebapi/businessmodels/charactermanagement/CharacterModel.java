@@ -30,6 +30,7 @@ public final class CharacterModel {
     private Integer goldPieces;
     private Integer platinumPieces;
     private String notes;
+    private CharacterPortraitModel portrait;
     private CharacterAlignment alignment;
     private CharacterTypeModel type;
     private CharacterRaceModel race;
@@ -45,8 +46,8 @@ public final class CharacterModel {
     private CharacterModel(
             Long id, String name, int charisma, int constitution, int dexterity, int intelligence, int strength, int wisdom,
             int maxHitPoints, int currentHitPoints, int experiencePoints, String size, Integer copperPieces, Integer silverPieces,
-            Integer electrumPieces, Integer goldPieces, Integer platinumPieces, String notes, CharacterAlignment alignment,
-            CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass
+            Integer electrumPieces, Integer goldPieces, Integer platinumPieces, String notes, CharacterPortraitModel portrait,
+            CharacterAlignment alignment, CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass
     ) {
         this.id = id;
         this.name = name;
@@ -66,6 +67,7 @@ public final class CharacterModel {
         this.goldPieces = goldPieces;
         this.platinumPieces = platinumPieces;
         this.notes = notes;
+        this.portrait = portrait;
         this.alignment = alignment;
         this.type = type;
         this.race = race;
@@ -109,13 +111,13 @@ public final class CharacterModel {
     public static CharacterModel restore(
             Long id, String name, int charisma, int constitution, int dexterity, int intelligence, int strength, int wisdom,
             int maxHitPoints, int currentHitPoints, int experiencePoints, String size, Integer copperPieces, Integer silverPieces,
-            Integer electrumPieces, Integer goldPieces, Integer platinumPieces, String notes, CharacterAlignment alignment,
-            CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass
+            Integer electrumPieces, Integer goldPieces, Integer platinumPieces, String notes, CharacterPortraitModel portrait,
+            CharacterAlignment alignment, CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass
     ) {
         return new CharacterModel(
                 id, name, charisma, constitution, dexterity, intelligence, strength, wisdom, maxHitPoints, currentHitPoints,
                 experiencePoints, size, copperPieces, silverPieces, electrumPieces, goldPieces, platinumPieces, notes,
-                alignment, type, race, characterClass
+                portrait, alignment, type, race, characterClass
         );
     }
     //endregion
@@ -191,6 +193,10 @@ public final class CharacterModel {
 
     public String getNotes() {
         return this.notes;
+    }
+
+    public CharacterPortraitModel getPortrait() {
+        return this.portrait;
     }
 
     public CharacterAlignment getAlignment() {
@@ -340,6 +346,10 @@ public final class CharacterModel {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public void setPortrait(CharacterPortraitModel portrait) {
+        this.portrait = portrait;
     }
 
     public void setAlignment(CharacterAlignment alignment) {

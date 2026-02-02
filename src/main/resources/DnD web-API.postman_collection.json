@@ -133,6 +133,67 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Upload character portrait",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "portrait",
+                  "type": "file",
+                  "uuid": "9ec54528-a8a5-4cca-8a97-670bb0ac3dc4",
+                  "src": "postman-cloud:///1f0fdee0-74e4-4860-be93-f201eb089514"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/characters/:id/portrait",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "characters",
+                ":id",
+                "portrait"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get character portrait",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/characters/:id/portrait",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "characters",
+                ":id",
+                "portrait"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },

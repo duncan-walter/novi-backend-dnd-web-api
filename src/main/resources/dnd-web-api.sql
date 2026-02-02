@@ -58,4 +58,8 @@ INSERT INTO character_inventory_items(type, quantity, character_id, created_at, 
 VALUES (2, 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW());
 
 INSERT INTO character_inventory_item_custom_infos(character_inventory_item_id, name, description, value_in_copper_pieces, weight_in_lbs, created_at, updated_at)
-VALUES ((SELECT id FROM character_inventory_items WHERE type = 2), 'Lucky stone', 'A smooth river stone that (seriously) brings luck.', 1000, 0.1, NOW(), NOW())
+VALUES ((SELECT id FROM character_inventory_items WHERE type = 2), 'Lucky stone', 'A smooth river stone that (seriously) brings luck.', 1000, 0.1, NOW(), NOW());
+
+-- Character portraits
+INSERT INTO character_portraits(character_id,  original_file_name, stored_file_name, mime_type, created_at, updated_at)
+VALUES ((SELECT id FROM characters WHERE name = 'Gandalf the Grey'), 'Gandalf_the_grey.gif', 'Gandalf_the_grey.gif', 'image/gif', NOW(), NOW());

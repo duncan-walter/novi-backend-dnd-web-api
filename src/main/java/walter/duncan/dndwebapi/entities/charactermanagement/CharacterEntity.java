@@ -1,7 +1,9 @@
 package walter.duncan.dndwebapi.entities.charactermanagement;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -104,10 +106,10 @@ public final class CharacterEntity extends BaseEntity {
     private List<CharacterInventoryItemEntity> inventory = new ArrayList<>();
 
     @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<EncounterParticipantEntity> encounterParticipations = new ArrayList<>();
+    private Set<EncounterParticipantEntity> encounterParticipations = new HashSet<>();
 
     @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<EncounterJoinRequestEntity> encounterJoinRequests = new ArrayList<>();
+    private Set<EncounterJoinRequestEntity> encounterJoinRequests = new HashSet<>();
 
     //region Getters & Setters
     public String getName() {
@@ -298,11 +300,11 @@ public final class CharacterEntity extends BaseEntity {
         }
     }
 
-    public List<EncounterParticipantEntity> getEncounterParticipations() {
+    public Set<EncounterParticipantEntity> getEncounterParticipations() {
         return this.encounterParticipations;
     }
 
-    public List<EncounterJoinRequestEntity> getEncounterJoinRequests() {
+    public Set<EncounterJoinRequestEntity> getEncounterJoinRequests() {
         return this.encounterJoinRequests;
     }
     //endregion

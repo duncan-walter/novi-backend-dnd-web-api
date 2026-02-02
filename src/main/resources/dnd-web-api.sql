@@ -75,9 +75,9 @@ VALUES (20, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Mor
        (15, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW());
 
 -- Encounter join request data
-INSERT INTO encounter_join_requests(state, encounter_id, character_id, created_at, updated_at)
-VALUES (1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()), -- APPROVED
-       (1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Aragorn son of Arathorn'), NOW(), NOW()), -- APPROVED
-       (1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW()), -- APPROVED
-       (0, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gimli son of Gloin'), NOW(), NOW()), -- PENDING
-       (2, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Frodo of the Shire'), NOW(), NOW()); -- DECLINED
+INSERT INTO encounter_join_requests(initiative, state, encounter_id, character_id, created_at, updated_at)
+VALUES (20, 1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()), -- APPROVED
+       (18, 1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Aragorn son of Arathorn'), NOW(), NOW()), -- APPROVED
+       (15, 1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW()), -- APPROVED
+       (10, 0, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gimli son of Gloin'), NOW(), NOW()), -- PENDING
+       (20, 2, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Frodo of the Shire'), NOW(), NOW()); -- DECLINED

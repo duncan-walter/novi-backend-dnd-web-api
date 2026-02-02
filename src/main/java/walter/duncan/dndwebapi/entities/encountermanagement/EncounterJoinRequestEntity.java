@@ -8,6 +8,9 @@ import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
 @Entity
 @Table(name = "encounter_join_requests")
 public class EncounterJoinRequestEntity extends BaseEntity {
+    @Column(name = "initiative")
+    private int initiative;
+
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "state", nullable = false)
     private EncounterJoinRequestState state;
@@ -21,6 +24,14 @@ public class EncounterJoinRequestEntity extends BaseEntity {
     private CharacterEntity character;
 
     //region Getters & Setters
+    public int getInitiative() {
+        return this.initiative;
+    }
+
+    public void setInitiative(int initiative) {
+        this.initiative = initiative;
+    }
+
     public EncounterJoinRequestState getState() {
         return this.state;
     }

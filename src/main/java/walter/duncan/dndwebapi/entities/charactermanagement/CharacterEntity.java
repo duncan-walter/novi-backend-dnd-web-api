@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Min;
 
 import walter.duncan.dndwebapi.entities.BaseEntity;
 import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterJoinRequestEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterParticipantEntity;
 
 @Entity
 @Table(name = "characters")
@@ -100,6 +102,12 @@ public final class CharacterEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CharacterInventoryItemEntity> inventory = new ArrayList<>();
+
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<EncounterParticipantEntity> encounterParticipations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<EncounterJoinRequestEntity> encounterJoinRequests = new ArrayList<>();
 
     //region Getters & Setters
     public String getName() {

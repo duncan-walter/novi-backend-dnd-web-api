@@ -1,6 +1,8 @@
 package walter.duncan.dndwebapi.businessmodels.encountermanagement;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
 public final class EncounterJoinRequestModel {
     //region Fields
@@ -79,11 +81,25 @@ public final class EncounterJoinRequestModel {
 
     //region Actions
     public void approve() {
-        // check if state is PENDING > otherwise throw business rule exception
+        if (this.state != EncounterJoinRequestState.PENDING) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.ENCOUNTER_JOIN_REQUEST_ALREADY_PROCESSED,
+                    "Only pending join requests can be approved."
+            );
+        }
+
+        this.state = EncounterJoinRequestState.APPROVED;
     }
 
     public void decline() {
-        // check if state is PENDING > otherwise throw business rule exception
+        if (this.state != EncounterJoinRequestState.PENDING) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.ENCOUNTER_JOIN_REQUEST_ALREADY_PROCESSED,
+                    "Only pending join requests can be declined."
+            );
+        }
+
+        this.state = EncounterJoinRequestState.DECLINED;
     }
     //endregion
 }

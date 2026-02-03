@@ -142,8 +142,6 @@ public final class EncounterModel {
                 return;
             }
         }
-
-        // if no join request is found > throw business rule exception
     }
 
     public void declineJoinRequest(Long joinRequestId) {
@@ -153,8 +151,6 @@ public final class EncounterModel {
                 return;
             }
         }
-
-        // if no join request is found > throw business rule exception
     }
 
     public void addParticipant(EncounterParticipantModel participant) {

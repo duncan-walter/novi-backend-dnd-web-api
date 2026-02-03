@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestResponseDto;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestStateUpdateRequestDto;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterJoinRequestResponseMapper;
 import walter.duncan.dndwebapi.services.encountermanagement.EncounterJoinRequestService;
@@ -45,7 +46,13 @@ public class EncounterJoinRequestController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<@NonNull Object> updateState(@PathVariable Long encounterId, @PathVariable Long id, @RequestBody @Valid Object requestDto) {
-        return ResponseEntity.ok(""); // Placeholder
+    public ResponseEntity<@NonNull EncounterJoinRequestResponseDto> updateState(@PathVariable Long encounterId, @PathVariable Long id, @RequestBody @Valid EncounterJoinRequestStateUpdateRequestDto requestDto) {
+        var responseDto = this.mapper.toDto(this.encounterJoinRequestService.updateState(encounterId, id, requestDto));
+        var location = this.urlHelper.getResourceUri(responseDto.id());
+
+        return ResponseEntity
+                .ok()
+                .location(location)
+                .body(responseDto);
     }
 }

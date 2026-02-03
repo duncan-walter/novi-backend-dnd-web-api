@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterJoinRequestModel;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestRequestDto;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestStateUpdateRequestDto;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterJoinRequestEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterJoinRequestState;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterState;
@@ -83,5 +84,33 @@ public class EncounterJoinRequestService extends BaseService<EncounterJoinReques
         encounterJoinRequestEntity.setEncounter(encounterEntity);
 
         return this.mapper.toModel(this.repository.save(encounterJoinRequestEntity));
+    }
+
+    @Transactional
+    public EncounterJoinRequestModel updateState(
+            Long encounterId,
+            Long joinRequestId,
+            EncounterJoinRequestStateUpdateRequestDto requestDto
+    ) {
+        this.existsByIdOrThrow(joinRequestId);
+        var encounterEntity = this.encounterService.findByIdOrThrow(encounterId);
+        var encounterModel = this.encounterPersistenceMapper.toModel(encounterEntity);
+
+        switch (walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterJoinRequestState.fromName(requestDto.state())) {
+            case APPROVED -> encounterModel.approveJoinRequest(joinRequestId);
+            case DECLINED -> encounterModel.declineJoinRequest(joinRequestId);
+            default -> throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.ENCOUNTER_JOIN_REQUEST_INVALID_STATE_TRANSITION,
+                    "Join request can only be approved or declined."
+            );
+        }
+
+        this.encounterPersistenceMapper.updateEntityFromModel(encounterModel, encounterEntity);
+        this.encounterRepository.save(encounterEntity);
+
+        return encounterModel.getJoinRequests().stream()
+                .filter(jr -> jr.getId().equals(joinRequestId))
+                .findFirst()
+                .orElseThrow();
     }
 }

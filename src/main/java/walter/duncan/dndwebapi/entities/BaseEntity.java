@@ -31,7 +31,7 @@ public abstract class BaseEntity {
      * Using this outside persistence mapping is a developer error. Beware.
      */
     public void setId(Long id) {
-        if (this.id != null) {
+        if (this.id != null && !this.id.equals(id)) {
             throw new IllegalStateException("We found a developer that cannot read!");
         }
 

@@ -57,7 +57,7 @@ public class CharacterService extends BaseService<CharacterEntity, Long, Charact
     @Transactional
     public CharacterModel update(Long id, CharacterRequestDto requestDto) {
         var persistedEntity = this.findByIdOrThrow(id);
-        var model = this.characterFactory.create(requestDto);
+        var model = this.characterFactory.create(id, requestDto);
 
         this.mapper.updateEntityFromModel(model, persistedEntity);
 

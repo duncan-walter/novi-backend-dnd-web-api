@@ -7,4 +7,4 @@ import org.springframework.stereotype.Repository;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
 
 @Repository
-interface EncounterRepository extends JpaRepository<@NonNull EncounterEntity, @NonNull Long> { }
+public interface EncounterRepository extends JpaRepository<@NonNull EncounterEntity, @NonNull Long> { }

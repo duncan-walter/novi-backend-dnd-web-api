@@ -4,6 +4,6 @@ package walter.duncan.dndwebapi.dtos.encountermanagement;
 public record EncounterJoinRequestResponseDto(
         Long id,
         String state,
-        int initiative,
-        Long characterId
+        Long characterId,
+        int initiative
 ) { }

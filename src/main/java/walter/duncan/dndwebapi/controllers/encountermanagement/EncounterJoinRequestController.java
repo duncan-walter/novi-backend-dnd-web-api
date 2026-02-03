@@ -6,20 +6,31 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestResponseDto;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
+import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterJoinRequestResponseMapper;
+import walter.duncan.dndwebapi.services.encountermanagement.EncounterJoinRequestService;
 
 @RestController
 @RequestMapping("/encounters/{encounterId}/join-requests")
 public class EncounterJoinRequestController {
+    private final EncounterJoinRequestService encounterJoinRequestService;
+    private final EncounterJoinRequestResponseMapper mapper;
     private final UrlHelper urlHelper;
 
-    public EncounterJoinRequestController(UrlHelper urlHelper) {
+    public EncounterJoinRequestController(
+            EncounterJoinRequestService encounterJoinRequestService,
+            EncounterJoinRequestResponseMapper mapper,
+            UrlHelper urlHelper
+    ) {
+        this.encounterJoinRequestService = encounterJoinRequestService;
+        this.mapper = mapper;
         this.urlHelper = urlHelper;
     }
 
     @GetMapping
-    public ResponseEntity<@NonNull List<Object>> get(@PathVariable Long encounterId) {
-        return ResponseEntity.ok(List.of()); // Placeholder
+    public ResponseEntity<@NonNull List<EncounterJoinRequestResponseDto>> get(@PathVariable Long encounterId) {
+        return ResponseEntity.ok(this.mapper.toDtos(this.encounterJoinRequestService.findAllByEncounterId(encounterId)));
     }
 
     @PostMapping

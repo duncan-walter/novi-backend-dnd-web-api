@@ -1,5 +1,6 @@
 package walter.duncan.dndwebapi.mappers.charactermanagement;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.*;
@@ -9,7 +10,8 @@ import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.inventory.CharacterInventoryItemPersistenceMapper;
 
 @Component
-public final class CharacterPersistenceMapper extends BasePersistenceMapper<CharacterModel, CharacterEntity> {
+public final class CharacterPersistenceMapper
+        extends BasePersistenceMapper<CharacterModel, CharacterEntity, List<CharacterModel>, List<CharacterEntity>> {
     private final CharacterTypePersistenceMapper characterTypePersistenceMapper;
     private final CharacterRacePersistenceMapper characterRacePersistenceMapper;
     private final CharacterClassPersistenceMapper characterClassPersistenceMapper;
@@ -68,6 +70,7 @@ public final class CharacterPersistenceMapper extends BasePersistenceMapper<Char
     public void updateEntityFromModel(CharacterModel model, CharacterEntity entity) {
         this.characterInventoryItemPersistenceMapper.setCharacterEntity(entity);
 
+        entity.setId(model.getId());
         entity.setName(model.getName());
         entity.setCharisma(model.getCharisma());
         entity.setConstitution(model.getConstitution());

@@ -44,13 +44,13 @@ public abstract class BaseService<TEntity extends BaseEntity, @NotNull TId, TRep
         return entities;
     }
 
-    protected void existsByIdOrThrow(@NonNull TId id) {
+    public void existsByIdOrThrow(@NonNull TId id) {
         if (!this.repository.existsById(id)) {
             throw this.getResourceNotFoundException(id);
         }
     }
 
-    protected TEntity findByIdOrThrow(@NonNull TId id) {
+    public TEntity findByIdOrThrow(@NonNull TId id) {
         return this.repository
                 .findById(id)
                 .orElseThrow(() -> this.getResourceNotFoundException(id));

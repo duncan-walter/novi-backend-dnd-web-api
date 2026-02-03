@@ -1,7 +1,9 @@
 package walter.duncan.dndwebapi.entities.charactermanagement;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -9,6 +11,8 @@ import jakarta.validation.constraints.Min;
 
 import walter.duncan.dndwebapi.entities.BaseEntity;
 import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterJoinRequestEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterParticipantEntity;
 
 @Entity
 @Table(name = "characters")
@@ -100,6 +104,12 @@ public final class CharacterEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CharacterInventoryItemEntity> inventory = new ArrayList<>();
+
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<EncounterParticipantEntity> encounterParticipations = new HashSet<>();
+
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<EncounterJoinRequestEntity> encounterJoinRequests = new HashSet<>();
 
     //region Getters & Setters
     public String getName() {
@@ -288,6 +298,14 @@ public final class CharacterEntity extends BaseEntity {
         if (inventory != null) {
             this.inventory.addAll(inventory);
         }
+    }
+
+    public Set<EncounterParticipantEntity> getEncounterParticipations() {
+        return this.encounterParticipations;
+    }
+
+    public Set<EncounterJoinRequestEntity> getEncounterJoinRequests() {
+        return this.encounterJoinRequests;
     }
     //endregion
 }

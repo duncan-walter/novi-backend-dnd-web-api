@@ -1,8 +1,12 @@
 package walter.duncan.dndwebapi.mappers;
 
-import java.util.List;
+import java.util.Collection;
 
-public interface ResponseMapper<TResponseDto, TModel> {
+public interface ResponseMapper<
+        TResponseDto,
+        TModel,
+        TCollection extends Collection<TResponseDto>
+> {
     TResponseDto toDto(TModel model);
-    List<TResponseDto> toDtos(List<TModel> models);
+    TCollection toDtos(Collection<TModel> models);
 }

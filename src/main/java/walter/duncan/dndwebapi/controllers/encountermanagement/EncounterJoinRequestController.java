@@ -1,0 +1,58 @@
+package walter.duncan.dndwebapi.controllers.encountermanagement;
+
+import java.util.List;
+import jakarta.validation.Valid;
+import org.jspecify.annotations.NonNull;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestRequestDto;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestResponseDto;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestStateUpdateRequestDto;
+import walter.duncan.dndwebapi.helpers.UrlHelper;
+import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterJoinRequestResponseMapper;
+import walter.duncan.dndwebapi.services.encountermanagement.EncounterJoinRequestService;
+
+@RestController
+@RequestMapping("/encounters/{encounterId}/join-requests")
+public class EncounterJoinRequestController {
+    private final EncounterJoinRequestService encounterJoinRequestService;
+    private final EncounterJoinRequestResponseMapper mapper;
+    private final UrlHelper urlHelper;
+
+    public EncounterJoinRequestController(
+            EncounterJoinRequestService encounterJoinRequestService,
+            EncounterJoinRequestResponseMapper mapper,
+            UrlHelper urlHelper
+    ) {
+        this.encounterJoinRequestService = encounterJoinRequestService;
+        this.mapper = mapper;
+        this.urlHelper = urlHelper;
+    }
+
+    @GetMapping
+    public ResponseEntity<@NonNull List<EncounterJoinRequestResponseDto>> get(@PathVariable Long encounterId) {
+        return ResponseEntity.ok(this.mapper.toDtos(this.encounterJoinRequestService.findAllByEncounterId(encounterId)));
+    }
+
+    @PostMapping
+    public ResponseEntity<@NonNull EncounterJoinRequestResponseDto> create(@PathVariable Long encounterId, @RequestBody @Valid EncounterJoinRequestRequestDto requestDto) {
+        var responseDto = this.mapper.toDto(this.encounterJoinRequestService.create(encounterId, requestDto));
+        var location = this.urlHelper.getResourceUri(responseDto.id());
+
+        return ResponseEntity
+                .created(location)
+                .body(responseDto);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<@NonNull EncounterJoinRequestResponseDto> updateState(@PathVariable Long encounterId, @PathVariable Long id, @RequestBody @Valid EncounterJoinRequestStateUpdateRequestDto requestDto) {
+        var responseDto = this.mapper.toDto(this.encounterJoinRequestService.updateState(encounterId, id, requestDto));
+        var location = this.urlHelper.getResourceUri(responseDto.id());
+
+        return ResponseEntity
+                .ok()
+                .location(location)
+                .body(responseDto);
+    }
+}

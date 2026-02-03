@@ -12,7 +12,7 @@ public final class CharacterModel {
     private final List<Integer> levelExperienceThresholds = List.of(0, 300, 900, 2_700, 6_500, 14_000, 23_000,
             34_000, 48_000, 64_000, 85_000, 100_000, 120_000, 140_000, 165_000, 195_000, 225_000, 265_000, 305_000, 355_000);
 
-    private final Long id;
+    private Long id;
     private String name;
     private int charisma;
     private int constitution;
@@ -260,6 +260,10 @@ public final class CharacterModel {
     //endregion
 
     //region Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

@@ -1,5 +1,6 @@
 package walter.duncan.dndwebapi.mappers.charactermanagement;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterClassModel;
@@ -7,7 +8,8 @@ import walter.duncan.dndwebapi.entities.charactermanagement.CharacterClassEntity
 import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 
 @Component
-public final class CharacterClassPersistenceMapper extends BasePersistenceMapper<CharacterClassModel, CharacterClassEntity> {
+public final class CharacterClassPersistenceMapper
+        extends BasePersistenceMapper<CharacterClassModel, CharacterClassEntity, List<CharacterClassModel>, List<CharacterClassEntity>> {
     @Override
     public CharacterClassModel toModel(CharacterClassEntity entity) {
         return CharacterClassModel.restore(

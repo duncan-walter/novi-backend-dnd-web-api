@@ -73,4 +73,11 @@ public class CharacterFactory {
 
         return model;
     }
+
+    public CharacterModel create(Long id, CharacterRequestDto requestDto) {
+        var model = this.create(requestDto);
+        model.setId(id);
+
+        return model;
+    }
 }

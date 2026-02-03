@@ -45,7 +45,7 @@ VALUES ('Gandalf the Grey', 18, 16, 14, 20, 12, 19, 60, 60, 9000, 'Medium', 20, 
        ('Gimli son of Gloin', 14, 20, 12, 11, 19, 13, 80, 80, 7800, 'Medium', 200, 40, 0, 100, 1, 'A proud dwarf warrior whose axe is as unyielding as his loyalty.', 1, (SELECT id FROM character_types WHERE name = 'Player'), (SELECT id FROM character_races WHERE name = 'Dwarf'), (SELECT id FROM character_classes WHERE name = 'Fighter'), NOW(), NOW()),
        ('Frodo of the Shire', 15, 14, 16, 12, 9, 17, 45, 45, 7000, 'Small', 30, 80, 0, 60, 0, 'A small hobbit burdened with a task that will decide the fate of the world.', 2, (SELECT id FROM character_types WHERE name = 'Player'), (SELECT id FROM character_races WHERE name = 'Halfling'), (SELECT id FROM character_classes WHERE name = 'Rogue'), NOW(), NOW());
 
--- Character inventory items
+-- Character inventory item data
 INSERT INTO character_inventory_items(reference_id, type, quantity, character_id, created_at, updated_at)
 VALUES ((SELECT id FROM weapons WHERE name = 'Dagger'), 0, 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
        ((SELECT id FROM weapons WHERE name = 'Longsword'), 0, 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
@@ -53,13 +53,31 @@ VALUES ((SELECT id FROM weapons WHERE name = 'Dagger'), 0, 1, (SELECT id FROM ch
        ((SELECT id FROM equipment WHERE name = 'Torch'), 1, 5, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
        ((SELECT id FROM equipment WHERE name = 'Bedroll'), 1, 2, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW());
 
--- Custom character inventory items
+-- Custom character inventory item data
 INSERT INTO character_inventory_items(type, quantity, character_id, created_at, updated_at)
 VALUES (2, 1, (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW());
 
 INSERT INTO character_inventory_item_custom_infos(character_inventory_item_id, name, description, value_in_copper_pieces, weight_in_lbs, created_at, updated_at)
 VALUES ((SELECT id FROM character_inventory_items WHERE type = 2), 'Lucky stone', 'A smooth river stone that (seriously) brings luck.', 1000, 0.1, NOW(), NOW());
 
--- Character portraits
+-- Character portrait data
 INSERT INTO character_portraits(character_id,  original_file_name, stored_file_name, mime_type, created_at, updated_at)
 VALUES ((SELECT id FROM characters WHERE name = 'Gandalf the Grey'), 'Gandalf_the_grey.gif', 'Gandalf_the_grey.gif', 'image/gif', NOW(), NOW());
+
+-- Encounter data
+INSERT INTO encounters(title, description, round_number, state, current_actor_id,  created_at, updated_at)
+VALUES ('Battle in the Mines of Moria', 'The fellowship delves deep into the dark halls of Moria. Shadows move in the corridors, goblins attack without warning, and a greater evil lurks beyond the bridge. Gandalf’s wisdom guides, Aragorn’s blade strikes true, and Legolas’s arrows find their marks as the trio fights to survive the ancient dwarven halls.', 0, 0, null, NOW(), NOW()); -- Gathering participants
+
+-- Encounter participant data
+INSERT INTO encounter_participants(initiative, encounter_id, character_id, created_at, updated_at)
+VALUES (15, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW()),
+       (20, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       (18, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Aragorn son of Arathorn'), NOW(), NOW());
+
+-- Encounter join request data
+INSERT INTO encounter_join_requests(initiative, state, encounter_id, character_id, created_at, updated_at)
+VALUES (20, 1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()), -- APPROVED
+       (18, 1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Aragorn son of Arathorn'), NOW(), NOW()), -- APPROVED
+       (15, 1, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW()), -- APPROVED
+       (10, 0, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gimli son of Gloin'), NOW(), NOW()), -- PENDING
+       (20, 2, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Frodo of the Shire'), NOW(), NOW()); -- DECLINED

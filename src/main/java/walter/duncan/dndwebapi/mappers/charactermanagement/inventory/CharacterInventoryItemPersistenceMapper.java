@@ -1,6 +1,7 @@
 package walter.duncan.dndwebapi.mappers.charactermanagement.inventory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,8 @@ import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterI
 import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 
 @Component
-public class CharacterInventoryItemPersistenceMapper extends BasePersistenceMapper<CharacterInventoryItemModel, CharacterInventoryItemEntity> {
+public class CharacterInventoryItemPersistenceMapper
+        extends BasePersistenceMapper<CharacterInventoryItemModel, CharacterInventoryItemEntity, List<CharacterInventoryItemModel>, List<CharacterInventoryItemEntity>> {
     private Map<Long, WeaponModel> weaponModelById = new HashMap<>();
     private Map<Long, EquipmentModel> equipmentModelById = new HashMap<>();
     private CharacterEntity characterEntity;

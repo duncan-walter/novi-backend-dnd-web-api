@@ -66,7 +66,7 @@ VALUES ((SELECT id FROM characters WHERE name = 'Gandalf the Grey'), 'Gandalf_th
 
 -- Encounter data
 INSERT INTO encounters(title, description, round_number, state, current_actor_id,  created_at, updated_at)
-VALUES ('Battle in the Mines of Moria', 'The fellowship delves deep into the dark halls of Moria. Shadows move in the corridors, goblins attack without warning, and a greater evil lurks beyond the bridge. Gandalf’s wisdom guides, Aragorn’s blade strikes true, and Legolas’s arrows find their marks as the trio fights to survive the ancient dwarven halls.', 1, 0, null, NOW(), NOW()); -- Gathering participants
+VALUES ('Battle in the Mines of Moria', 'The fellowship delves deep into the dark halls of Moria. Shadows move in the corridors, goblins attack without warning, and a greater evil lurks beyond the bridge. Gandalf’s wisdom guides, Aragorn’s blade strikes true, and Legolas’s arrows find their marks as the trio fights to survive the ancient dwarven halls.', 0, 0, null, NOW(), NOW()); -- Gathering participants
 
 -- Encounter participant data
 INSERT INTO encounter_participants(initiative, encounter_id, character_id, created_at, updated_at)

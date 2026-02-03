@@ -87,7 +87,7 @@ public class EncounterService extends BaseService<EncounterEntity, Long, Encount
         var model = this.mapper.toModel(persistedEntity);
 
         switch (EncounterAction.fromName(requestDto.action())) {
-            case ADVANCE_TURN -> model.advanceEncounterTurn();
+            case ADVANCE_TURN -> model.advanceTurn();
             case START -> model.startEncounter();
             case CLOSE -> model.closeEncounter();
         }

@@ -1,8 +1,7 @@
 package walter.duncan.dndwebapi.businessmodels.encountermanagement;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.IntStream;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
@@ -105,6 +104,15 @@ public final class EncounterModel {
     }
     //endregion
 
+    //region Calculated getters
+    public List<EncounterParticipantModel> getParticipantsInInitiativeOrder() {
+        List<EncounterParticipantModel> ordered = new ArrayList<>(this.participants);
+        ordered.sort((a, b) -> Integer.compare(b.getInitiative(), a.getInitiative()));
+
+        return ordered;
+    }
+    //endregion
+
     //region Setters
     public void setTitle(String title) {
         this.title = title;
@@ -159,14 +167,41 @@ public final class EncounterModel {
         this.participants.add(participant);
     }
 
-    public void advanceEncounterTurn() {
+    public void advanceTurn() {
         this.validateIsInState(
                 EncounterState.IN_PROGRESS,
                 BusinessRuleViolation.ENCOUNTER_ADVANCE_TURN_ONLY_ALLOWED_IN_PROGRESS,
                 "Cannot advance a turn of an encounter that is not in progress."
         );
-        // set next current actor
-        // increase roundNumber if applicable
+        this.validateHasParticipants("Cannot advance turn because there are no participants in the encounter.");
+
+        var participantsInInitiativeOrder = this.getParticipantsInInitiativeOrder();
+
+        if (this.currentActor == null) {
+            this.currentActor = participantsInInitiativeOrder.getFirst();
+            return;
+        }
+
+        // List.indexOf() cannot be used since the object reference of current character is not the same as the one in participants.
+        // That's why we use the IntStream (acts like a loop) to loop over the participants that were ordered to find the matching id.
+        var currentIndex = IntStream.range(0, participantsInInitiativeOrder.size())
+                .filter(i -> participantsInInitiativeOrder.get(i).getId().equals(this.currentActor.getId()))
+                .findFirst()
+                .orElse(-1);
+
+        // Fallback for when the current actor is not in the participants.
+        if (currentIndex == -1) {
+            this.currentActor = participantsInInitiativeOrder.getFirst();
+            return;
+        }
+
+        var nextIndex = currentIndex + 1;
+        if (nextIndex >= participantsInInitiativeOrder.size()) {
+            nextIndex = 0;
+            this.roundNumber++;
+        }
+
+        this.currentActor = participantsInInitiativeOrder.get(nextIndex);
     }
 
     public void startEncounter() {
@@ -175,9 +210,10 @@ public final class EncounterModel {
                 BusinessRuleViolation.ENCOUNTER_START_ONLY_ALLOWED_WHEN_GATHERING_PARTICIPANTS,
                 "Cannot start an encounter that is not gathering participants."
         );
+        this.validateHasParticipants("Cannot start encounter because there are no participants in it.");
+
         this.state = EncounterState.IN_PROGRESS;
-        // set round number
-        // set current actor
+        this.roundNumber = 1;
         // decline all join requests that are pending
     }
 
@@ -203,6 +239,15 @@ public final class EncounterModel {
             throw new BusinessRuleViolationException(
                     BusinessRuleViolation.ENCOUNTER_CHARACTER_ALREADY_PARTICIPANT,
                     String.format("Character with id: %s is already part of this encounter.", character.getId())
+            );
+        }
+    }
+
+    private void validateHasParticipants(String message) {
+        if (this.participants.isEmpty()) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.ENCOUNTER_NO_PARTICIPANTS,
+                    message
             );
         }
     }

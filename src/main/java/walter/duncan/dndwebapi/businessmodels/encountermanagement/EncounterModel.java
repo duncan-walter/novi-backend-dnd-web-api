@@ -214,7 +214,7 @@ public final class EncounterModel {
 
         this.state = EncounterState.IN_PROGRESS;
         this.roundNumber = 1;
-        // decline all join requests that are pending
+        this.joinRequests.clear();
     }
 
     public void closeEncounter() {

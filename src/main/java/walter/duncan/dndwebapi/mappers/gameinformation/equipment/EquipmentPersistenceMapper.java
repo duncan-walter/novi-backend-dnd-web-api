@@ -1,5 +1,6 @@
 package walter.duncan.dndwebapi.mappers.gameinformation.equipment;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import walter.duncan.dndwebapi.businessmodels.gameinformation.EquipmentModel;
@@ -7,7 +8,8 @@ import walter.duncan.dndwebapi.entities.gameinformation.EquipmentEntity;
 import walter.duncan.dndwebapi.mappers.BasePersistenceMapper;
 
 @Component
-public final class EquipmentPersistenceMapper extends BasePersistenceMapper<EquipmentModel, EquipmentEntity> {
+public final class EquipmentPersistenceMapper
+        extends BasePersistenceMapper<EquipmentModel, EquipmentEntity, List<EquipmentModel>, List<EquipmentEntity>> {
     @Override
     public EquipmentModel toModel(EquipmentEntity entity) {
         return EquipmentModel.restore(

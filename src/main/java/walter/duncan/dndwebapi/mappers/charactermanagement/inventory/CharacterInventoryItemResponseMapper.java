@@ -1,5 +1,6 @@
 package walter.duncan.dndwebapi.mappers.charactermanagement.inventory;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CharacterInventoryItemModel;
@@ -12,7 +13,8 @@ import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.WeaponCharacte
 import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
 
 @Component
-public class CharacterInventoryItemResponseMapper extends BaseResponseMapper<CharacterInventoryItemResponseDto, CharacterInventoryItemModel> {
+public class CharacterInventoryItemResponseMapper
+        extends BaseResponseMapper<CharacterInventoryItemResponseDto, CharacterInventoryItemModel, List<CharacterInventoryItemResponseDto>> {
     @Override
     public CharacterInventoryItemResponseDto toDto(CharacterInventoryItemModel model) {
         return switch (model.getType()) {

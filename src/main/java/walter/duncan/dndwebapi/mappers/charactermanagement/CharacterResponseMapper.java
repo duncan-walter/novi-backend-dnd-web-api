@@ -1,5 +1,6 @@
 package walter.duncan.dndwebapi.mappers.charactermanagement;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
@@ -8,7 +9,8 @@ import walter.duncan.dndwebapi.mappers.BaseResponseMapper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.inventory.CharacterInventoryItemResponseMapper;
 
 @Component
-public final class CharacterResponseMapper extends BaseResponseMapper<CharacterResponseDto, CharacterModel> {
+public final class CharacterResponseMapper
+        extends BaseResponseMapper<CharacterResponseDto, CharacterModel, List<CharacterResponseDto>> {
     private final CharacterTypeResponseMapper characterTypeResponseMapper;
     private final CharacterRaceResponseMapper characterRaceResponseMapper;
     private final CharacterClassResponseMapper characterClassResponseMapper;

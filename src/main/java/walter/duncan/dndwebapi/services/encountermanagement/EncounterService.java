@@ -2,11 +2,15 @@ package walter.duncan.dndwebapi.services.encountermanagement;
 
 import java.util.List;
 import java.util.Set;
+
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterAction;
 import walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterModel;
 import walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterParticipantModel;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterActionRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
@@ -70,6 +74,22 @@ public class EncounterService extends BaseService<EncounterEntity, Long, Encount
                     BusinessRuleViolation.ENCOUNTER_CHARACTER_ALREADY_PARTICIPANT_IN_ACTIVE_ENCOUNTER,
                     String.format("Character with id: %s is already participating in an encounter active encounter.", characterModel.getId())
             );
+        }
+
+        this.mapper.updateEntityFromModel(model, persistedEntity);
+
+        return this.mapper.toModel(this.repository.save(persistedEntity));
+    }
+
+    @Transactional
+    public EncounterModel performAction(Long id, @Valid EncounterActionRequestDto requestDto) {
+        var persistedEntity = this.findByIdOrThrow(id);
+        var model = this.mapper.toModel(persistedEntity);
+
+        switch (EncounterAction.fromName(requestDto.action())) {
+            case ADVANCE_TURN -> model.advanceEncounterTurn();
+            case START -> model.startEncounter();
+            case CLOSE -> model.closeEncounter();
         }
 
         this.mapper.updateEntityFromModel(model, persistedEntity);

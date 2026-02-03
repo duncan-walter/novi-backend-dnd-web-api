@@ -10,6 +10,7 @@ import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterResponseDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterActionRequestDto;
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterResponseMapper;
 import walter.duncan.dndwebapi.services.encountermanagement.EncounterService;
 
@@ -66,7 +67,13 @@ public class EncounterController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<@NonNull Object> advanceTurn(@PathVariable Long id, @RequestBody @Valid Object requestDto) {
-        return ResponseEntity.ok(""); // Placeholder
+    public ResponseEntity<@NonNull EncounterResponseDto> action(@PathVariable Long id, @RequestBody @Valid EncounterActionRequestDto requestDto) {
+        var responseDto = this.mapper.toDto(this.encounterService.performAction(id, requestDto));
+        var location = this.urlHelper.getResourceUri(responseDto.id());
+
+        return ResponseEntity
+                .ok()
+                .location(location)
+                .body(responseDto);
     }
 }

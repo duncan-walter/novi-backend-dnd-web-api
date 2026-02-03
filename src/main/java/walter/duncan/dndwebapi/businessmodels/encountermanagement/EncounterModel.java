@@ -171,7 +171,7 @@ public final class EncounterModel {
 
     public void startEncounter() {
         this.validateIsInState(
-                EncounterState.IN_PROGRESS,
+                EncounterState.GATHERING_PARTICIPANTS,
                 BusinessRuleViolation.ENCOUNTER_START_ONLY_ALLOWED_WHEN_GATHERING_PARTICIPANTS,
                 "Cannot start an encounter that is not gathering participants."
         );

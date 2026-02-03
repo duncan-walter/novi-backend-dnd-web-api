@@ -51,6 +51,7 @@ public final class EncounterJoinRequestPersistenceMapper
     @Override
     public void updateEntityFromModel(EncounterJoinRequestModel model, EncounterJoinRequestEntity entity) {
         entity.setId(model.getId());
+        entity.setInitiative(model.getInitiative());
         entity.setState(this.mapState(model.getState()));
         entity.setEncounter(null); // Set later in encounter mapping to avoid circular reference
         entity.setCharacter(this.characterPersistenceMapper.toEntity(model.getCharacter()));

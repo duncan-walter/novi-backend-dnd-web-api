@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestResponseDto;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterJoinRequestResponseMapper;
@@ -34,12 +35,13 @@ public class EncounterJoinRequestController {
     }
 
     @PostMapping
-    public ResponseEntity<@NonNull Object> create(@PathVariable Long encounterId, @RequestBody @Valid Object requestDto) {
-        var location = this.urlHelper.getResourceUri(0L); // Placeholder
+    public ResponseEntity<@NonNull EncounterJoinRequestResponseDto> create(@PathVariable Long encounterId, @RequestBody @Valid EncounterJoinRequestRequestDto requestDto) {
+        var responseDto = this.mapper.toDto(this.encounterJoinRequestService.create(encounterId, requestDto));
+        var location = this.urlHelper.getResourceUri(responseDto.id());
 
         return ResponseEntity
                 .created(location)
-                .body(""); // Placeholder
+                .body(responseDto);
     }
 
     @PatchMapping("/{id}")

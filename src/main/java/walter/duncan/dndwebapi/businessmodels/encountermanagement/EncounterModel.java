@@ -131,7 +131,7 @@ public final class EncounterModel {
                 "Cannot join encounter unless it is gathering participants."
         );
         this.validateUniqueCharacterParticipant(joinRequest.getCharacter());
-        // add join request to join requests
+        this.joinRequests.add(joinRequest);
     }
 
     public void approveJoinRequest(Long joinRequestId) {

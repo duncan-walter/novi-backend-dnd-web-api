@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterJoinRequestEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterJoinRequestState;
 
 @Repository
 public interface EncounterJoinRequestRepository extends JpaRepository<@NonNull EncounterJoinRequestEntity, @NonNull Long> {
     List<EncounterJoinRequestEntity> findByEncounterId(Long encounterId);
+    boolean existsByCharacterIdAndState(Long characterId, EncounterJoinRequestState state);
 }

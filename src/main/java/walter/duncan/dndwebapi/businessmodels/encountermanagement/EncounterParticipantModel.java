@@ -6,7 +6,7 @@ public final class EncounterParticipantModel {
     //region Fields
     private final Long id;
     private int initiative;
-    private final EncounterModel encounter;
+    private EncounterModel encounter;
     private final CharacterModel character;
     //endregion
 
@@ -50,6 +50,10 @@ public final class EncounterParticipantModel {
     //region Setters
     public void setInitiative(int initiative) {
         this.initiative = initiative;
+    }
+
+    public void setEncounter(EncounterModel encounter) {
+        this.encounter = encounter;
     }
     //endregion
 }

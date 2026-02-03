@@ -7,7 +7,7 @@ public final class EncounterJoinRequestModel {
     private final Long id;
     private final int initiative;
     private EncounterJoinRequestState state;
-    private final EncounterModel encounter;
+    private EncounterModel encounter;
     private final CharacterModel character;
     //endregion
 
@@ -68,6 +68,12 @@ public final class EncounterJoinRequestModel {
 
     public CharacterModel getCharacter() {
         return this.character;
+    }
+    //endregion
+
+    //region Setters
+    public void setEncounter(EncounterModel encounter) {
+        this.encounter = encounter;
     }
     //endregion
 

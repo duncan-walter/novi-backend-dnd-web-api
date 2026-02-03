@@ -1,6 +1,6 @@
 package walter.duncan.dndwebapi.dtos.encountermanagement;
 
-import java.util.Set;
+import java.util.List;
 
 public record EncounterResponseDto(
         Long id,
@@ -9,5 +9,5 @@ public record EncounterResponseDto(
         int roundNumber,
         String state,
         EncounterParticipantResponseDto currentActor,
-        Set<EncounterParticipantResponseDto> participants
+        List<EncounterParticipantResponseDto> participants
 ) { }

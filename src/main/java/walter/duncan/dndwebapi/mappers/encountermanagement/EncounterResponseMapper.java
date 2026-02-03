@@ -31,7 +31,7 @@ public final class EncounterResponseMapper
                 model.getRoundNumber(),
                 model.getState().getName(),
                 model.getCurrentActor().isPresent() ? this.encounterParticipantResponseMapper.toDto(model.getCurrentActor().get()) : null,
-                this.encounterParticipantResponseMapper.toDtos(model.getParticipants())
+                this.encounterParticipantResponseMapper.toDtos(model.getParticipantsInInitiativeOrder())
         );
     }
 }

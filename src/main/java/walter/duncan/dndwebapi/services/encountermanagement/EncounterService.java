@@ -1,5 +1,6 @@
 package walter.duncan.dndwebapi.services.encountermanagement;
 
+import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,9 @@ import walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterParti
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterState;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterPersistenceMapper;
 import walter.duncan.dndwebapi.repositories.encountermanagement.EncounterRepository;
 import walter.duncan.dndwebapi.services.BaseService;
@@ -53,7 +57,20 @@ public class EncounterService extends BaseService<EncounterEntity, Long, Encount
         var model = this.mapper.toModel(persistedEntity);
         var encounterParticipantModel = EncounterParticipantModel.create(encounterParticipantRequestDto.initiative(), model, characterModel);
 
+        // Validates uniqueness within encounter
         model.addParticipant(encounterParticipantModel);
+
+        // Validates uniqueness across active encounters
+        var characterInAnotherActiveEncounter = this.repository.existsByParticipantAndState(
+                characterModel.getId(),
+                List.of(EncounterState.GATHERING_PARTICIPANTS, EncounterState.IN_PROGRESS)
+        );
+        if (characterInAnotherActiveEncounter) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.ENCOUNTER_CHARACTER_ALREADY_PARTICIPANT_IN_ACTIVE_ENCOUNTER,
+                    String.format("Character with id: %s is already participating in an encounter active encounter.", characterModel.getId())
+            );
+        }
 
         this.mapper.updateEntityFromModel(model, persistedEntity);
 

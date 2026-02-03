@@ -4,6 +4,10 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
+
 public final class EncounterModel {
     //region Fields
     private final Long id;
@@ -113,10 +117,12 @@ public final class EncounterModel {
 
     //region Actions
     public void addJoinRequest(EncounterJoinRequestModel joinRequest) {
-        // check if state is gathering participants > throw business rule exception if true
-        // check is participant  already in participants > throw business rule exception if true
-        // check if join request model character's participations has an encounter that is in progress > throw business rule exception is true
-        // check if join request model character's join requests has a join request that is pending > throw business rule exception if true
+        this.validateIsInState(
+                EncounterState.GATHERING_PARTICIPANTS,
+                BusinessRuleViolation.ENCOUNTER_JOIN_ONLY_ALLOWED_WHEN_GATHERING_PARTICIPANTS,
+                "Cannot join encounter unless it is gathering participants."
+        );
+        this.validateUniqueCharacterParticipant(joinRequest.getCharacter());
         // add join request to join requests
     }
 
@@ -144,28 +150,61 @@ public final class EncounterModel {
     }
 
     public void addParticipant(EncounterParticipantModel participant) {
-        // check is participant already in participants > throw business rule exception if true
-        // check if participant model character's participations has an encounter that is in progress > throw business rule exception if true
+        this.validateIsInState(
+                EncounterState.GATHERING_PARTICIPANTS,
+                BusinessRuleViolation.ENCOUNTER_JOIN_ONLY_ALLOWED_WHEN_GATHERING_PARTICIPANTS,
+                "Cannot join encounter unless it is gathering participants."
+        );
+        this.validateUniqueCharacterParticipant(participant.getCharacter());
         this.participants.add(participant);
     }
 
     public void advanceEncounterTurn() {
-        // check if state is "in progress" > throw business rule exception if not true
+        this.validateIsInState(
+                EncounterState.IN_PROGRESS,
+                BusinessRuleViolation.ENCOUNTER_ADVANCE_TURN_ONLY_ALLOWED_IN_PROGRESS,
+                "Cannot advance a turn of an encounter that is not in progress."
+        );
         // set next current actor
         // increase roundNumber if applicable
     }
 
     public void startEncounter() {
-        // check if state is "gathering participants" > throw business rule exception if not true
-        // set state
+        this.validateIsInState(
+                EncounterState.IN_PROGRESS,
+                BusinessRuleViolation.ENCOUNTER_START_ONLY_ALLOWED_WHEN_GATHERING_PARTICIPANTS,
+                "Cannot start an encounter that is not gathering participants."
+        );
+        this.state = EncounterState.IN_PROGRESS;
         // set round number
         // set current actor
         // decline all join requests that are pending
     }
 
     public void closeEncounter() {
-        // check if state is "in progress" > throw business rule exception if not true
-        // set state
+        this.validateIsInState(
+                EncounterState.IN_PROGRESS,
+                BusinessRuleViolation.ENCOUNTER_CLOSE_ONLY_ALLOWED_IN_PROGRESS,
+                "Cannot close an encounter that is not in progress."
+        );
+        this.state = EncounterState.COMPLETED;
+    }
+    //endregion
+
+    //region Validation methods
+    private void validateIsInState(EncounterState state, BusinessRuleViolation businessRuleViolation, String exceptionMessage) {
+        if (this.state != state) {
+            throw new BusinessRuleViolationException(businessRuleViolation, exceptionMessage);
+        }
+    }
+
+    private void validateUniqueCharacterParticipant(CharacterModel character) {
+        if (this.participants.stream().anyMatch(p -> p.getCharacter().getId().equals(character.getId()))) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.ENCOUNTER_CHARACTER_ALREADY_PARTICIPANT,
+                    String.format("Character with id: %s is already part of this encounter.", character.getId())
+            );
+        }
     }
     //endregion
 }

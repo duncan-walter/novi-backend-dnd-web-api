@@ -146,15 +146,17 @@ public final class EncounterModel {
     public void addParticipant(EncounterParticipantModel participant) {
         // check is participant already in participants > throw business rule exception if true
         // check if participant model character's participations has an encounter that is in progress > throw business rule exception if true
-        // add participant to participants
+        this.participants.add(participant);
     }
 
     public void advanceEncounterTurn() {
+        // check if state is "in progress" > throw business rule exception if not true
         // set next current actor
         // increase roundNumber if applicable
     }
 
     public void startEncounter() {
+        // check if state is "gathering participants" > throw business rule exception if not true
         // set state
         // set round number
         // set current actor
@@ -162,7 +164,7 @@ public final class EncounterModel {
     }
 
     public void closeEncounter() {
-        // check if state is "in progress" > throw business rule exception if true
+        // check if state is "in progress" > throw business rule exception if not true
         // set state
     }
     //endregion

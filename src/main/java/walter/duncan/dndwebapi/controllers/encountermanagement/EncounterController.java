@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterResponseDto;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterResponseMapper;
 import walter.duncan.dndwebapi.services.encountermanagement.EncounterService;
 
@@ -50,12 +51,18 @@ public class EncounterController {
     }
 
     @PostMapping("/{id}/participants")
-    public ResponseEntity<@NonNull Object> addParticipant(@PathVariable Long id, @RequestBody @Valid Object requestDto) {
-        var location = this.urlHelper.getResourceUri(0L); // Placeholder
+    public ResponseEntity<@NonNull EncounterResponseDto> addParticipant(@PathVariable Long id, @RequestBody @Valid EncounterParticipantRequestDto requestDto) {
+        var responseDto = this.mapper.toDto(this.encounterService.addParticipant(id, requestDto));
+        var participantId = responseDto.participants().stream()
+                .filter(p -> p.characterId().equals(requestDto.characterId()))
+                .findFirst()
+                .orElseThrow()
+                .id();
+        var location = this.urlHelper.getResourceUri(participantId);
 
         return ResponseEntity
                 .created(location)
-                .body(""); // Placeholder
+                .body(responseDto);
     }
 
     @PatchMapping("/{id}")

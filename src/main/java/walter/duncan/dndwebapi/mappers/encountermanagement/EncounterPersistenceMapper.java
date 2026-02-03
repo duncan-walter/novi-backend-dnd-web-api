@@ -82,8 +82,10 @@ public final class EncounterPersistenceMapper
         entity.setRoundNumber(model.getRoundNumber());
         entity.setState(this.mapState(model.getState()));
         entity.setCurrentActor(currentActorEntity);
-        entity.setParticipants(participantEntities);
-        entity.setJoinRequests(joinRequestEntities);
+        entity.getParticipants().clear();
+        entity.getParticipants().addAll(participantEntities);
+        entity.getJoinRequests().clear();
+        entity.getJoinRequests().addAll(joinRequestEntities);
 
         if (currentActorEntity != null) {
             currentActorEntity.setEncounter(entity);

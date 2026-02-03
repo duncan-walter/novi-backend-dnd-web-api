@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 // Yes the naming on this is unfortunate...
 public record EncounterJoinRequestRequestDto(
-        @Min(1) int initiative,
-        @NotNull Long characterId
+        @NotNull Long characterId,
+        @Min(1) int initiative
 ) { }

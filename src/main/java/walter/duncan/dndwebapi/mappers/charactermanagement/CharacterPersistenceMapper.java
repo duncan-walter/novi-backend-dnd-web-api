@@ -70,6 +70,7 @@ public final class CharacterPersistenceMapper
     public void updateEntityFromModel(CharacterModel model, CharacterEntity entity) {
         this.characterInventoryItemPersistenceMapper.setCharacterEntity(entity);
 
+        entity.setId(model.getId());
         entity.setName(model.getName());
         entity.setCharisma(model.getCharisma());
         entity.setConstitution(model.getConstitution());

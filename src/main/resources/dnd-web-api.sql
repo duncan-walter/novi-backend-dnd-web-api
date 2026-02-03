@@ -70,9 +70,9 @@ VALUES ('Battle in the Mines of Moria', 'The fellowship delves deep into the dar
 
 -- Encounter participant data
 INSERT INTO encounter_participants(initiative, encounter_id, character_id, created_at, updated_at)
-VALUES (20, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
-       (18, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Aragorn son of Arathorn'), NOW(), NOW()),
-       (15, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW());
+VALUES (15, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Legolas Greenleaf'), NOW(), NOW()),
+       (20, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Gandalf the Grey'), NOW(), NOW()),
+       (18, (SELECT id FROM encounters WHERE title = 'Battle in the Mines of Moria'), (SELECT id FROM characters WHERE name = 'Aragorn son of Arathorn'), NOW(), NOW());
 
 -- Encounter join request data
 INSERT INTO encounter_join_requests(initiative, state, encounter_id, character_id, created_at, updated_at)

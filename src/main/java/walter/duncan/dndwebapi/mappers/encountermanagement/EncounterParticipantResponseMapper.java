@@ -20,6 +20,7 @@ public final class EncounterParticipantResponseMapper
     public EncounterParticipantResponseDto toDto(EncounterParticipantModel model) {
         return new EncounterParticipantResponseDto(
                 model.getId(),
+                model.getCharacter().getId(),
                 model.getInitiative(),
                 model.getCharacter().getName(),
                 model.getCharacter().getCurrentHitPoints(),

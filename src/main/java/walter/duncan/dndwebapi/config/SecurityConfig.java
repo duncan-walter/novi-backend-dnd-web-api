@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +32,34 @@ public class SecurityConfig {
     @Value("${client-id}")
     private String clientId;
 
+    // NOTE: Endpoints are secured very explicitly. This is to make the global security future-proof when new roles or endpoints are added.
+    private static void addGlobalEndpointSecurity(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        authorize
+                // Weapon & Equipment endpoints
+                .requestMatchers(HttpMethod.GET, "/weapons", "/weapons/{id}").hasAnyRole("ADMIN", "DUNGEON_MASTER", "PLAYER")
+                .requestMatchers(HttpMethod.POST,"/weapons", "/equipment").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT,"/weapons/{id}", "/equipment/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/weapons/{id}", "/equipment/{id}").hasRole("ADMIN")
+
+                // Encounter endpoints
+                .requestMatchers(HttpMethod.GET, "/encounters").hasAnyRole("DUNGEON_MASTER", "PLAYER")
+                .requestMatchers(HttpMethod.POST, "/encounters", "/encounters/{id}/participants").hasRole("DUNGEON_MASTER")
+                .requestMatchers(HttpMethod.PATCH, "/encounters/{id}").hasRole("DUNGEON_MASTER")
+
+                .requestMatchers(HttpMethod.GET, "/encounters/{id}/join-requests").hasRole("DUNGEON_MASTER")
+                .requestMatchers(HttpMethod.POST, "/encounters/{id}/join-requests").hasRole("PLAYER")
+                .requestMatchers(HttpMethod.PATCH, "/encounters/{encounterId}/join-requests/{id}").hasRole("DUNGEON_MASTER")
+
+                // Character endpoints
+                .requestMatchers("/characters/**").hasAnyRole("DUNGEON_MASTER", "PLAYER")
+
+                // Authenticated
+                .requestMatchers("/**").authenticated() // Any user is required to be authenticated for any endpoint
+
+                // Default
+                .anyRequest().denyAll();
+    }
+
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) {
         return http
@@ -41,15 +71,12 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                                 .decoder(jwtDecoder())
                         ))
-                .authorizeHttpRequests(authorize -> authorize
-                        // Default
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(SecurityConfig::addGlobalEndpointSecurity)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    private JwtAuthenticationConverter jwtAuthenticationConverter() {
         var jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new Converter<>() {
             @Override

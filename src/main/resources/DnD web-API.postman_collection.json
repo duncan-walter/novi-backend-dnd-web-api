@@ -850,6 +850,79 @@
       ]
     }
   ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "useBrowser",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "authRequestParams",
+        "value": [
+          {
+            "key": "prompt",
+            "value": "create",
+            "enabled": false,
+            "send_as": "request_url"
+          },
+          {
+            "key": "prompt",
+            "value": "login",
+            "enabled": true,
+            "send_as": "request_url"
+          }
+        ],
+        "type": "any"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid profile email",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "{{authClientSecret}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{authClientId}}",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{authTokenUrl}}",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{authAuthorizationUrl}}",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "https://oauth.pstmn.io/v1/callback",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "dnd-app-web-api-token",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
   "event": [
     {
       "listen": "prerequest",
@@ -877,7 +950,27 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "localhost:8080"
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "authClientId",
+      "value": "dnd-app-web-api"
+    },
+    {
+      "key": "authClientSecret",
+      "value": "YzlNBLr20ObxvNkeflIKeorhnlsq4yCg"
+    },
+    {
+      "key": "authTokenUrl",
+      "value": "http://localhost:9090/realms/dnd-app/protocol/openid-connect/token"
+    },
+    {
+      "key": "authAuthorizationUrl",
+      "value": "http://localhost:9090/realms/dnd-app/protocol/openid-connect/auth"
+    },
+    {
+      "key": "authAudience",
+      "value": "account"
     }
   ]
 }

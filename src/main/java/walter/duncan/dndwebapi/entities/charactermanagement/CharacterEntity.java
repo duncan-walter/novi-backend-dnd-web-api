@@ -9,14 +9,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
-import walter.duncan.dndwebapi.entities.BaseEntity;
+import walter.duncan.dndwebapi.entities.usermanagement.UserOwnedEntity;
 import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterJoinRequestEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterParticipantEntity;
 
 @Entity
 @Table(name = "characters")
-public final class CharacterEntity extends BaseEntity {
+public final class CharacterEntity extends UserOwnedEntity {
     @Column(length = 50, nullable = false)
     private String name;
 

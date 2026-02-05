@@ -1,6 +1,7 @@
 package walter.duncan.dndwebapi.repositories.encountermanagement;
 
 import java.util.Collection;
+import java.util.Optional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterState;
+import walter.duncan.dndwebapi.entities.usermanagement.UserEntity;
 
 @Repository
 public interface EncounterRepository extends JpaRepository<@NonNull EncounterEntity, @NonNull Long> {
@@ -23,4 +25,6 @@ public interface EncounterRepository extends JpaRepository<@NonNull EncounterEnt
             @Param("characterId") Long characterId,
             @Param("states") Collection<EncounterState> states
     );
+
+    Optional<EncounterEntity> findByIdAndUser(Long id, UserEntity user);
 }

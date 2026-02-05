@@ -2,8 +2,9 @@ package walter.duncan.dndwebapi.services.encountermanagement;
 
 import java.util.List;
 import java.util.Set;
-
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +22,24 @@ import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterPersistenceM
 import walter.duncan.dndwebapi.repositories.encountermanagement.EncounterRepository;
 import walter.duncan.dndwebapi.services.BaseService;
 import walter.duncan.dndwebapi.services.charactermanagement.CharacterService;
+import walter.duncan.dndwebapi.services.usermanagement.UserService;
 
 @Service
 public class EncounterService extends BaseService<EncounterEntity, Long, EncounterRepository> {
     private final CharacterService characterService;
     private final EncounterPersistenceMapper mapper;
+    private final UserService userService;
 
     protected EncounterService(
             EncounterRepository repository,
             CharacterService characterService,
-            EncounterPersistenceMapper mapper
+            EncounterPersistenceMapper mapper,
+            UserService userService
     ) {
         super(repository, EncounterEntity.class);
         this.characterService = characterService;
         this.mapper = mapper;
+        this.userService = userService;
     }
 
     public Set<EncounterModel> findAll() {
@@ -46,17 +51,18 @@ public class EncounterService extends BaseService<EncounterEntity, Long, Encount
     }
 
     @Transactional
-    public EncounterModel create(EncounterRequestDto requestDto) {
-        var model = EncounterModel.create(requestDto.title(), requestDto.description());
+    public EncounterModel create(EncounterRequestDto requestDto, @AuthenticationPrincipal Jwt jwt) {
+        var user = this.userService.resolveUser(jwt);
+        var model = EncounterModel.create(requestDto.title(), requestDto.description(), user);
         var persistedEntity = this.repository.save(this.mapper.toEntity(model));
 
         return this.mapper.toModel(persistedEntity);
     }
 
     @Transactional
-    public EncounterModel addParticipant(Long id, EncounterParticipantRequestDto encounterParticipantRequestDto) {
-        var persistedEntity = this.findByIdOrThrow(id);
-        var characterModel = this.characterService.findById(encounterParticipantRequestDto.characterId());
+    public EncounterModel addParticipant(Long id, EncounterParticipantRequestDto encounterParticipantRequestDto, @AuthenticationPrincipal Jwt jwt) {
+        var persistedEntity = this.getOwnedEncounterOrThrow(id, jwt);
+        var characterModel = this.characterService.findByIdForUser(encounterParticipantRequestDto.characterId(), jwt);
 
         var model = this.mapper.toModel(persistedEntity);
         var encounterParticipantModel = EncounterParticipantModel.create(encounterParticipantRequestDto.initiative(), model, characterModel);
@@ -82,8 +88,8 @@ public class EncounterService extends BaseService<EncounterEntity, Long, Encount
     }
 
     @Transactional
-    public EncounterModel performAction(Long id, @Valid EncounterActionRequestDto requestDto) {
-        var persistedEntity = this.findByIdOrThrow(id);
+    public EncounterModel performAction(Long id, @Valid EncounterActionRequestDto requestDto, @AuthenticationPrincipal Jwt jwt) {
+        var persistedEntity = this.getOwnedEncounterOrThrow(id, jwt);
         var model = this.mapper.toModel(persistedEntity);
 
         switch (EncounterAction.fromName(requestDto.action())) {
@@ -95,5 +101,10 @@ public class EncounterService extends BaseService<EncounterEntity, Long, Encount
         this.mapper.updateEntityFromModel(model, persistedEntity);
 
         return this.mapper.toModel(this.repository.save(persistedEntity));
+    }
+
+    public EncounterEntity getOwnedEncounterOrThrow(Long id, Jwt jwt) {
+        var user = this.userService.resolveUser(jwt);
+        return this.repository.findByIdAndUser(id, user).orElseThrow(() -> this.getResourceNotFoundException(id));
     }
 }

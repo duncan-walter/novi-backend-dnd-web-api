@@ -48,7 +48,8 @@ public final class EncounterPersistenceMapper
                 this.mapState(entity.getState()),
                 currentActorModel,
                 participantModels,
-                joinRequestModels
+                joinRequestModels,
+                entity.getUser()
         );
 
         if (currentActorModel != null) {
@@ -86,6 +87,7 @@ public final class EncounterPersistenceMapper
         entity.getParticipants().addAll(participantEntities);
         entity.getJoinRequests().clear();
         entity.getJoinRequests().addAll(joinRequestEntities);
+        entity.setUser(model.getUser());
 
         if (currentActorEntity != null) {
             currentActorEntity.setEncounter(entity);

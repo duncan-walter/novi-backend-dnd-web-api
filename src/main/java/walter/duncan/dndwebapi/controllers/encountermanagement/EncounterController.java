@@ -4,6 +4,8 @@ import java.util.Set;
 import jakarta.validation.Valid;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import walter.duncan.dndwebapi.helpers.UrlHelper;
@@ -42,8 +44,11 @@ public class EncounterController {
     }
 
     @PostMapping
-    public ResponseEntity<@NonNull EncounterResponseDto> create(@RequestBody @Valid EncounterRequestDto requestDto) {
-        var responseDto = this.mapper.toDto(this.encounterService.create(requestDto));
+    public ResponseEntity<@NonNull EncounterResponseDto> create(
+            @RequestBody @Valid EncounterRequestDto requestDto,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        var responseDto = this.mapper.toDto(this.encounterService.create(requestDto, jwt));
         var location = this.urlHelper.getResourceUri(responseDto.id());
 
         return ResponseEntity
@@ -52,8 +57,12 @@ public class EncounterController {
     }
 
     @PostMapping("/{id}/participants")
-    public ResponseEntity<@NonNull EncounterResponseDto> addParticipant(@PathVariable Long id, @RequestBody @Valid EncounterParticipantRequestDto requestDto) {
-        var responseDto = this.mapper.toDto(this.encounterService.addParticipant(id, requestDto));
+    public ResponseEntity<@NonNull EncounterResponseDto> addParticipant(
+            @PathVariable Long id,
+            @RequestBody @Valid EncounterParticipantRequestDto requestDto,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        var responseDto = this.mapper.toDto(this.encounterService.addParticipant(id, requestDto, jwt));
         var participantId = responseDto.participants().stream()
                 .filter(p -> p.characterId().equals(requestDto.characterId()))
                 .findFirst()
@@ -67,8 +76,12 @@ public class EncounterController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<@NonNull EncounterResponseDto> action(@PathVariable Long id, @RequestBody @Valid EncounterActionRequestDto requestDto) {
-        var responseDto = this.mapper.toDto(this.encounterService.performAction(id, requestDto));
+    public ResponseEntity<@NonNull EncounterResponseDto> action(
+            @PathVariable Long id,
+            @RequestBody @Valid EncounterActionRequestDto requestDto,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        var responseDto = this.mapper.toDto(this.encounterService.performAction(id, requestDto, jwt));
         var location = this.urlHelper.getResourceUri(responseDto.id());
 
         return ResponseEntity

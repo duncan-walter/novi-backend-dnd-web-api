@@ -39,7 +39,8 @@ VALUES ('Wizard',6,NOW(),NOW()),
 
 -- User data
 INSERT INTO users (identity_provider_id, name, email, created_at, updated_at)
-VALUES ('6c7abe11-6431-4c6b-b530-91f929c25e61', 'Henk the Tank', 'player1@dndapp.nl', NOW(), NOW());
+VALUES ('6c7abe11-6431-4c6b-b530-91f929c25e61', 'Henk the Tank', 'player1@dndapp.nl', NOW(), NOW()),
+       ('6703dd9d-1872-4292-99a9-21bebbdb9b5c', 'Bert the Hurt', 'dungeon-master1@dndapp.nl', NOW(), NOW());
 
 -- Character data
 INSERT INTO characters (name, charisma, constitution, dexterity, intelligence, strength, wisdom, max_hit_points, current_hit_points, experience_points, size, copper_pieces, silver_pieces, electrum_pieces, gold_pieces, platinum_pieces, notes, alignment, type_id, race_id, class_id, user_id, created_at, updated_at)
@@ -69,8 +70,8 @@ INSERT INTO character_portraits(character_id,  original_file_name, stored_file_n
 VALUES ((SELECT id FROM characters WHERE name = 'Gandalf the Grey'), 'Gandalf_the_grey.gif', 'Gandalf_the_grey.gif', 'image/gif', NOW(), NOW());
 
 -- Encounter data
-INSERT INTO encounters(title, description, round_number, state, current_actor_id,  created_at, updated_at)
-VALUES ('Battle in the Mines of Moria', 'The fellowship delves deep into the dark halls of Moria. Shadows move in the corridors, goblins attack without warning, and a greater evil lurks beyond the bridge. Gandalf’s wisdom guides, Aragorn’s blade strikes true, and Legolas’s arrows find their marks as the trio fights to survive the ancient dwarven halls.', 0, 0, null, NOW(), NOW()); -- Gathering participants
+INSERT INTO encounters(title, description, round_number, state, current_actor_id, user_id, created_at, updated_at)
+VALUES ('Battle in the Mines of Moria', 'The fellowship delves deep into the dark halls of Moria. Shadows move in the corridors, goblins attack without warning, and a greater evil lurks beyond the bridge. Gandalf’s wisdom guides, Aragorn’s blade strikes true, and Legolas’s arrows find their marks as the trio fights to survive the ancient dwarven halls.', 0, 0, null, (SELECT id FROM users WHERE name = 'Bert the Hurt'), NOW(), NOW()); -- Gathering participants
 
 -- Encounter participant data
 INSERT INTO encounter_participants(initiative, encounter_id, character_id, created_at, updated_at)

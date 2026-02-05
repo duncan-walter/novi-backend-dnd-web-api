@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 import jakarta.persistence.*;
 
-import walter.duncan.dndwebapi.entities.BaseEntity;
+import walter.duncan.dndwebapi.entities.usermanagement.UserOwnedEntity;
 
 @Entity
 @Table(name = "encounters")
-public class EncounterEntity extends BaseEntity {
+public class EncounterEntity extends UserOwnedEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 

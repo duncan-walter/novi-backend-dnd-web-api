@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
+import walter.duncan.dndwebapi.entities.usermanagement.UserEntity;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
@@ -17,6 +18,7 @@ public final class EncounterModel {
     private EncounterParticipantModel currentActor;
     private Set<EncounterParticipantModel> participants;
     private Set<EncounterJoinRequestModel> joinRequests;
+    private UserEntity user;
     //endregion
 
     //region Constructors
@@ -28,7 +30,8 @@ public final class EncounterModel {
             EncounterState state,
             EncounterParticipantModel currentActor,
             Set<EncounterParticipantModel> participants,
-            Set<EncounterJoinRequestModel> joinRequests
+            Set<EncounterJoinRequestModel> joinRequests,
+            UserEntity user
     ) {
 
         this.id = id;
@@ -39,11 +42,12 @@ public final class EncounterModel {
         this.currentActor = currentActor;
         this.participants = participants;
         this.joinRequests = joinRequests;
+        this.user = user;
     }
     //endregion
 
     //region Factory methods
-    public static EncounterModel create(String title, String description) {
+    public static EncounterModel create(String title, String description, UserEntity user) {
         return new EncounterModel(
                 null,
                 title,
@@ -52,7 +56,8 @@ public final class EncounterModel {
                 EncounterState.GATHERING_PARTICIPANTS,
                 null,
                 new HashSet<>(),
-                new HashSet<>()
+                new HashSet<>(),
+                user
         );
     }
 
@@ -64,9 +69,10 @@ public final class EncounterModel {
             EncounterState state,
             EncounterParticipantModel currentActor,
             Set<EncounterParticipantModel> participants,
-            Set<EncounterJoinRequestModel> joinRequests
+            Set<EncounterJoinRequestModel> joinRequests,
+            UserEntity user
     ) {
-        return new EncounterModel(id, title, description, roundNumber, state, currentActor, participants, joinRequests);
+        return new EncounterModel(id, title, description, roundNumber, state, currentActor, participants, joinRequests, user);
     }
     //endregion
 
@@ -102,6 +108,10 @@ public final class EncounterModel {
     public Set<EncounterJoinRequestModel> getJoinRequests() {
         return this.joinRequests;
     }
+
+    public UserEntity getUser() {
+        return this.user;
+    }
     //endregion
 
     //region Calculated getters
@@ -120,6 +130,10 @@ public final class EncounterModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
     //endregion
 
@@ -142,6 +156,8 @@ public final class EncounterModel {
                 return;
             }
         }
+
+        this.throwJoinRequestNotPartOfEncounterException();
     }
 
     public void declineJoinRequest(Long joinRequestId) {
@@ -151,6 +167,8 @@ public final class EncounterModel {
                 return;
             }
         }
+
+        this.throwJoinRequestNotPartOfEncounterException();
     }
 
     public void addParticipant(EncounterParticipantModel participant) {
@@ -248,4 +266,11 @@ public final class EncounterModel {
         }
     }
     //endregion
+
+    private void throwJoinRequestNotPartOfEncounterException() {
+        throw new BusinessRuleViolationException(
+                BusinessRuleViolation.ENCOUNTER_JOIN_REQUEST_NOT_PART_OF_ENCOUNTER,
+                "Join request does not belong to the specified encounter."
+        );
+    }
 }

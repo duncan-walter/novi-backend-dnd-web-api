@@ -6,6 +6,7 @@ import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterAlign
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.CharacterModel;
 import walter.duncan.dndwebapi.dtos.charactermanagement.CharacterRequestDto;
 import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
+import walter.duncan.dndwebapi.entities.usermanagement.UserEntity;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterPersistenceMapper;
 import walter.duncan.dndwebapi.services.charactermanagement.CharacterClassService;
 import walter.duncan.dndwebapi.services.charactermanagement.CharacterRaceService;
@@ -41,7 +42,7 @@ public class CharacterFactory {
         return model;
     }
 
-    public CharacterModel create(CharacterRequestDto requestDto) {
+    public CharacterModel create(CharacterRequestDto requestDto, UserEntity user) {
         var model = CharacterModel.create(
                 requestDto.name(),
                 requestDto.charisma(),
@@ -63,7 +64,8 @@ public class CharacterFactory {
                 CharacterAlignment.fromCode(requestDto.alignmentCode()),
                 this.characterTypeService.findById(requestDto.typeId()),
                 this.characterRaceService.findById(requestDto.raceId()),
-                this.characterClassService.findById(requestDto.classId())
+                this.characterClassService.findById(requestDto.classId()),
+                user
         );
 
         if (requestDto.inventory() != null) {
@@ -74,8 +76,8 @@ public class CharacterFactory {
         return model;
     }
 
-    public CharacterModel create(Long id, CharacterRequestDto requestDto) {
-        var model = this.create(requestDto);
+    public CharacterModel create(Long id, CharacterRequestDto requestDto, UserEntity user) {
+        var model = this.create(requestDto, user);
         model.setId(id);
 
         return model;

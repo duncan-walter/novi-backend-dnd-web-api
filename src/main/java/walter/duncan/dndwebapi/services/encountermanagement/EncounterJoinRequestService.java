@@ -2,6 +2,7 @@ package walter.duncan.dndwebapi.services.encountermanagement;
 
 import java.util.List;
 import java.util.Set;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,17 +45,17 @@ public class EncounterJoinRequestService extends BaseService<EncounterJoinReques
         this.encounterPersistenceMapper = encounterPersistenceMapper;
     }
 
-    public Set<EncounterJoinRequestModel> findAllByEncounterId(Long encounterId) {
-        this.encounterService.existsByIdOrThrow(encounterId);
+    public Set<EncounterJoinRequestModel> findAllByEncounterId(Long encounterId, Jwt jwt) {
+        this.encounterService.getOwnedEncounterOrThrow(encounterId, jwt);
 
         return this.mapper.toModels(this.repository.findByEncounterId(encounterId));
     }
 
     @Transactional
-    public EncounterJoinRequestModel create(Long encounterId, EncounterJoinRequestRequestDto requestDto) {
+    public EncounterJoinRequestModel create(Long encounterId, EncounterJoinRequestRequestDto requestDto, Jwt jwt) {
         var encounterEntity = this.encounterService.findByIdOrThrow(encounterId);
         var encounterModel = this.encounterPersistenceMapper.toModel(encounterEntity);
-        var characterModel = this.characterService.findById(requestDto.characterId());
+        var characterModel = this.characterService.findByIdForUser(requestDto.characterId(), jwt);
         var encounterJoinRequestModel = EncounterJoinRequestModel.create(requestDto.initiative(), encounterModel, characterModel);
 
         // Validates there is only one pending
@@ -90,10 +91,11 @@ public class EncounterJoinRequestService extends BaseService<EncounterJoinReques
     public EncounterJoinRequestModel updateState(
             Long encounterId,
             Long joinRequestId,
-            EncounterJoinRequestStateUpdateRequestDto requestDto
+            EncounterJoinRequestStateUpdateRequestDto requestDto,
+            Jwt jwt
     ) {
         this.existsByIdOrThrow(joinRequestId);
-        var encounterEntity = this.encounterService.findByIdOrThrow(encounterId);
+        var encounterEntity = this.encounterService.getOwnedEncounterOrThrow(encounterId, jwt);
         var encounterModel = this.encounterPersistenceMapper.toModel(encounterEntity);
 
         switch (walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterJoinRequestState.fromName(requestDto.state())) {

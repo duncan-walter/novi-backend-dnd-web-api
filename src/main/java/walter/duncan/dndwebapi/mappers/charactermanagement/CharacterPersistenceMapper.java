@@ -54,7 +54,8 @@ public final class CharacterPersistenceMapper
                 this.mapAlignment(entity.getAlignment()),
                 this.characterTypePersistenceMapper.toModel(entity.getType()),
                 this.characterRacePersistenceMapper.toModel(entity.getRace()),
-                this.characterClassPersistenceMapper.toModel(entity.getCharacterClass())
+                this.characterClassPersistenceMapper.toModel(entity.getCharacterClass()),
+                entity.getUser()
         );
     }
 
@@ -93,6 +94,7 @@ public final class CharacterPersistenceMapper
         entity.setRace(this.characterRacePersistenceMapper.toEntity(model.getRace()));
         entity.setCharacterClass(this.characterClassPersistenceMapper.toEntity(model.getCharacterClass()));
         entity.setInventory(this.characterInventoryItemPersistenceMapper.toEntities(model.getInventory()));
+        entity.setUser(model.getUser());
     }
 
     private CharacterAlignment mapAlignment(walter.duncan.dndwebapi.entities.charactermanagement.CharacterAlignment persistedAlignment) {

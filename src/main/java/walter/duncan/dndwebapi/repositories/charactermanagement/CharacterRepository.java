@@ -1,5 +1,7 @@
 package walter.duncan.dndwebapi.repositories.charactermanagement;
 
+import java.util.List;
+import java.util.Optional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
 import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemType;
+import walter.duncan.dndwebapi.entities.usermanagement.UserEntity;
 
 @Repository
 public interface CharacterRepository extends JpaRepository<@NonNull CharacterEntity, @NonNull Long> {
@@ -23,4 +26,8 @@ public interface CharacterRepository extends JpaRepository<@NonNull CharacterEnt
             @Param("referenceId") Long referenceId,
             @Param("type") CharacterInventoryItemType type
     );
+
+    List<CharacterEntity> findByUser(UserEntity user);
+    Optional<CharacterEntity> findByIdAndUser(Long id, UserEntity user);
+    boolean existsByIdAndUser(Long id, UserEntity user);
 }

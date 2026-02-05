@@ -1,6 +1,7 @@
 package walter.duncan.dndwebapi.businessmodels.charactermanagement;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.inventory.CharacterInventoryItemModel;
+import walter.duncan.dndwebapi.entities.usermanagement.UserEntity;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolation;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 
@@ -36,6 +37,7 @@ public final class CharacterModel {
     private CharacterRaceModel race;
     private CharacterClassModel characterClass;
     private List<CharacterInventoryItemModel> inventory = new ArrayList<>();
+    private UserEntity user;
     //endregion
 
     //region Constructors
@@ -47,7 +49,8 @@ public final class CharacterModel {
             Long id, String name, int charisma, int constitution, int dexterity, int intelligence, int strength, int wisdom,
             int maxHitPoints, int currentHitPoints, int experiencePoints, String size, Integer copperPieces, Integer silverPieces,
             Integer electrumPieces, Integer goldPieces, Integer platinumPieces, String notes, CharacterPortraitModel portrait,
-            CharacterAlignment alignment, CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass
+            CharacterAlignment alignment, CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass,
+            UserEntity user
     ) {
         this.id = id;
         this.name = name;
@@ -72,6 +75,7 @@ public final class CharacterModel {
         this.type = type;
         this.race = race;
         this.characterClass = characterClass;
+        this.user = user;
     }
     //endregion
 
@@ -80,7 +84,7 @@ public final class CharacterModel {
             String name, int charisma, int constitution, int dexterity, int intelligence, int strength, int wisdom,
             int maxHitPoints, int currentHitPoints, int experiencePoints, String size, Integer copperPieces, Integer silverPieces,
             Integer electrumPieces, Integer goldPieces, Integer platinumPieces, String notes, CharacterAlignment alignment,
-            CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass
+            CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass, UserEntity user
     ) {
         var model = new CharacterModel(null);
         model.setName(name);
@@ -104,6 +108,7 @@ public final class CharacterModel {
         model.setType(type);
         model.setRace(race);
         model.setCharacterClass(characterClass);
+        model.setUser(user);
 
         return model;
     }
@@ -112,12 +117,13 @@ public final class CharacterModel {
             Long id, String name, int charisma, int constitution, int dexterity, int intelligence, int strength, int wisdom,
             int maxHitPoints, int currentHitPoints, int experiencePoints, String size, Integer copperPieces, Integer silverPieces,
             Integer electrumPieces, Integer goldPieces, Integer platinumPieces, String notes, CharacterPortraitModel portrait,
-            CharacterAlignment alignment, CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass
+            CharacterAlignment alignment, CharacterTypeModel type, CharacterRaceModel race, CharacterClassModel characterClass,
+            UserEntity user
     ) {
         return new CharacterModel(
                 id, name, charisma, constitution, dexterity, intelligence, strength, wisdom, maxHitPoints, currentHitPoints,
                 experiencePoints, size, copperPieces, silverPieces, electrumPieces, goldPieces, platinumPieces, notes,
-                portrait, alignment, type, race, characterClass
+                portrait, alignment, type, race, characterClass, user
         );
     }
     //endregion
@@ -217,6 +223,10 @@ public final class CharacterModel {
 
     public List<CharacterInventoryItemModel> getInventory() {
         return this.inventory;
+    }
+
+    public UserEntity getUser() {
+        return this.user;
     }
     //endregion
 
@@ -383,6 +393,10 @@ public final class CharacterModel {
         }
 
         this.inventory = inventory;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
     //endregion
 

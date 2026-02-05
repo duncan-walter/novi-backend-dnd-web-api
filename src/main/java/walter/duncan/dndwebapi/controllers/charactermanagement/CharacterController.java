@@ -7,6 +7,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,22 +40,22 @@ public class CharacterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<@NonNull CharacterResponseDto> getById(@PathVariable Long id) {
-        var responseDto = this.mapper.toDto(this.characterService.findById(id));
+    public ResponseEntity<@NonNull CharacterResponseDto> getById(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
+        var responseDto = this.mapper.toDto(this.characterService.findByIdForUser(id, jwt));
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping
-    public ResponseEntity<@NonNull List<CharacterResponseDto>> get() {
-        var responseDtos = this.mapper.toDtos(this.characterService.findAll());
+    public ResponseEntity<@NonNull List<CharacterResponseDto>> get(@AuthenticationPrincipal Jwt jwt) {
+        var responseDtos = this.mapper.toDtos(this.characterService.findAllForUser(jwt));
 
         return ResponseEntity.ok(responseDtos);
     }
 
     @PostMapping
-    public ResponseEntity<@NonNull CharacterResponseDto> create(@RequestBody @Valid CharacterRequestDto requestDto) {
-        var responseDto = this.mapper.toDto(this.characterService.create(requestDto));
+    public ResponseEntity<@NonNull CharacterResponseDto> create(@RequestBody @Valid CharacterRequestDto requestDto, @AuthenticationPrincipal Jwt jwt) {
+        var responseDto = this.mapper.toDto(this.characterService.create(requestDto, jwt));
         var location = this.urlHelper.getResourceUri(responseDto.id());
 
         return ResponseEntity
@@ -62,8 +64,8 @@ public class CharacterController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<@NonNull CharacterResponseDto> update(@PathVariable Long id, @RequestBody @Valid CharacterRequestDto requestDto) {
-        var responseDto = this.mapper.toDto(this.characterService.update(id, requestDto));
+    public ResponseEntity<@NonNull CharacterResponseDto> update(@PathVariable Long id, @RequestBody @Valid CharacterRequestDto requestDto, @AuthenticationPrincipal Jwt jwt) {
+        var responseDto = this.mapper.toDto(this.characterService.update(id, requestDto, jwt));
         var location = this.urlHelper.getResourceUri(responseDto.id());
 
         return ResponseEntity
@@ -73,15 +75,15 @@ public class CharacterController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<@NonNull Object> delete(@PathVariable Long id) {
-        this.characterService.deleteById(id);
+    public ResponseEntity<@NonNull Object> delete(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
+        this.characterService.deleteById(id, jwt);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/portrait")
-    public ResponseEntity<@NonNull Resource> getPortrait(@PathVariable Long id) {
-        var portrait = this.characterService.getPortrait(id);
+    public ResponseEntity<@NonNull Resource> getPortrait(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
+        var portrait = this.characterService.getPortrait(id, jwt);
         var mimeType = this.mimeTypeHelper.getMimeType(portrait);
 
         return ResponseEntity
@@ -92,8 +94,8 @@ public class CharacterController {
     }
 
     @PutMapping("/{id}/portrait")
-    public ResponseEntity<@NonNull CharacterResponseDto> uploadPortrait(@PathVariable Long id, @RequestBody MultipartFile portrait) {
-        var responseDto = this.mapper.toDto(this.characterService.updatePortrait(id, portrait));
+    public ResponseEntity<@NonNull CharacterResponseDto> uploadPortrait(@PathVariable Long id, @RequestBody MultipartFile portrait, @AuthenticationPrincipal Jwt jwt) {
+        var responseDto = this.mapper.toDto(this.characterService.updatePortrait(id, portrait, jwt));
         var location = this.urlHelper.getResourceUri(id);
 
         return ResponseEntity

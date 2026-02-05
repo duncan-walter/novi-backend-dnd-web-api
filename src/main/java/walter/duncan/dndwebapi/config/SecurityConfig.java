@@ -53,6 +53,9 @@ public class SecurityConfig {
                 // Character endpoints
                 .requestMatchers("/characters/**").hasAnyRole("DUNGEON_MASTER", "PLAYER")
 
+                // Public
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
                 // Authenticated
                 .requestMatchers("/**").authenticated() // Any user is required to be authenticated for any endpoint
 

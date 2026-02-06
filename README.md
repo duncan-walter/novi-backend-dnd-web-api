@@ -137,17 +137,84 @@ Spring Boot 4.0
 JUnit
 
 ## Benodigdheden
-Windows
-Java (versie)
-Postgresql (versie)
-Git
-Maven Wrapper (bijgeleverd)
-Internetverbinding (tijdens clonen)
+De onderstaande benodigdheden zijn nodig om deze applicatie te kunnen runnen. Zorg dat deze zijn geïnstalleerd voordat de installatiestappen worden opgevolgd.
 
-Postman (testen)
+- Een LTS-versie van Java (25 is gebruikt als runtime tijdens development)
+- PostgreSQL 18.1
+- pgAdmin 4
+- Maven / Maven Wrapper (bijgeleverd)
+- IntelliJ IDEA
+- Postman (desktop app)
+- Je favoriete browser (voor Swagger)
+- Windows 11
+- Internetverbinding (tijdens het clonen)
+- Git
+
+> **_NOTITIE_**: Een ander besturingssysteem of IDE zijn toegestaan, maar daar wordt geen rekening mee gehouden tijdens de installatiestappen.
+
+> **TIP**: Tijdens de PostgreSQL-installatie moet een gebruikersnaam en wachtwoord worden opgegeven; onthoud deze goed. Deze zijn namelijk nodig om de applicatie te kunnen draaien.
 
 ## Installatie stappen
-1. Zorg dat alle 
+
+1. **Installeer alle benodigdheden**  
+Zorg dat alle [benodigdheden](#benodigdheden) zijn geïnstalleerd.  
+
+2. **Maak een nieuwe database aan**  
+Open pgAdmin en login met de inloggegevens die tijdens de installatie van PostgreSQL is opgegeven.
+Maak een nieuwe database aan door met de rechtermuisknop op Databases (in Servers > PostgreSQL 18) te klikken. Geef de database een naam en druk op "save".
+
+3. **Clone de repository**  
+Clone de source code naar de lokale machine via `git clone` of download het project op een andere manier.
+
+4. **Maak een `.env`-bestand aan**  
+Kopieer het bestand `.env.dist` naar de root van het project en hernoem het naar `.env`.
+
+5. **Vul het `.env`-bestand met de juiste waarden**  
+Hoewel environment variabelen normaal gesproken niet openbaar gedeeld worden, zijn ze in dit geval
+toegevoegd zodat de applicatie correct kan functioneren tijdens de beoordeling. Voeg de onderstaande
+waarden toe aan het zojuist aangemaakte `.env`-bestand:
+   ```
+   SERVER_PORT=8080
+   SPRING_DATASOURCE_URL_HOST=localhost
+   SPRING_DATASOURCE_URL_PORT=5432
+   SPRING_DATASOURCE_URL_DATABASE_NAME=<naam van de database in stap 2>
+   SPRING_DATASOURCE_USERNAME=<gebruikersnaam opgegeven tijdens de PostgreSQL installatie>
+   SPRING_DATASOURCE_PASSWORD=<wachtwoord opgegeven tijdens de PostgreSQL installatie>
+   ```
+   
+6. **Installeer en start Keycloak**  
+Download link: https://github.com/keycloak/keycloak/releases/download/26.5.2/keycloak-26.5.2.zip  
+Pak het zip-bestand uit in een locatie naar keuze. Navigeer in de terminal naar deze locatie en voer het volgende commando uit:  
+    ```bash
+    bin\kc.bat start-dev --http-port 9090
+    ```
+Zorg dat Java's PATH variabel juist staat geïnstalleerd als dit niet goed werkt.
+
+7. **Importeer het realm bestand**
+
+8. **Installeer de benodigde dependencies**  
+Open het project in IntelliJ IDEA via File > Open door in de pop-up naar het project te navigeren en de pom.xml te openen.
+IntelliJ IDEA zal vragen hoe dit project geopend moet worden, open het project via "Open as Project".
+Wacht totdat alle dependencies door Maven geïnstalleerd zijn of ga naar pom.xml en druk op Sync Maven Changes om Maven een duwtje te geven.
+
+9. **Start de applicatie**  
+Start de web-API vanuit de root van het project met het volgende commando:
+    ```bash
+    ./mvnw spring-boot:run
+    ```
+
+> **_NOTITIE_**:  
+> Om Swagger correct te laten werken **moet de web-API op poort 8080 draaien**. Dit is nodig vanwege de Swagger OAuth 2.0 authentication flow, die gebruikmaakt van de volgende redirect-URL:
+> 
+> `http://localhost:{port}/swagger-ui/oauth2-redirect.html`  
+> 
+> In principe is de poort in deze redirect-URL dynamisch en afhankelijk van de poort waarop de web-API wordt gehost.
+> Omdat er echter ook een authentication gedraaid wordt (Keycloak), moeten toegestane redirect-URL’s expliciet worden geregistreerd op de client binnen een realm.
+> 
+> Keycloak ondersteunt geen wildcards in het midden van een stringwaarde. Daarom is de toegestane redirect-URL in Keycloak vast ingesteld op:
+> 
+> `http://localhost:8080/swagger-ui/oauth2-redirect.html`
+
 ## Testen
 ### Testdata
 Om direct relevante handmatige tests uit te kunnen voeren wordt de database bij iedere start up van de applicatie gevuld met standaard gegevens.
@@ -187,7 +254,7 @@ De applicatie kent 3 verschillende rollen, ieder moet hun eigen bevoegdheden.
 | Dungeon master | Characters beheren (CRUD), Encounters beheren (ophalen, aanmaken, participant toevoegen, starten, volgende beurt geven, sluiten), Join Request van Encounters beheren (ophalen en goed- of afkeuren), Equipment- en Weapon-informatie ophalen |
 | Admin          | Game information beheren (CRUD)                                                                                                                                                                                                               |
 
-Door de import van `dnd-app-realm.json` staan er standaard 3 gebruiker klaar om mee te testen: 
+Door de import van `dnd-app-realm.json` staan er standaard 3 gebruikers klaar om mee te testen: 
 
 | Gebruikersnaam  | Wachtwoord      | Toegewezen rol(len)           | Opmerking                                           |
 |-----------------|-----------------|-------------------------------|-----------------------------------------------------|

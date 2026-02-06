@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.config;
+package walter.duncan.dndwebapi.config.openapi;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -34,16 +34,22 @@ public class SwaggerConfig {
                         .title("Dungeons & Dragons web-API")
                         .version("v1")
                         .description("""
+## Summary
 This web-API provides endpoints for managing characters, encounters, weapons, and equipment in a D&D game.
 
-**Roles & Permissions:**
+## Roles & Permissions
 - **Player**: Can manage their own characters (CRUD, including portraits), read weapons and equipment, send join requests to encounters, and read encounters.
 - **Dungeon Master**: Can manage characters and portraits, read weapons and equipment, create and read encounters, and directly add participants to encounters.
 - **Admin**: Can specifically CRUD weapons and equipment.
 
 Authentication is done via OAuth2.0 / OpenID Connect (Keycloak).
 
-*Login credentials are provided in the README.md of this repository.*
+## Test accounts
+|Role|Username|Password|Notes|
+|-|-|-|-|
+|Player|player1|player1|Has 5 characters seeded|
+|Dungeon Master|dungeon-master1|dungeon-master1|Has 1 encounter seeded|
+|Admin|admin1|admin1|-|
 """
                         )
                 )

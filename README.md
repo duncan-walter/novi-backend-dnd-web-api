@@ -224,13 +224,8 @@ Pak het zip-bestand uit in een locatie naar keuze. Navigeer in de terminal naar 
 Navigeer in de browser naar http://localhost:9090/ en login met je logingegevens of maak deze aan als dit de eerste keer is dat deze installatie van Keycloak wordt opgestart.
 Ga naar "Manage Realms" en druk op "Create realm". Voeg in de pop-up het bestand `/keycloak/dnd-app-realm.json` uit dit project toe als resource file en druk op "Create". 
 
-8. **Installeer de benodigde dependencies**  
-Open het project in IntelliJ IDEA via File > Open door in de pop-up naar het project te navigeren en de pom.xml te openen.
-IntelliJ IDEA zal vragen hoe dit project geopend moet worden, open het project via "Open as Project".
-Wacht totdat alle dependencies door Maven geïnstalleerd zijn of ga naar pom.xml en druk op Sync Maven Changes om Maven een duwtje te geven.
-
 9. **Start de applicatie**  
-Start de web-API vanuit de terminal in de root van het project met het volgende commando:
+Start de web-API vanuit de terminal in de root van het project met het volgende commando (afhankelijk van OS):
     ```bash
     ./mvnw spring-boot:run
     ```

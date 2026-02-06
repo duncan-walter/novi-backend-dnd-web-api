@@ -36,7 +36,7 @@ public class SecurityConfig {
     private static void addGlobalEndpointSecurity(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
         authorize
                 // Weapon & Equipment endpoints
-                .requestMatchers(HttpMethod.GET, "/weapons", "/weapons/{id}").hasAnyRole("ADMIN", "DUNGEON_MASTER", "PLAYER")
+                .requestMatchers(HttpMethod.GET, "/weapons", "/weapons/{id}", "/equipment", "/equipment/{id}").hasAnyRole("ADMIN", "DUNGEON_MASTER", "PLAYER")
                 .requestMatchers(HttpMethod.POST,"/weapons", "/equipment").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT,"/weapons/{id}", "/equipment/{id}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/weapons/{id}", "/equipment/{id}").hasRole("ADMIN")

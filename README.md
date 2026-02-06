@@ -160,7 +160,7 @@ De onderstaande benodigdheden zijn nodig om deze applicatie te kunnen runnen. Zo
 Zorg dat alle [benodigdheden](#benodigdheden) zijn geïnstalleerd.  
 
 2. **Maak een nieuwe database aan**  
-Open pgAdmin en login met de inloggegevens die tijdens de installatie van PostgreSQL is opgegeven.
+Open pgAdmin en login met de inloggegevens die tijdens de installatie van PostgreSQL zijn opgegeven.
 Maak een nieuwe database aan door met de rechtermuisknop op Databases (in Servers > PostgreSQL 18) te klikken. Geef de database een naam en druk op "save".
 
 3. **Clone de repository**  
@@ -188,9 +188,10 @@ Pak het zip-bestand uit in een locatie naar keuze. Navigeer in de terminal naar 
     ```bash
     bin\kc.bat start-dev --http-port 9090
     ```
-Zorg dat Java's PATH variabel juist staat geïnstalleerd als dit niet goed werkt.
 
 7. **Importeer het realm bestand**
+Navigeer in de browser naar http://localhost:9090/ en login met je logingegevens of maak deze aan als dit de eerste keer is dat deze installatie van Keycloak wordt opgestart.
+Ga naar "Manage Realms" en druk op "Create realm". Voeg in de pop-up het `/keycloak/dnd-app-realm.json` bestand toe als resource file en druk op "Create". 
 
 8. **Installeer de benodigde dependencies**  
 Open het project in IntelliJ IDEA via File > Open door in de pop-up naar het project te navigeren en de pom.xml te openen.
@@ -198,7 +199,7 @@ IntelliJ IDEA zal vragen hoe dit project geopend moet worden, open het project v
 Wacht totdat alle dependencies door Maven geïnstalleerd zijn of ga naar pom.xml en druk op Sync Maven Changes om Maven een duwtje te geven.
 
 9. **Start de applicatie**  
-Start de web-API vanuit de root van het project met het volgende commando:
+Start de web-API vanuit de terminal in de root van het project met het volgende commando:
     ```bash
     ./mvnw spring-boot:run
     ```
@@ -214,6 +215,8 @@ Start de web-API vanuit de root van het project met het volgende commando:
 > Keycloak ondersteunt geen wildcards in het midden van een stringwaarde. Daarom is de toegestane redirect-URL in Keycloak vast ingesteld op:
 > 
 > `http://localhost:8080/swagger-ui/oauth2-redirect.html`
+
+> **_NOTITIE_**: Werkt het starten van Keycloak niet goed? Zorg dan dat Java's PATH variabel juist staat ingesteld.
 
 ## Testen
 ### Testdata

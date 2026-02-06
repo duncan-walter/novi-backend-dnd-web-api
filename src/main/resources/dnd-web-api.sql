@@ -29,7 +29,7 @@ VALUES ('Human', 'Versatile and ambitious, humans adapt quickly and thrive in al
        ('Halfling', 'Small, nimble people with quiet courage and surprising resilience.', 25, NOW(), NOW()),
        ('Half-Elf', 'Born of both human ambition and elven grace, half-elves move easily between worlds.', 30, NOW(), NOW());
 
--- Character races data
+-- Character classes data
 INSERT INTO character_classes (name, hit_die, created_at, updated_at)
 VALUES ('Wizard',6,NOW(),NOW()),
        ('Ranger',10,NOW(),NOW()),

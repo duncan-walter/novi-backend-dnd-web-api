@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import walter.duncan.dndwebapi.config.openapi.annotations.encountermanagement.*;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterResponseDto;
@@ -16,6 +17,7 @@ import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterActionRequestDt
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterResponseMapper;
 import walter.duncan.dndwebapi.services.encountermanagement.EncounterService;
 
+@EncounterManagementTag
 @RestController
 @RequestMapping("/encounters")
 public class EncounterController {
@@ -33,16 +35,19 @@ public class EncounterController {
         this.urlHelper = urlHelper;
     }
 
+    @GetByIdEncounterDocs
     @GetMapping("/{id}")
     public ResponseEntity<@NonNull EncounterResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(this.mapper.toDto(this.encounterService.findById(id)));
     }
 
+    @GetEncounterDocs
     @GetMapping
     public ResponseEntity<@NonNull Set<EncounterResponseDto>> get() {
         return ResponseEntity.ok(this.mapper.toDtos(this.encounterService.findAll()));
     }
 
+    @CreateEncounterDocs
     @PostMapping
     public ResponseEntity<@NonNull EncounterResponseDto> create(
             @RequestBody @Valid EncounterRequestDto requestDto,
@@ -56,6 +61,7 @@ public class EncounterController {
                 .body(responseDto);
     }
 
+    @AddEncounterParticipantDocs
     @PostMapping("/{id}/participants")
     public ResponseEntity<@NonNull EncounterResponseDto> addParticipant(
             @PathVariable Long id,
@@ -75,6 +81,7 @@ public class EncounterController {
                 .body(responseDto);
     }
 
+    @EncounterActionDocs
     @PatchMapping("/{id}")
     public ResponseEntity<@NonNull EncounterResponseDto> action(
             @PathVariable Long id,

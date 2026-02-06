@@ -19,6 +19,7 @@ but all subsequent chapters will be written in Dutch as required for my assessme
   - [Geautomatiseerde testen](#geautomatiseerde-testen)
     - [Integratietests](#integratietests)
     - [Unit-tests](#unit-tests)
+- [Overige toelichting](#overige-toelichting)
 
 ## Inleiding
 
@@ -46,8 +47,36 @@ De frontend-applicatie zelf valt buiten de scope van dit project. De belangrijks
 > Vanaf nu wordt de Engelse term gebruikt om de verbinding met de code beter te kunnen maken.
 
 ## Projectstructuur
-Dit project gebruikt... controller > service > repository (duh)
-DTO's, business models, entities
+Dit project maakt gebruik van een **gelaagde architectuur**. Controllers zijn het start- en eindpunt van een verzoek naar de web-API.
+Zij definiëren de endpoints en hoe een verzoek eruit moet zien. Controller werken samen met services, waarin businesslogica leeft
+en alle business rules worden gevalideerd.
+
+Om de Separation of Concerns (SOLID-principe "S") te respecteren, is er een duidelijke scheiding tussen DTO's, business models en entities:
+- DTO's verzorgen de communicatie tussen de client en de web-API.
+- Business models bevatten de businesslogica en de meeste business rule validations, inclusief berekende velden o.b.v. businesslogica.
+- Entities representeren de database-objecten, relaties en constraints van data.
+
+### Doorsnee POST-request flow
+Een typisch POST request doorloopt in dit project de volgende stappen:
+1. De controller ontvangt het verzoek van de client.
+2. Jackson mapt de JSON-requestbody naar een request DTO en valideer de velden.
+3. De controller stuurt het request DTO door naar de service.
+4. De service zet het request DTO om naar een business model en voert validaties uit volgens de business rules.
+5. Extra validaties die niet in het business model passen worden door de service uitgevoerd.
+6. De service mapt het business model naar een entity.
+7. De repository slaat de entity op via Hibernate (ORM) en retourneert de opgeslagen entity.
+8. De service zet het entity terug naar een business model en stuurt dit naar de controller.
+9. De controller mapt het busines model naar een response DTO met de berekende velden.
+10. Jackson zet het response DTO om naar een JSON-responsebody en de client ontvangt het antwoord.
+
+### Domeinen en mappenstructuur
+Binnen dit project, en de mappenstructuur, is er een duidelijke splitsing tussen verschillende domeinen.
+Doordat er veel verschillende bestanden zijn, wordt hier ook onderscheid gemaakt in de mappenstructuur. De domeinen zijn:
+- Character management
+- Game information
+- Encounter management
+
+Bekijk hieronder de volledige mappenstructuur:
 <details>
 
 <summary>Mappenstructuur</summary>
@@ -56,8 +85,6 @@ DTO's, business models, entities
 ├───.idea
 ├───.mvn
 │   └───wrapper
-├───documentation
-│   └───sequence-diagrams
 ├───keycloak
 ├───src
 │   ├───main
@@ -132,9 +159,13 @@ DTO's, business models, entities
 </details>
 
 ## Technieken & frameworks
-Keycloak
-Spring Boot 4.0
-JUnit
+De volgende technieken en frameworks zijn gebruikt om de web-API te realiseren:
+
+- Spring Boot 4.0 voor het bouwen van de web-API.
+- PostgreSQL 18.1 voor de relationele database voor opslag.
+- Keycloak voor Identity & Access Management (OAuth2/OpenID Connect).
+- Postman & Swagger voor API-documentatie en endpoint-testing.
+- JUnit voor integratietests en unit-tests.
 
 ## Benodigdheden
 De onderstaande benodigdheden zijn nodig om deze applicatie te kunnen runnen. Zorg dat deze zijn geïnstalleerd voordat de installatiestappen worden opgevolgd.
@@ -167,7 +198,7 @@ Maak een nieuwe database aan door met de rechtermuisknop op Databases (in Server
 Clone de source code naar de lokale machine via `git clone` of download het project op een andere manier.
 
 4. **Maak een `.env`-bestand aan**  
-Kopieer het bestand `.env.dist` naar de root van het project en hernoem het naar `.env`.
+Kopieer het bestand `.env.dist` uit dit project naar de root van het project en hernoem het naar `.env`.
 
 5. **Vul het `.env`-bestand met de juiste waarden**  
 Hoewel environment variabelen normaal gesproken niet openbaar gedeeld worden, zijn ze in dit geval
@@ -191,7 +222,7 @@ Pak het zip-bestand uit in een locatie naar keuze. Navigeer in de terminal naar 
 
 7. **Importeer het realm bestand**
 Navigeer in de browser naar http://localhost:9090/ en login met je logingegevens of maak deze aan als dit de eerste keer is dat deze installatie van Keycloak wordt opgestart.
-Ga naar "Manage Realms" en druk op "Create realm". Voeg in de pop-up het `/keycloak/dnd-app-realm.json` bestand toe als resource file en druk op "Create". 
+Ga naar "Manage Realms" en druk op "Create realm". Voeg in de pop-up het bestand `/keycloak/dnd-app-realm.json` uit dit project toe als resource file en druk op "Create". 
 
 8. **Installeer de benodigde dependencies**  
 Open het project in IntelliJ IDEA via File > Open door in de pop-up naar het project te navigeren en de pom.xml te openen.
@@ -249,6 +280,9 @@ De volgende testdata is bij iedere start up beschikbaar:
   * 3 approved, 1 declined, 1 pending
 
 ### Gebruikers & rollen
+Het is mogelijk om een account te registreren via het Keycloak loginscherm, druk daar op registeren en maak een account aan. Het account krijgt standaard de PLAYER role.
+Dungeon master en admin rollen worden door de beheerder van de applicatie toegewezen via Keycloak. Zelf registreren als dungeon master of admin is niet mogelijk.
+
 De applicatie kent 3 verschillende rollen, ieder moet hun eigen bevoegdheden.
 
 | Rol            | Bevoegdheid                                                                                                                                                                                                                                   |
@@ -266,17 +300,58 @@ Door de import van `dnd-app-realm.json` staan er standaard 3 gebruikers klaar om
 | admin1          | admin1          | PLAYER, DUNGEON_MASTER, ADMIN | Kan alles (binnen de business rules 😉)             |
 
 ### Handmatig testen
-Dit project ondersteund officieel twee verschillende manier om handmatig te testen. Hieronder wordt beschreven
-hoe Postman en Swagger gebruikt kunnen worden om handmatig te testen.
+Dit project ondersteund officieel twee manieren om handmatig te testen.
+Hieronder wordt beschreven hoe Postman en Swagger gebruikt kunnen worden om handmatig te testen.
+
+> **_NOTITIE_**: Binnen de applicatie zijn veel business rules van kracht. Hierdoor is het eenvoudig om een request te versturen dat door de web-API wordt geweigerd.
+> Daarnaast zijn bepaalde resources, zoals characters en encounters, alleen toegankelijk onder specifieke voorwaarden (bijvoorbeeld op basis van autorisatie of geldige data)
 
 #### Postman
-...uitleg over hoe postman gebruikt kan worden...
+Voor handmatig testen is een Postman-collectie beschikbaar met vooraf ingestelde requests die eenvoudig aan te passen zijn.
+Importeer `/src/main/resources/DnD web-API.postman_collection.json` in de Postman desktop app.
+
+De security is binnen Postman geregeld via de Authorization-tab van de geïmporteerde collectie.
+- Klik op de geïmporteerde collectie
+- Klik in het detailscherm op de Authorization-tab
+- Scroll naar benden en druk op "Get New Access Token"
+- Login met een van de accounts uit het [Gebruikers & Rollen](#gebruikers--rollen) hoofdstuk.
+
+> **_NOTITIE_**: Standaard vewijst de baseUrl naar http://localhost:8080 en is de authenticatie afgestemd op poort 9090.
+> Stel de collectie variabelen in indien dat nodig is.
 
 #### Swagger
-...uitleg over hoe swagger gebruikt kan worden en waar op gelet moet worden...
+Swagger kan ook worden gebruikt om handmatig te testen, maar is voornamelijk bedoeld voor de documentatie van de web-API.
+Om Swagger te gebruiken moeten de web-API en Keycloak draaien. Navigeer naar `http://localhost:8080/swagger-ui/index.html` terwijl de web-API en Keycloak draaien.
+
+De security is binnen Swagger geregeld met een geconfigureerde OAuth2.0 flow.
+Druk op de Swagger-pagina rechtsboven op "Authorize". De client_id en client_secret zijn al ingevuld, druk nogmaals op "Authorize".
+Log nu bij Keycloak in met een van de accounts uit het [Gebruikers & Rollen](#gebruikers--rollen) hoofdstuk.
+
+Voor het gemak hebben de volgende requests een voorbeeld request body geconfigureerd (you're welcome 😉):
+- POST /characters
+- PUT /characters/{id}
+- POST /encounters
+- POST /equipment
+- PUT /equipment/{id}
+- POST /weapons
+- PUT /weapons/{id}
+
+> **_NOTITIE_**: Het is niet mogelijk om via Swagger een character portrait te uploaden, wel om er een op te halen.
+> Dit is wel mogelijk met Postman of andere verzoeken zoals via de browser zelf in een frontend-applicatie. Dit is een configuratie pijnpunt van Swagger.
 
 ### Geautomatiseerde testen
 Deze applicatie bevat geen line coverage van 100% over alle files. Maar het bevat wel...
 #### Integratietests
 
 #### Unit-tests
+
+### Overige toelichting
+De volgende entiteiten bestaan puur om het character gedeelte van de applicatie netjes op te splitsen: CharacterType, CharacterRace, CharacterClass.
+Er zijn voor deze entiteiten testgegevens beschikbaar. Hier moet naar worden verwezen tijdens het aanmaken en updaten van een Character (typeId, raceId & classId).
+Momenteel zijn er geen CRUD-acties voor deze entiteiten. De volgende id's zijn valide:
+
+| Entiteit       | Id's          |
+|----------------|---------------|
+| CharacterType  | 1, 2, 3, 4    |
+| CharacterRace  | 1, 2, 3, 4, 5 |
+| CharacterClass | 1, 2, 3, 4, 5 |

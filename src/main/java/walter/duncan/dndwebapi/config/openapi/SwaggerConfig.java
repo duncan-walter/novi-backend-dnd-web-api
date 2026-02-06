@@ -45,11 +45,11 @@ This web-API provides endpoints for managing characters, encounters, weapons, an
 Authentication is done via OAuth2.0 / OpenID Connect (Keycloak).
 
 ## Test accounts
-|Role|Username|Password|Notes|
+|Username|Password|Roles|Notes|
 |-|-|-|-|
-|Player|player1|player1|Has 5 characters seeded|
-|Dungeon Master|dungeon-master1|dungeon-master1|Has 1 encounter seeded|
-|Admin|admin1|admin1|-|
+|player1|player1|Player|Has 5 characters seeded (id = 1, 2, 3, 4 & 5)|
+|dungeon-master1|dungeon-master1|Player, Dungeon master|Has 1 encounter seeded (id = 1)|
+|admin1|admin1|Player, Dungeon master, Admin|-|
 """
                         )
                 )

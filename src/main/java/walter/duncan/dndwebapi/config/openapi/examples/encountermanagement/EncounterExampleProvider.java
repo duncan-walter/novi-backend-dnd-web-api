@@ -16,4 +16,12 @@ public class EncounterExampleProvider {
     "initiative": 25
 }
 """;
+
+    public static final String CREATE_ENCOUNTER_JOIN_REQUEST =
+"""
+{
+    "characterId": 5,
+    "initiative": 10
+}
+""";
 }

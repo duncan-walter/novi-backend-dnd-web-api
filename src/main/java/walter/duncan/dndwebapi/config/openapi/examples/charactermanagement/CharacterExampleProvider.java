@@ -35,6 +35,43 @@ public class CharacterExampleProvider {
             "referenceId": 2,
             "type": "weapon",
             "quantity": 10
+        },
+        {
+            "referenceId": 1,
+            "type": "equipment",
+            "quantity": 5
+        },
+        {
+            "type": "custom",
+            "name": "Staff of Shadowfire",
+            "description": "A blackened staff wreathed in eternal dark flames, radiating fear and burning the will of foes.",
+            "valueInCopperPieces": 500000,
+            "weightInLbs": 15,
+            "quantity": 1
+        },
+        {
+            "type": "custom",
+            "name": "Crown of the Dark Lord",
+            "description": "A spiked iron crown that grants immense authority over armies and instills dread into all who see it.",
+            "valueInCopperPieces": 750000,
+            "weightInLbs": 8,
+            "quantity": 1
+        },
+        {
+            "type": "custom",
+            "name": "Ring of Power (The One Ring)",
+            "description": "Forged in secret, this ring grants near-immortality and domination over other rings of power. Emits a faint, ominous glow.",
+            "valueInCopperPieces": 10000000,
+            "weightInLbs": 0.5,
+            "quantity": 1
+        },
+        {
+            "type": "custom",
+            "name": "Armor of Shadowsteel",
+            "description": "Black steel armor infused with dark magic, nearly indestructible and enhances the wearer's strength and presence.",
+            "valueInCopperPieces": 600000,
+            "weightInLbs": 80,
+            "quantity": 1
         }
     ]
 }

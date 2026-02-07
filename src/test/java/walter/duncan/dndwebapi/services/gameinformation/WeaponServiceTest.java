@@ -226,7 +226,7 @@ class WeaponServiceTest {
     }
 
     @Test
-    void update_shouldReturnWeaponModel_whenLongRangeIsLessThanNormalRange() {
+    void update_shouldThrowBusinessRuleViolationException_whenLongRangeIsLessThanNormalRange() {
         // Arrange
         var weaponId = 1L;
         var requestDto = mock(WeaponRequestDto.class);
@@ -283,7 +283,7 @@ class WeaponServiceTest {
     }
 
     @Test
-    void delete_shouldBusinessRuleViolation_whenWeaponExistsInInventoryItem() {
+    void delete_shouldThrowBusinessRuleViolationException_whenWeaponExistsInInventoryItem() {
         // Arrange
         var weaponId = 1L;
 

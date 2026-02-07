@@ -11,7 +11,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponResponseDto;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -36,15 +36,15 @@ public class WeaponControllerIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        var responseDto = objectMapper.readValue(
+        var weaponResponseDto = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 WeaponResponseDto.class
         );
 
         // Assert
-        assertEquals(weaponId, responseDto.getId());
-        assertEquals("Longsword", responseDto.getName());
-        assertEquals("1d8", responseDto.getDamageDice());
+        assertEquals(weaponId, weaponResponseDto.getId());
+        assertEquals("Longsword", weaponResponseDto.getName());
+        assertEquals("1d8", weaponResponseDto.getDamageDice());
     }
 
     @Test
@@ -54,5 +54,22 @@ public class WeaponControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(get("/weapons/{id}", weaponId)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void get_shouldReturnAllWeaponResponseDtos_whenWeaponsExist() throws Exception {
+        // Arrange & Act
+        var result = mockMvc.perform(get("/weapons"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        var weaponResponseDtos = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                WeaponResponseDto[].class
+        );
+
+        // Assert
+        assertTrue(weaponResponseDtos.length > 0);
     }
 }

@@ -9,7 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
+import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
 import walter.duncan.dndwebapi.entities.gameinformation.WeaponEntity;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 import walter.duncan.dndwebapi.exceptions.ResourceNotFoundException;
 import walter.duncan.dndwebapi.mappers.gameinformation.weapon.WeaponPersistenceMapper;
 import walter.duncan.dndwebapi.repositories.charactermanagement.CharacterRepository;
@@ -135,6 +137,58 @@ class WeaponServiceTest {
         assertThrows(
                 ResourceNotFoundException.class,
                 () -> weaponService.findByIds(weaponIds)
+        );
+    }
+
+    @Test
+    void create_shouldReturnWeaponModel_whenRequestHasNoBusinessRuleViolations() {
+        // Arrange
+        var requestDto = mock(WeaponRequestDto.class);
+        when(requestDto.getName()).thenReturn("Light Crossbow");
+        when(requestDto.getDescription()).thenReturn("A mechanical ranged weapon that fires bolts with high accuracy and stopping power.");
+        when(requestDto.getValueInCopperPieces()).thenReturn(2500L);
+        when(requestDto.getWeightInLbs()).thenReturn(5.0);
+        when(requestDto.getDamageDice()).thenReturn("1d8");
+        when(requestDto.getDamageType()).thenReturn("piercing");
+        when(requestDto.getRangeNormal()).thenReturn(80);
+        when(requestDto.getRangeLong()).thenReturn(320);
+        when(requestDto.getIsTwoHanded()).thenReturn(true);
+
+        var entity = mock(WeaponEntity.class);
+        var model = mock(WeaponModel.class);
+
+        when(weaponPersistenceMapper.toEntity(any(WeaponModel.class))).thenReturn(entity);
+        when(weaponRepository.save(entity)).thenReturn(entity);
+        when(weaponPersistenceMapper.toModel(entity)).thenReturn(model);
+
+        // Act
+        var result = weaponService.create(requestDto);
+
+        // Assert
+        assertSame(model, result);
+        verify(weaponPersistenceMapper).toEntity(any(WeaponModel.class));
+        verify(weaponRepository).save(entity);
+        verify(weaponPersistenceMapper).toModel(entity);
+    }
+
+    @Test
+    void create_shouldThrowBusinessRuleViolationException_whenNormalRangeExceedsLongRange() {
+        // Arrange
+        var requestDto = mock(WeaponRequestDto.class);
+        when(requestDto.getName()).thenReturn("Light Crossbow");
+        when(requestDto.getDescription()).thenReturn("A mechanical ranged weapon that fires bolts with high accuracy and stopping power.");
+        when(requestDto.getValueInCopperPieces()).thenReturn(2500L);
+        when(requestDto.getWeightInLbs()).thenReturn(5.0);
+        when(requestDto.getDamageDice()).thenReturn("1d8");
+        when(requestDto.getDamageType()).thenReturn("piercing");
+        when(requestDto.getRangeNormal()).thenReturn(320);
+        when(requestDto.getRangeLong()).thenReturn(80);
+        when(requestDto.getIsTwoHanded()).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(
+                BusinessRuleViolationException.class,
+                () -> weaponService.create(requestDto)
         );
     }
 }

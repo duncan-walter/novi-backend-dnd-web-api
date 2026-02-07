@@ -86,7 +86,7 @@ class WeaponServiceTest {
     }
 
     @Test
-    void findById_shouldThrowResourceNotFoundException_whenWeaponDoesNotExists() {
+    void findById_shouldThrowResourceNotFoundException_whenWeaponDoesNotExist() {
         // Arrange
         var weaponId = 1337L;
 
@@ -96,6 +96,45 @@ class WeaponServiceTest {
         assertThrows(
                 ResourceNotFoundException.class,
                 () -> weaponService.findById(weaponId)
+        );
+    }
+
+    @Test
+    void findByIds_shouldReturnListOfAllWeaponModels() {
+        // Arrange
+        var weaponIds = List.of(1L, 2L);
+        var entities = List.of(mock(WeaponEntity.class), mock(WeaponEntity.class));
+        var models = List.of(mock(WeaponModel.class), mock(WeaponModel.class));
+
+        when(entities.getFirst().getId()).thenReturn(weaponIds.getFirst());
+        when(entities.get(1).getId()).thenReturn(weaponIds.get(1));
+        when(weaponRepository.findAllById(weaponIds)).thenReturn(entities);
+        when(weaponPersistenceMapper.toModels(entities)).thenReturn(models);
+
+        // Act
+        var result = weaponService.findByIds(weaponIds);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsAll(models));
+        verify(weaponRepository, times(1)).findAllById(weaponIds);
+        verify(weaponPersistenceMapper, times(1)).toModels(entities);
+    }
+
+    @Test
+    void findByIds_shouldThrowResourceNotFoundException_whenAWeaponDoesNotExist() {
+        // Arrange
+        var weaponIds = List.of(1L, 2L, 3L);
+        var entities = List.of(mock(WeaponEntity.class), mock(WeaponEntity.class));
+
+        when(entities.getFirst().getId()).thenReturn(weaponIds.getFirst());
+        when(entities.get(1).getId()).thenReturn(weaponIds.get(1));
+        when(weaponRepository.findAllById(weaponIds)).thenReturn(entities);
+
+        // Act & Assert
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> weaponService.findByIds(weaponIds)
         );
     }
 }

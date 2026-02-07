@@ -166,9 +166,9 @@ class WeaponServiceTest {
 
         // Assert
         assertSame(model, result);
-        verify(weaponPersistenceMapper).toEntity(any(WeaponModel.class));
-        verify(weaponRepository).save(entity);
-        verify(weaponPersistenceMapper).toModel(entity);
+        verify(weaponPersistenceMapper, times(1)).toEntity(any(WeaponModel.class));
+        verify(weaponRepository, times(1)).save(entity);
+        verify(weaponPersistenceMapper, times(1)).toModel(entity);
     }
 
     @Test
@@ -189,6 +189,63 @@ class WeaponServiceTest {
         assertThrows(
                 BusinessRuleViolationException.class,
                 () -> weaponService.create(requestDto)
+        );
+    }
+
+    @Test
+    void update_shouldReturnWeaponModel_whenRequestHasNoBusinessRuleViolations() {
+        // Arrange
+        var weaponId = 1L;
+        var requestDto = mock(WeaponRequestDto.class);
+        when(requestDto.getName()).thenReturn("Longsword +1");
+        when(requestDto.getDescription()).thenReturn("A finely crafted longsword imbued with minor enchantments that enhance its accuracy and lethality.");
+        when(requestDto.getValueInCopperPieces()).thenReturn(30000L);
+        when(requestDto.getWeightInLbs()).thenReturn(3.0);
+        when(requestDto.getDamageDice()).thenReturn("1d8");
+        when(requestDto.getDamageType()).thenReturn("piercing");
+        when(requestDto.getRangeNormal()).thenReturn(null);
+        when(requestDto.getRangeLong()).thenReturn(null);
+        when(requestDto.getIsTwoHanded()).thenReturn(false);
+
+        var persistedEntity = mock(WeaponEntity.class);
+        var model = mock(WeaponModel.class);
+
+        when(weaponRepository.findById(weaponId)).thenReturn(Optional.of(persistedEntity));
+        when(weaponRepository.save(persistedEntity)).thenReturn(persistedEntity);
+        when(weaponPersistenceMapper.toModel(persistedEntity)).thenReturn(model);
+
+        // Act
+        var result = weaponService.update(weaponId, requestDto);
+
+        // Assert
+        assertSame(model, result);
+        verify(weaponPersistenceMapper, times(1)).updateEntityFromModel(any(WeaponModel.class), eq(persistedEntity));
+        verify(weaponRepository, times(1)).save(persistedEntity);
+        verify(weaponPersistenceMapper, times(1)).toModel(persistedEntity);
+    }
+
+    @Test
+    void update_shouldReturnWeaponModel_whenLongRangeIsLessThanNormalRange() {
+        // Arrange
+        var weaponId = 1L;
+        var requestDto = mock(WeaponRequestDto.class);
+        when(requestDto.getName()).thenReturn("Light Crossbow");
+        when(requestDto.getDescription()).thenReturn("A mechanical ranged weapon that fires bolts with high accuracy and stopping power.");
+        when(requestDto.getValueInCopperPieces()).thenReturn(2500L);
+        when(requestDto.getWeightInLbs()).thenReturn(5.0);
+        when(requestDto.getDamageDice()).thenReturn("1d8");
+        when(requestDto.getDamageType()).thenReturn("piercing");
+        when(requestDto.getRangeNormal()).thenReturn(320);
+        when(requestDto.getRangeLong()).thenReturn(80);
+        when(requestDto.getIsTwoHanded()).thenReturn(true);
+
+        var weaponEntity = mock(WeaponEntity.class);
+        when(weaponRepository.findById(weaponId)).thenReturn(Optional.of(weaponEntity));
+
+        // Act & Assert
+        assertThrows(
+                BusinessRuleViolationException.class,
+                () -> weaponService.update(weaponId, requestDto)
         );
     }
 }

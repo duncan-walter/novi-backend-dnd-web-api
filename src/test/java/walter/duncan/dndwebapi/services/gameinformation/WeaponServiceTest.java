@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
+import walter.duncan.dndwebapi.entities.charactermanagement.inventory.CharacterInventoryItemType;
 import walter.duncan.dndwebapi.entities.gameinformation.WeaponEntity;
 import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 import walter.duncan.dndwebapi.exceptions.ResourceNotFoundException;
@@ -247,5 +248,22 @@ class WeaponServiceTest {
                 BusinessRuleViolationException.class,
                 () -> weaponService.update(weaponId, requestDto)
         );
+    }
+
+    @Test
+    void delete_shouldDeleteWeapon_whenRequestHasNoBusinessRuleViolations() {
+        // Arrange
+        var weaponId = 1L;
+
+        when(weaponRepository.existsById(weaponId)).thenReturn(true);
+        when(characterRepository.existsInventoryItemReference(weaponId, CharacterInventoryItemType.WEAPON)).thenReturn(false);
+
+        // Act
+        weaponService.deleteById(weaponId);
+
+        // Assert
+        verify(characterRepository, times(1)).existsInventoryItemReference(weaponId, CharacterInventoryItemType.WEAPON);
+        verify(weaponRepository, times(1)).existsById(weaponId);
+        verify(weaponRepository, times(1)).deleteById(weaponId);
     }
 }

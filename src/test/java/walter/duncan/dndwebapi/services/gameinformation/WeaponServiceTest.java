@@ -1,6 +1,7 @@
 package walter.duncan.dndwebapi.services.gameinformation;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import walter.duncan.dndwebapi.businessmodels.gameinformation.WeaponModel;
 import walter.duncan.dndwebapi.entities.gameinformation.WeaponEntity;
+import walter.duncan.dndwebapi.exceptions.ResourceNotFoundException;
 import walter.duncan.dndwebapi.mappers.gameinformation.weapon.WeaponPersistenceMapper;
 import walter.duncan.dndwebapi.repositories.charactermanagement.CharacterRepository;
 import walter.duncan.dndwebapi.repositories.gameinformation.WeaponRepository;
@@ -62,5 +64,38 @@ class WeaponServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(weaponRepository, times(1)).findAll();
+    }
+
+    @Test
+    void findById_shouldReturnWeaponModel_whenWeaponExists() {
+        // Arrange
+        var weaponId = 1L;
+        var entity =  mock(WeaponEntity.class);
+        var model = mock(WeaponModel.class);
+
+        when(weaponRepository.findById(weaponId)).thenReturn(Optional.of(entity));
+        when(weaponPersistenceMapper.toModel(entity)).thenReturn(model);
+
+        // Act
+        var result = weaponService.findById(weaponId);
+
+        // Assert
+        assertSame(model, result);
+        verify(weaponRepository, times(1)).findById(weaponId);
+        verify(weaponPersistenceMapper, times(1)).toModel(entity);
+    }
+
+    @Test
+    void findById_shouldThrowResourceNotFoundException_whenWeaponDoesNotExists() {
+        // Arrange
+        var weaponId = 1337L;
+
+        when(weaponRepository.findById(weaponId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> weaponService.findById(weaponId)
+        );
     }
 }

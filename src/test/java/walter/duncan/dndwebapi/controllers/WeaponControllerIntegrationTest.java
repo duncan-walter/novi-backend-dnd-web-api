@@ -7,19 +7,22 @@ import org.springframework.http.MediaType;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponResponseDto;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
+// Rolls back the database after every test. This is needed because we are not using isolated data sets for each test.
+// This means that if the update test finishes first, the get test will be checking against a different property value and fail. And @Transcational fixes that.
+@Transactional
 public class WeaponControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
@@ -76,7 +79,7 @@ public class WeaponControllerIntegrationTest {
     }
 
     @Test
-    void create_shouldCreateAndReturnWeaponResponseDto_whenRequestIsValid() throws Exception {
+    void create_shouldCreateAndReturnWeaponResponseDtoWithLocationHeader_whenRequestIsValid() throws Exception {
         // Arrange
         var createWeaponRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
 """
@@ -96,8 +99,8 @@ public class WeaponControllerIntegrationTest {
 
         // Act
         var result = mockMvc.perform(post("/weapons")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(weaponRequestDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(weaponRequestDto)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(header().exists("Location"))
@@ -139,8 +142,8 @@ public class WeaponControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(post("/weapons")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(weaponRequestDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(weaponRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.type").value("urn:dnd:api:problem:validation-error"))
@@ -177,5 +180,98 @@ public class WeaponControllerIntegrationTest {
                 .andExpect(jsonPath("$.detail").value("A business rule was violated."))
                 .andExpect(jsonPath("$.errors.businessRuleViolation.WEAPON_LONG_RANGE_LESS_THAN_NORMAL_RANGE")
                         .value("Weapon long range cannot be less than normal range."));
+    }
+
+    @Test
+    void update_shouldUpdateAndReturnWeaponResponseDtoWithLocationHeader_whenRequestIsValid() throws Exception {
+        // Arrange
+        var weaponId = 1L;
+        var updateWeaponRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "name": "Longsword +1",
+    "description": "A finely crafted longsword imbued with minor enchantments that enhance its accuracy and lethality.",
+    "valueInCopperPieces": 30000,
+    "weightInLbs": 3.0,
+    "damageDice": "1d8",
+    "damageType": "slashing",
+    "rangeNormal": null,
+    "rangeLong": null,
+    "isTwoHanded": false
+}
+""";
+        var weaponRequestDto = objectMapper.readValue(updateWeaponRequestJson, WeaponRequestDto.class);
+
+        // Act
+        var result = mockMvc.perform(put("/weapons/{id}", weaponId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(weaponRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(header().exists("Location"))
+                .andReturn();
+
+        var locationHeader = result.getResponse().getHeader("Location");
+        var weaponResponseDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                WeaponResponseDto.class
+        );
+
+
+        // Assert
+        assertNotNull(locationHeader);
+        assertTrue(locationHeader.endsWith("/" + weaponResponseDto.getId()));
+        assertNotNull(weaponResponseDto.getId());
+        assertEquals(weaponRequestDto.getName(), weaponResponseDto.getName());
+        assertEquals(weaponRequestDto.getDescription(), weaponResponseDto.getDescription());
+        assertEquals(weaponRequestDto.getValueInCopperPieces(), weaponResponseDto.getValueInCopperPieces());
+    }
+
+    @Test
+    void update_shouldReturnNotFound_whenWeaponDoesNotExist() throws Exception {
+        // Arrange
+        var weaponId = 1337L;
+        var updateWeaponRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "name": "Longsword +1",
+    "description": "A finely crafted longsword imbued with minor enchantments that enhance its accuracy and lethality.",
+    "valueInCopperPieces": 30000,
+    "weightInLbs": 3.0,
+    "damageDice": "1d8",
+    "damageType": "slashing",
+    "rangeNormal": null,
+    "rangeLong": null,
+    "isTwoHanded": false
+}
+""";
+        // Act
+        var weaponRequestDto = objectMapper.readValue(updateWeaponRequestJson, WeaponRequestDto.class);
+
+        // Act & Assert
+        mockMvc.perform(put("/weapons/{id}", weaponId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(weaponRequestDto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void delete_shouldDeleteAndReturnNoContent_whenWeaponExists() throws Exception {
+        // Arrange
+        var weaponId = 5L;
+
+        // Act & Assert
+        var result = mockMvc.perform(delete("/weapons/{id}", weaponId))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void delete_shouldReturnNotFound_whenWeaponDoesNotExist() throws Exception {
+        // Arrange
+        var weaponId = 1337L;
+
+        // Act & Assert
+        var result = mockMvc.perform(delete("/weapons/{id}", weaponId))
+                .andExpect(status().isNotFound());
     }
 }

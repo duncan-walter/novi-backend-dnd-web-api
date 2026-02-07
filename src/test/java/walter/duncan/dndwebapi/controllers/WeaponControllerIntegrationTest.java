@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import tools.jackson.databind.ObjectMapper;
 
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
@@ -77,7 +76,7 @@ public class WeaponControllerIntegrationTest {
     }
 
     @Test
-    void create_shouldCreateAndReturnWeaponResponseDto_whenProvidedAValidRequest() throws Exception {
+    void create_shouldCreateAndReturnWeaponResponseDto_whenRequestIsValid() throws Exception {
         // Arrange
         var createWeaponRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
 """
@@ -99,7 +98,7 @@ public class WeaponControllerIntegrationTest {
         var result = mockMvc.perform(post("/weapons")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(weaponRequestDto)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(header().exists("Location"))
                 .andReturn();
@@ -118,5 +117,65 @@ public class WeaponControllerIntegrationTest {
         assertEquals(weaponRequestDto.getName(), weaponResponseDto.getName());
         assertEquals(weaponRequestDto.getDescription(), weaponResponseDto.getDescription());
         assertEquals(weaponRequestDto.getValueInCopperPieces(), weaponResponseDto.getValueInCopperPieces());
+    }
+
+    @Test
+    void create_shouldReturnBadRequestWithProblemDetails_whenWhenRequestHasMissingRequiredProperties() throws Exception {
+        // Arrange
+        var createWeaponRequestWithoutNameJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "description": "A mechanical ranged weapon that fires bolts with high accuracy and stopping power.",
+    "valueInCopperPieces": 2500,
+    "weightInLbs": 5.0,
+    "damageDice": "1d8",
+    "damageType": "piercing",
+    "rangeNormal": 80,
+    "rangeLong": 320,
+    "isTwoHanded": true
+}
+""";
+        var weaponRequestDto = objectMapper.readValue(createWeaponRequestWithoutNameJson, WeaponRequestDto.class);
+
+        // Act & Assert
+        mockMvc.perform(post("/weapons")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(weaponRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.type").value("urn:dnd:api:problem:validation-error"))
+                .andExpect(jsonPath("$.detail").value("One or more validation errors occurred."))
+                .andExpect(jsonPath("$.errors.validation.name").value("must not be empty"));
+    }
+
+    @Test
+    void create_shouldReturnUnprocessableContentWithProblemDetails_whenRequestContainsBusinessRuleViolations() throws Exception {
+        // Arrange
+        var createWeaponRequestWithBusinessRuleViolationJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "name": "Light Crossbow",
+    "description": "A mechanical ranged weapon that fires bolts with high accuracy and stopping power.",
+    "valueInCopperPieces": 2500,
+    "weightInLbs": 5.0,
+    "damageDice": "1d8",
+    "damageType": "piercing",
+    "rangeNormal": 320,
+    "rangeLong": 80,
+    "isTwoHanded": true
+}
+""";
+        var weaponRequestDto = objectMapper.readValue(createWeaponRequestWithBusinessRuleViolationJson, WeaponRequestDto.class);
+
+        // Act & Assert
+        mockMvc.perform(post("/weapons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(weaponRequestDto)))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.type").value("urn:dnd:api:problem:business-rule-violation"))
+                .andExpect(jsonPath("$.detail").value("A business rule was violated."))
+                .andExpect(jsonPath("$.errors.businessRuleViolation.WEAPON_LONG_RANGE_LESS_THAN_NORMAL_RANGE")
+                        .value("Weapon long range cannot be less than normal range."));
     }
 }

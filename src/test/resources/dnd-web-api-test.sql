@@ -1,0 +1,1 @@
+SELECT * FROM characters -- Placeholder for now so tests can run

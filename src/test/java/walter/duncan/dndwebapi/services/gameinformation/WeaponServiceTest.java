@@ -266,4 +266,33 @@ class WeaponServiceTest {
         verify(weaponRepository, times(1)).existsById(weaponId);
         verify(weaponRepository, times(1)).deleteById(weaponId);
     }
+
+    @Test
+    void delete_shouldThrowResourceNotFoundException_whenWeaponDoesNotExist() {
+        // Arrange
+        var weaponId = 1337L;
+
+        when(weaponRepository.existsById(weaponId)).thenReturn(false);
+        when(characterRepository.existsInventoryItemReference(weaponId, CharacterInventoryItemType.WEAPON)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> weaponService.deleteById(weaponId)
+        );
+    }
+
+    @Test
+    void delete_shouldBusinessRuleViolation_whenWeaponExistsInInventoryItem() {
+        // Arrange
+        var weaponId = 1L;
+
+        when(characterRepository.existsInventoryItemReference(weaponId, CharacterInventoryItemType.WEAPON)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(
+                BusinessRuleViolationException.class,
+                () -> weaponService.deleteById(weaponId)
+        );
+    }
 }

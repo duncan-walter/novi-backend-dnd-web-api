@@ -7,12 +7,15 @@ import org.springframework.http.MediaType;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import tools.jackson.databind.ObjectMapper;
 
+import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponResponseDto;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
@@ -71,5 +74,49 @@ public class WeaponControllerIntegrationTest {
 
         // Assert
         assertTrue(weaponResponseDtos.length > 0);
+    }
+
+    @Test
+    void create_shouldCreateAndReturnWeaponResponseDto_whenProvidedAValidRequest() throws Exception {
+        // Arrange
+        var createWeaponRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "name": "Light Crossbow",
+    "description": "A mechanical ranged weapon that fires bolts with high accuracy and stopping power.",
+    "valueInCopperPieces": 2500,
+    "weightInLbs": 5.0,
+    "damageDice": "1d8",
+    "damageType": "piercing",
+    "rangeNormal": 80,
+    "rangeLong": 320,
+    "isTwoHanded": true
+}
+""";
+        var weaponRequestDto = objectMapper.readValue(createWeaponRequestJson, WeaponRequestDto.class);
+
+        // Act
+        var result = mockMvc.perform(post("/weapons")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(weaponRequestDto)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(header().exists("Location"))
+                .andReturn();
+
+        var locationHeader = result.getResponse().getHeader("Location");
+        var weaponResponseDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                WeaponResponseDto.class
+        );
+
+
+        // Assert
+        assertNotNull(locationHeader);
+        assertTrue(locationHeader.endsWith("/" + weaponResponseDto.getId()));
+        assertNotNull(weaponResponseDto.getId());
+        assertEquals(weaponRequestDto.getName(), weaponResponseDto.getName());
+        assertEquals(weaponRequestDto.getDescription(), weaponResponseDto.getDescription());
+        assertEquals(weaponRequestDto.getValueInCopperPieces(), weaponResponseDto.getValueInCopperPieces());
     }
 }

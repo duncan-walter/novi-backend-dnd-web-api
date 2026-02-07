@@ -1,4 +1,4 @@
-package walter.duncan.dndwebapi.controllers;
+package walter.duncan.dndwebapi.controllers.gameinformation;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +123,7 @@ public class WeaponControllerIntegrationTest {
     }
 
     @Test
-    void create_shouldReturnBadRequestWithProblemDetails_whenWhenRequestHasMissingRequiredProperties() throws Exception {
+    void create_shouldReturnBadRequestWithProblemDetails_whenRequestHasMissingRequiredProperties() throws Exception {
         // Arrange
         var createWeaponRequestWithoutNameJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
 """

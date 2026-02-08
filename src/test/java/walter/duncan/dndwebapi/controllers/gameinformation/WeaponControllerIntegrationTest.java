@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// DISCLAIMER: Tests are written less DRY on purpose so each scenario is crystal clear and easy to change independently of each-other.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
@@ -24,6 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // This means that if the update test finishes first, the get test will be checking against a different property value and fail. And @Transcational fixes that.
 @Transactional
 public class WeaponControllerIntegrationTest {
+    private static final Long EXISTING_WEAPON_ID = 1L;
+    private static final Long NON_EXISTING_WEAPON_ID = 1337L;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -33,7 +37,7 @@ public class WeaponControllerIntegrationTest {
     @Test
     void getById_shouldReturnWeaponResponseDto_whenWeaponExists() throws Exception {
         // Arrange
-        var weaponId = 1L;
+        var weaponId = EXISTING_WEAPON_ID;
 
         // Act
         var result = mockMvc.perform(get("/weapons/{id}", weaponId))
@@ -54,11 +58,8 @@ public class WeaponControllerIntegrationTest {
 
     @Test
     void getById_shouldReturnNotFound_whenWeaponDoesNotExist() throws Exception {
-        // Arrange
-        var weaponId = 1337L;
-
         // Act & Assert
-        mockMvc.perform(get("/weapons/{id}", weaponId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/weapons/{id}", NON_EXISTING_WEAPON_ID)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -185,7 +186,6 @@ public class WeaponControllerIntegrationTest {
     @Test
     void update_shouldUpdateAndReturnWeaponResponseDtoWithLocationHeader_whenRequestIsValid() throws Exception {
         // Arrange
-        var weaponId = 1L;
         var updateWeaponRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
 """
 {
@@ -203,7 +203,7 @@ public class WeaponControllerIntegrationTest {
         var weaponRequestDto = objectMapper.readValue(updateWeaponRequestJson, WeaponRequestDto.class);
 
         // Act
-        var result = mockMvc.perform(put("/weapons/{id}", weaponId)
+        var result = mockMvc.perform(put("/weapons/{id}", EXISTING_WEAPON_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(weaponRequestDto)))
                 .andExpect(status().isOk())
@@ -230,7 +230,6 @@ public class WeaponControllerIntegrationTest {
     @Test
     void update_shouldReturnNotFound_whenWeaponDoesNotExist() throws Exception {
         // Arrange
-        var weaponId = 1337L;
         var updateWeaponRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
 """
 {
@@ -249,7 +248,7 @@ public class WeaponControllerIntegrationTest {
         var weaponRequestDto = objectMapper.readValue(updateWeaponRequestJson, WeaponRequestDto.class);
 
         // Act & Assert
-        mockMvc.perform(put("/weapons/{id}", weaponId)
+        mockMvc.perform(put("/weapons/{id}", NON_EXISTING_WEAPON_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(weaponRequestDto)))
                 .andExpect(status().isNotFound());
@@ -257,21 +256,13 @@ public class WeaponControllerIntegrationTest {
 
     @Test
     void delete_shouldDeleteAndReturnNoContent_whenWeaponExists() throws Exception {
-        // Arrange
-        var weaponId = 5L;
-
         // Act & Assert
-        var result = mockMvc.perform(delete("/weapons/{id}", weaponId))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/weapons/{id}", EXISTING_WEAPON_ID)).andExpect(status().isNoContent());
     }
 
     @Test
     void delete_shouldReturnNotFound_whenWeaponDoesNotExist() throws Exception {
-        // Arrange
-        var weaponId = 1337L;
-
         // Act & Assert
-        var result = mockMvc.perform(delete("/weapons/{id}", weaponId))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/weapons/{id}", NON_EXISTING_WEAPON_ID)).andExpect(status().isNotFound());
     }
 }

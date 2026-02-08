@@ -21,6 +21,7 @@ import walter.duncan.dndwebapi.repositories.gameinformation.WeaponRepository;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+// DISCLAIMER: Tests are written less DRY on purpose so each scenario is crystal clear and easy to change independently of each-other.
 @ExtendWith(MockitoExtension.class)
 class WeaponServiceTest {
     @Mock

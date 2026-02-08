@@ -22,6 +22,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// DISCLAIMER: Tests are written less DRY on purpose so each scenario is crystal clear and easy to change independently of each-other.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -238,7 +239,6 @@ public class EncounterControllerIntegrationTest {
     @Test
     void addParticipant_shouldReturnNotFound_whenCharacterDoesNotExist() throws Exception {
         // Arrange
-        var encounterId = 1;
         var createEncounterParticipantRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
 """
 {
@@ -249,7 +249,7 @@ public class EncounterControllerIntegrationTest {
         var encounterParticipantRequestDto = objectMapper.readValue(createEncounterParticipantRequestJson, EncounterParticipantRequestDto.class);
 
         // Act & Assert
-        mockMvc.perform(post("/encounters/{id}/participants", encounterId)
+        mockMvc.perform(post("/encounters/{id}/participants", IN_PROGRESS_ENCOUNTER_ID)
                         .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(encounterParticipantRequestDto)))

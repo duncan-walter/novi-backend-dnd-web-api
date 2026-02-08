@@ -10,6 +10,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterState;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterActionRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterResponseDto;
@@ -17,8 +19,7 @@ import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterResponseDto;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
@@ -28,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class EncounterControllerIntegrationTest {
     private static final Long NON_EXISTING_ENCOUNTER_ID = 1337L;
     private static final Long NON_EXISTING_CHARACTER_ID = 1337L;
+    private static final Long GATHERING_PARTICIPANTS_ENCOUNTER_ID = 1L;
+    private static final Long IN_PROGRESS_ENCOUNTER_ID = 2L;
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +41,7 @@ public class EncounterControllerIntegrationTest {
     @Test
     void getById_shouldReturnEncounterResponseDto_whenEncounterExists() throws Exception {
         // Arrange
-        var encounterId = 1L;
+        var encounterId = GATHERING_PARTICIPANTS_ENCOUNTER_ID;
 
         // Act
         var result = mockMvc.perform(get("/encounters/{id}", encounterId)
@@ -173,7 +176,6 @@ public class EncounterControllerIntegrationTest {
     @Test
     void addParticipant_shouldReturnEncounterResponseDtoWithLocationAndNewParticipant_whenEncounterAndCharacterExist() throws Exception {
         // Arrange
-        var encounterId = 1;
         var createEncounterParticipantRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
 """
 {
@@ -184,7 +186,7 @@ public class EncounterControllerIntegrationTest {
         var encounterParticipantRequestDto = objectMapper.readValue(createEncounterParticipantRequestJson, EncounterParticipantRequestDto.class);
 
         // Act
-        var result = mockMvc.perform(post("/encounters/{id}/participants", encounterId)
+        var result = mockMvc.perform(post("/encounters/{id}/participants", GATHERING_PARTICIPANTS_ENCOUNTER_ID)
                         .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(encounterParticipantRequestDto)))
@@ -225,7 +227,7 @@ public class EncounterControllerIntegrationTest {
 """;
         var encounterParticipantRequestDto = objectMapper.readValue(createEncounterParticipantRequestJson, EncounterParticipantRequestDto.class);
 
-        // Act
+        // Act & Assert
         mockMvc.perform(post("/encounters/{id}/participants", NON_EXISTING_ENCOUNTER_ID)
                         .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -246,7 +248,7 @@ public class EncounterControllerIntegrationTest {
 """.formatted(NON_EXISTING_CHARACTER_ID);
         var encounterParticipantRequestDto = objectMapper.readValue(createEncounterParticipantRequestJson, EncounterParticipantRequestDto.class);
 
-        // Act
+        // Act & Assert
         mockMvc.perform(post("/encounters/{id}/participants", encounterId)
                         .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -256,22 +258,115 @@ public class EncounterControllerIntegrationTest {
 
     @Test
     void action_shouldReturnEncounterResponseDtoWithStateInProgress_whenActionIsStart() throws Exception {
+        // Arrange
+        var encounterActionRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "action": "start"
+}
+""";
+        var encounterActionRequestDto = objectMapper.readValue(encounterActionRequestJson, EncounterActionRequestDto.class);
 
+        // Act
+        var result = mockMvc.perform(patch("/encounters/{id}", GATHERING_PARTICIPANTS_ENCOUNTER_ID)
+                    .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(encounterActionRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        var encounterResponseDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                EncounterResponseDto.class
+        );
+
+        // Assert
+        assertEquals(EncounterState.IN_PROGRESS.getName(), encounterResponseDto.state());
     }
 
     @Test
-    void action_shouldReturnEncounterResponseDtoWithNextCurrentActor_whenActionIsAdvanceTurn() throws Exception {
+    void action_shouldReturnEncounterResponseDtoWithCurrentActor_whenActionIsAdvanceTurn() throws Exception {
+        // Arrange
+        var encounterActionRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "action": "advance-turn"
+}
+""";
+        var encounterActionRequestDto = objectMapper.readValue(encounterActionRequestJson, EncounterActionRequestDto.class);
 
+        // Act
+        var result = mockMvc.perform(patch("/encounters/{id}", IN_PROGRESS_ENCOUNTER_ID)
+                        .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(encounterActionRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        var encounterResponseDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                EncounterResponseDto.class
+        );
+
+        // Assert
+        assertEquals(EncounterState.IN_PROGRESS.getName(), encounterResponseDto.state());
+        assertNotNull(encounterResponseDto.currentActor());
     }
 
     @Test
-    void action_shouldReturnEncounterResponseDtoWithStateCompleted_whenActionIsStop() throws Exception {
+    void action_shouldReturnEncounterResponseDtoWithStateCompleted_whenActionIsClose() throws Exception {
+        // Arrange
+        var encounterActionRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "action": "close"
+}
+""";
+        var encounterActionRequestDto = objectMapper.readValue(encounterActionRequestJson, EncounterActionRequestDto.class);
 
+        // Act
+        var result = mockMvc.perform(patch("/encounters/{id}", IN_PROGRESS_ENCOUNTER_ID)
+                        .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(encounterActionRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        var encounterResponseDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                EncounterResponseDto.class
+        );
+
+        // Assert
+        assertEquals(EncounterState.COMPLETED.getName(), encounterResponseDto.state());
     }
 
     @Test
     void action_shouldReturnUnprocessableContentWithProblemDetails_whenActionIsInvalid() throws Exception {
+        // Arrange
+        var encounterActionRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "action": "flip-table"
+}
+""";
+        var encounterActionRequestDto = objectMapper.readValue(encounterActionRequestJson, EncounterActionRequestDto.class);
 
+        // Act & Assert
+         mockMvc.perform(patch("/encounters/{id}", IN_PROGRESS_ENCOUNTER_ID)
+                         .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
+                         .contentType(MediaType.APPLICATION_JSON)
+                         .content(objectMapper.writeValueAsString(encounterActionRequestDto)))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.type").value("urn:dnd:api:problem:business-rule-violation"))
+                .andExpect(jsonPath("$.detail").value("A business rule was violated."))
+                .andExpect(jsonPath("$.errors.businessRuleViolation.ENCOUNTER_ACTION_NOT_VALID")
+                        .value(containsString("Encounter action must be a valid action."))
+                );
     }
 
     // addFilters = false had to be removed because some endpoints have a @AuthenticationPrincipal in their signature.

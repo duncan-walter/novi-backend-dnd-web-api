@@ -7,8 +7,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterResponseDto;
 
@@ -22,7 +24,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional // Needed because test otherwise affect each-others test data since they share the same datasource.
 public class EncounterControllerIntegrationTest {
+    private static final Long NON_EXISTING_ENCOUNTER_ID = 1337L;
+    private static final Long NON_EXISTING_CHARACTER_ID = 1337L;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -56,11 +62,8 @@ public class EncounterControllerIntegrationTest {
 
     @Test
     void getById_shouldReturnNotFound_whenEncounterDoesNotExist() throws Exception {
-        // Arrange
-        var encounterId = 1337L;
-
         // Act & Assert
-        mockMvc.perform(get("/encounters/{id}", encounterId)
+        mockMvc.perform(get("/encounters/{id}", NON_EXISTING_ENCOUNTER_ID)
                         .with(getJwtToken("6c7abe11-6431-4c6b-b530-91f929c25e61", "Henk the Tank")))
                 .andExpect(status().isNotFound());
     }
@@ -168,18 +171,87 @@ public class EncounterControllerIntegrationTest {
     }
 
     @Test
-    void addParticipant_shouldReturnEncounterResponseDtoWithLocationHeader_whenEncounterAndCharacterExist() throws Exception {
+    void addParticipant_shouldReturnEncounterResponseDtoWithLocationAndNewParticipant_whenEncounterAndCharacterExist() throws Exception {
+        // Arrange
+        var encounterId = 1;
+        var createEncounterParticipantRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "characterId": 5,
+    "initiative": 25
+}
+""";
+        var encounterParticipantRequestDto = objectMapper.readValue(createEncounterParticipantRequestJson, EncounterParticipantRequestDto.class);
 
+        // Act
+        var result = mockMvc.perform(post("/encounters/{id}/participants", encounterId)
+                        .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(encounterParticipantRequestDto)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(header().exists("Location"))
+                .andReturn();
+
+        var locationHeader = result.getResponse().getHeader("Location");
+        var encounterResponseDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                EncounterResponseDto.class
+        );
+
+        // Assert
+        assertNotNull(locationHeader);
+        assertTrue(encounterResponseDto.participants().stream().anyMatch(p ->
+                locationHeader.endsWith("/" + p.id()))
+        );
+        assertNotNull(encounterResponseDto.id());
+        assertTrue(encounterResponseDto.participants().stream().anyMatch(p ->
+                p.characterId().equals(encounterParticipantRequestDto.characterId()))
+        );
+        assertTrue(encounterResponseDto.participants().stream().anyMatch(p ->
+                p.initiative() == encounterParticipantRequestDto.initiative())
+        );
     }
 
     @Test
     void addParticipant_shouldReturnNotFound_whenEncounterDoesNotExist() throws Exception {
+        // Arrange
+        var createEncounterParticipantRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "characterId": 5,
+    "initiative": 25
+}
+""";
+        var encounterParticipantRequestDto = objectMapper.readValue(createEncounterParticipantRequestJson, EncounterParticipantRequestDto.class);
 
+        // Act
+        mockMvc.perform(post("/encounters/{id}/participants", NON_EXISTING_ENCOUNTER_ID)
+                        .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(encounterParticipantRequestDto)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void addParticipant_shouldReturnNotFound_whenCharacterDoesNotExist() throws Exception {
+        // Arrange
+        var encounterId = 1;
+        var createEncounterParticipantRequestJson = // The request DTOs in this project don't expose setters so we parse a JSON-string through the ObjectMapper instead.
+"""
+{
+    "characterId": %s,
+    "initiative": 25
+}
+""".formatted(NON_EXISTING_CHARACTER_ID);
+        var encounterParticipantRequestDto = objectMapper.readValue(createEncounterParticipantRequestJson, EncounterParticipantRequestDto.class);
 
+        // Act
+        mockMvc.perform(post("/encounters/{id}/participants", encounterId)
+                        .with(getJwtToken("6703dd9d-1872-4292-99a9-21bebbdb9b5c", "Bert the Hurt"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(encounterParticipantRequestDto)))
+                .andExpect(status().isNotFound());
     }
 
     @Test

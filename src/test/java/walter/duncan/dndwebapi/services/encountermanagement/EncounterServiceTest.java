@@ -8,11 +8,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import walter.duncan.dndwebapi.businessmodels.charactermanagement.*;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterActionRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
+import walter.duncan.dndwebapi.entities.charactermanagement.CharacterClassEntity;
+import walter.duncan.dndwebapi.entities.charactermanagement.CharacterEntity;
+import walter.duncan.dndwebapi.entities.charactermanagement.CharacterRaceEntity;
+import walter.duncan.dndwebapi.entities.charactermanagement.CharacterTypeEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterParticipantEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterState;
 import walter.duncan.dndwebapi.entities.usermanagement.UserEntity;
+import walter.duncan.dndwebapi.exceptions.BusinessRuleViolationException;
 import walter.duncan.dndwebapi.exceptions.ResourceNotFoundException;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterClassPersistenceMapper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterPersistenceMapper;
@@ -182,6 +189,32 @@ public class EncounterServiceTest {
     }
 
     @Test
+    void addParticipant_shouldThrowBusinessRuleViolationException_whenCharacterIsActiveInAnotherEncounter() {
+        // Arrange
+        var encounterIdOwnedByUser = 1L;
+        var characterIdOwnedByUser = 1L;
+        var requestDto = mock(EncounterParticipantRequestDto.class);
+        var jwt = mock(Jwt.class);
+        var entity = encounterEntityBuilder.withState(EncounterState.GATHERING_PARTICIPANTS).build();
+        var userEntity = mock(UserEntity.class);
+        var characterModel = mock(CharacterModel.class);
+
+        when(requestDto.characterId()).thenReturn(characterIdOwnedByUser);
+        when(characterModel.getId()).thenReturn(characterIdOwnedByUser);
+
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
+        when(encounterRepository.findByIdAndUser(encounterIdOwnedByUser, userEntity)).thenReturn(Optional.of(entity));
+        when(encounterRepository.existsByParticipantAndState(eq(characterIdOwnedByUser), any())).thenReturn(true);
+        when(characterService.findByIdForUser(characterIdOwnedByUser, jwt)).thenReturn(characterModel);
+
+        // Act
+        assertThrows(
+                BusinessRuleViolationException.class,
+                () -> encounterService.addParticipant(encounterIdOwnedByUser, requestDto, jwt)
+        );
+    }
+
+    @Test
     void addParticipant_shouldThrowResourceNotFoundException_whenUserDoesNotOwnEncounter() {
         // Arrange
         var encounterIdNotOwnedByUser = 5L;
@@ -223,18 +256,73 @@ public class EncounterServiceTest {
     }
 
     @Test
-    void performAction_shouldReturnEncounterModelWithStateInProgress_whenActionIsStart() {
+    void performAction_shouldReturnEncounterModelWithStateInProgress_whenActionIsStartAndStateIsGatheringParticipants() {
+        // Arrange
+        var encounterId = 1L;
+        var requestDto = mock(EncounterActionRequestDto.class);
+        var jwt = mock(Jwt.class);
+        var entity = encounterEntityBuilder.withMockParticipants(3L).withState(EncounterState.GATHERING_PARTICIPANTS).build();
+        var userEntity = mock(UserEntity.class);
 
+        when(requestDto.action()).thenReturn("start");
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
+        when(encounterRepository.findByIdAndUser(encounterId, userEntity)).thenReturn(Optional.of(entity));
+        when(encounterRepository.save(any())).thenReturn(entity);
+
+        // Act
+        var result = encounterService.performAction(encounterId, requestDto, jwt);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterState.IN_PROGRESS, result.getState());
+        verify(encounterRepository).save(any(EncounterEntity.class));
     }
 
     @Test
-    void performAction_shouldReturnEncounterModelWithNextCurrentActor_whenActionIsAdvanceTurn() {
+    void performAction_shouldReturnEncounterModelWithNextCurrentActor_whenActionIsAdvanceTurnAndStateIsInProgress() {
+        // Arrange
+        var encounterId = 1L;
+        var requestDto = mock(EncounterActionRequestDto.class);
+        var jwt = mock(Jwt.class);
+        var entity = encounterEntityBuilder.withMockParticipants(3L).withState(EncounterState.IN_PROGRESS).build();
+        var userEntity = mock(UserEntity.class);
 
+        when(requestDto.action()).thenReturn("advance-turn");
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
+        when(encounterRepository.findByIdAndUser(encounterId, userEntity)).thenReturn(Optional.of(entity));
+        when(encounterRepository.save(any())).thenReturn(entity);
+
+        // Act
+        var result = encounterService.performAction(encounterId, requestDto, jwt);
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.getCurrentActor());
+        assertEquals(walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterState.IN_PROGRESS, result.getState());
+        verify(encounterRepository).save(any(EncounterEntity.class));
     }
 
     @Test
-    void performAction_shouldReturnEncounterModelWithStateCompleted_whenActionIsClose() {
+    void performAction_shouldReturnEncounterModelWithStateCompleted_whenActionIsCloseAndStateIsInProgress() {
+        // Arrange
+        var encounterId = 1L;
+        var requestDto = mock(EncounterActionRequestDto.class);
+        var jwt = mock(Jwt.class);
+        var entity = encounterEntityBuilder.withMockParticipants(3L).withState(EncounterState.IN_PROGRESS).build();
+        var userEntity = mock(UserEntity.class);
 
+        when(requestDto.action()).thenReturn("close");
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
+        when(encounterRepository.findByIdAndUser(encounterId, userEntity)).thenReturn(Optional.of(entity));
+        when(encounterRepository.save(any())).thenReturn(entity);
+
+        // Act
+        var result = encounterService.performAction(encounterId, requestDto, jwt);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterState.COMPLETED, result.getState());
+        verify(encounterRepository).save(any(EncounterEntity.class));
     }
 
     private static EncounterPersistenceMapper createEncounterPersistenceMapper() {
@@ -254,11 +342,13 @@ public class EncounterServiceTest {
     private static class EncounterEntityBuilder {
         private Long id;
         private EncounterState state = EncounterState.IN_PROGRESS;
+        private final Set<EncounterParticipantEntity> participants = new HashSet<>();
 
         public EncounterEntity build() {
             var entity = new EncounterEntity();
             entity.setId(id);
             entity.setState(state);
+            entity.setParticipants(participants);
 
             reset();
             return entity;
@@ -271,6 +361,22 @@ public class EncounterServiceTest {
 
         public EncounterEntityBuilder withState(EncounterState state) {
             this.state = state;
+            return this;
+        }
+
+        public EncounterEntityBuilder withMockParticipants(Long amount) {
+            for (Long i = 0L; i < amount; i++) {
+                var participant = mock(EncounterParticipantEntity.class);
+                var character = mock(CharacterEntity.class);
+                when(character.getId()).thenReturn(i);
+                when(character.getAlignment()).thenReturn(walter.duncan.dndwebapi.entities.charactermanagement.CharacterAlignment.CHAOTIC_EVIL);
+                when(character.getType()).thenReturn(mock(CharacterTypeEntity.class));
+                when(character.getRace()).thenReturn(mock(CharacterRaceEntity.class));
+                when(character.getCharacterClass()).thenReturn(mock(CharacterClassEntity.class));
+                when(participant.getCharacter()).thenReturn(character);
+
+                participants.add(participant);
+            }
             return this;
         }
     }

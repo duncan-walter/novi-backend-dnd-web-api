@@ -1,0 +1,46 @@
+sequenceDiagram
+    autonumber
+
+    box Process: Update a weapon
+        actor User as Actor
+        participant WeaponController
+        participant WeaponService
+        participant WeaponRepository
+    end
+
+    User->>+WeaponController: PUT /weapons/{id}<br/>body: { WeaponRequestDto }<br/>update(id, requestDto)
+    WeaponController->>WeaponController: Check authenticated
+    alt Not authenticated
+        WeaponController-->>User: 401 Unauthorized
+    else Authenticated
+        WeaponController->>WeaponController: Check role
+        alt Not Authorized
+            WeaponController-->>User: 403 Forbidden
+        else Authorized
+            WeaponController->>+WeaponService: update(id, requestDto)
+            WeaponService->>+WeaponRepository: findById(id)
+            WeaponRepository-->>WeaponService: Optional<WeaponEntity>
+            alt Weapon does not exist
+                WeaponService->>WeaponService: throwResourceNotFoundException
+                Note over WeaponService, WeaponController: Global exception handler<br/>catches exception.
+                WeaponController-->>User: 404 Not Found
+            else Weapon exists
+                Note right of WeaponService: NOTE: Factory method .create()<br/>validates business rules internally.
+                WeaponService->>WeaponService: WeaponModel.create(requestDto)
+                alt Business rule violation
+                    WeaponService->>WeaponService: throw BusinessRuleViolationException
+                    Note over WeaponService, WeaponController: Global exception handler<br/>catches exception.
+                    WeaponController-->>User: 422 Unprocessable Content
+                else No business rule violations
+                    WeaponService->>WeaponService: Copy fields from model<br/>to retrieved entity
+                    WeaponService->>WeaponRepository: save(weaponEntity)
+                    WeaponRepository-->>-WeaponService: WeaponEntity
+                    Note right of WeaponService: NOTE: Factory method .restore()<br/>bypasses validation by design since<br/>database state is assumed valid.
+                    WeaponService->>WeaponService: WeaponModel.restore(weaponEntity)
+                    WeaponService-->>-WeaponController: WeaponModel
+                    WeaponController->>WeaponController: Map model to responseDto
+                    WeaponController-->-User: 200 OK<br/>body: { WeaponResponseDto }<br/>location: /weapons/{id}
+                end
+            end
+        end
+    end

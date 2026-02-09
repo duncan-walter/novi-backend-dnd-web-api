@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterState;
+import walter.duncan.dndwebapi.exceptions.ResourceNotFoundException;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterClassPersistenceMapper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterPersistenceMapper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterRacePersistenceMapper;
@@ -22,8 +23,7 @@ import walter.duncan.dndwebapi.services.usermanagement.UserService;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
@@ -75,17 +75,46 @@ public class EncounterServiceTest {
 
     @Test
     void findAll_shouldReturnEmptySet_whenNoEncountersExist() {
+        // Arrange
+        when(encounterRepository.findAll()).thenReturn(List.of());
 
+        // Act
+        var result = encounterService.findAll();
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(encounterRepository, times(1)).findAll();
     }
 
     @Test
     void findById_shouldReturnEncounterModel_whenEncounterExists() {
+        // Arrange
+        var encounterId = 1L;
+        var entity = encounterEntityBuilder.withId(encounterId).build();
 
+        when(encounterRepository.findById(encounterId)).thenReturn(Optional.of(entity));
+
+        // Act
+        var result = encounterService.findById(encounterId);
+
+        // Assert
+        assertEquals(encounterId, result.getId());
+        verify(encounterRepository, times(1)).findById(encounterId);
     }
 
     @Test
     void findById_shouldThrowResourceNotFoundException_whenEncounterDoesNotExist() {
+        // Arrange
+        var encounterId = 1337L;
 
+        when(encounterRepository.findById(encounterId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> encounterService.findById(encounterId)
+        );
     }
 
     @Test
@@ -138,14 +167,21 @@ public class EncounterServiceTest {
     }
 
     private static class EncounterEntityBuilder {
+        private Long id;
         private EncounterState state = EncounterState.IN_PROGRESS;
 
         public EncounterEntity build() {
             var entity = new EncounterEntity();
+            entity.setId(id);
             entity.setState(state);
 
             reset();
             return entity;
+        }
+
+        public EncounterEntityBuilder withId(Long id) {
+            this.id = id;
+            return this;
         }
 
         public EncounterEntityBuilder withState(EncounterState state) {

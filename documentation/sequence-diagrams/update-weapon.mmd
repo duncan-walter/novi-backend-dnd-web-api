@@ -21,7 +21,7 @@ sequenceDiagram
             WeaponService->>+WeaponRepository: findById(id)
             WeaponRepository-->>WeaponService: Optional<WeaponEntity>
             alt Weapon does not exist
-                WeaponService->>WeaponService: throwResourceNotFoundException
+                WeaponService->>WeaponService: throw ResourceNotFoundException
                 Note over WeaponService, WeaponController: Global exception handler<br/>catches exception.
                 WeaponController-->>User: 404 Not Found
             else Weapon exists

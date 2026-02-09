@@ -1,13 +1,20 @@
 package walter.duncan.dndwebapi.services.encountermanagement;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import walter.duncan.dndwebapi.businessmodels.encountermanagement.EncounterModel;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
+import walter.duncan.dndwebapi.entities.encountermanagement.EncounterState;
+import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterClassPersistenceMapper;
+import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterPersistenceMapper;
+import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterRacePersistenceMapper;
+import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterTypePersistenceMapper;
+import walter.duncan.dndwebapi.mappers.charactermanagement.inventory.CharacterInventoryItemPersistenceMapper;
+import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterJoinRequestPersistenceMapper;
+import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterParticipantPersistenceMapper;
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterPersistenceMapper;
 import walter.duncan.dndwebapi.repositories.encountermanagement.EncounterRepository;
 import walter.duncan.dndwebapi.services.charactermanagement.CharacterService;
@@ -24,37 +31,46 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 public class EncounterServiceTest {
     @Mock
-    private EncounterRepository encounterRepository;
+    public EncounterRepository encounterRepository;
 
     @Mock
-    private CharacterService characterService;
+    public CharacterService characterService;
 
     @Mock
-    private UserService userService;
+    public UserService userService;
 
-    @Mock
-    private EncounterPersistenceMapper encounterPersistenceMapper;
+    // Injected in @BeforeEach
+    private EncounterEntityBuilder encounterEntityBuilder;
 
-    @InjectMocks
-    private EncounterService encounterService;
+    // Injected in @BeforeEach
+    public EncounterService encounterService;
+
+    @BeforeEach
+    public void setUp() {
+        this.encounterEntityBuilder = new EncounterEntityBuilder();
+        // I was not able to create stubs using a @Mock of EncounterPersistenceMapper.
+        // So instead we inject the real implementation, this is fine because the results are predictable as it just contains mapping.
+        this.encounterService = new EncounterService(
+                this.encounterRepository,
+                this.characterService,
+                createEncounterPersistenceMapper(),
+                this.userService
+        );
+    }
 
     @Test
     void findAll_shouldReturnSetOfAllEncounterModels() {
         // Arrange
-        var entities = Set.of(mock(EncounterEntity.class), mock(EncounterEntity.class));
-        var models = Set.of(mock(EncounterModel.class), mock(EncounterModel.class));
+        var entities = List.of(encounterEntityBuilder.build(), encounterEntityBuilder.build());
 
-        when(encounterRepository.findAll()).thenReturn(new ArrayList<>(entities));
-        when(encounterPersistenceMapper.toModels(entities)).thenReturn(new HashSet<>(models));
+        when(encounterRepository.findAll()).thenReturn(entities);
 
         // Act
         var result = encounterService.findAll();
 
         // Assert
-        assertEquals(2, result.size());
-        assertTrue(result.containsAll(models));
+        assertEquals(entities.size(), result.size());
         verify(encounterRepository, times(1)).findAll();
-        verify(encounterPersistenceMapper, times(1)).toModels(entities);
     }
 
     @Test
@@ -105,5 +121,36 @@ public class EncounterServiceTest {
     @Test
     void performAction_shouldReturnEncounterModelWithStateCompleted_whenActionIsClose() {
 
+    }
+
+    private static EncounterPersistenceMapper createEncounterPersistenceMapper() {
+        var characterMapper = new CharacterPersistenceMapper(
+                new CharacterTypePersistenceMapper(),
+                new CharacterRacePersistenceMapper(),
+                new CharacterClassPersistenceMapper(),
+                new CharacterInventoryItemPersistenceMapper()
+        );
+
+        return new EncounterPersistenceMapper(
+                new EncounterJoinRequestPersistenceMapper(characterMapper),
+                new EncounterParticipantPersistenceMapper(characterMapper)
+        );
+    }
+
+    private static class EncounterEntityBuilder {
+        private EncounterState state = EncounterState.IN_PROGRESS;
+
+        public EncounterEntity build() {
+            var entity = new EncounterEntity();
+            entity.setState(state);
+
+            reset();
+            return entity;
+        }
+
+        public EncounterEntityBuilder withState(EncounterState state) {
+            this.state = state;
+            return this;
+        }
     }
 }

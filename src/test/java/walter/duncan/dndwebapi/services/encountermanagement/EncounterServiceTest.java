@@ -5,9 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.oauth2.jwt.Jwt;
 
+import walter.duncan.dndwebapi.businessmodels.charactermanagement.*;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterParticipantRequestDto;
+import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterRequestDto;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterEntity;
 import walter.duncan.dndwebapi.entities.encountermanagement.EncounterState;
+import walter.duncan.dndwebapi.entities.usermanagement.UserEntity;
 import walter.duncan.dndwebapi.exceptions.ResourceNotFoundException;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterClassPersistenceMapper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterPersistenceMapper;
@@ -25,6 +30,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 // DISCLAIMER: Tests are written less DRY on purpose so each scenario is crystal clear and easy to change independently of each-other.
@@ -119,22 +125,101 @@ public class EncounterServiceTest {
 
     @Test
     void create_shouldReturnEncounterModel_whenRequestHasNoBusinessRuleViolations() {
+        // Arrange
+        var requestDto = mock(EncounterRequestDto.class);
+        var jwt = mock(Jwt.class);
+        var entity = encounterEntityBuilder.build();
+        var userEntity = mock(UserEntity.class);
 
-    }
+        when(encounterRepository.save(any())).thenReturn(entity);
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
 
-    @Test
-    void create_shouldThrowBusinessRuleViolationException_when1() {
+        // Act
+        var result = this.encounterService.create(requestDto, jwt);
 
-    }
-
-    @Test
-    void create_shouldThrowBusinessRuleViolationException_when2() {
-
+        // Assert
+        assertNotNull(result);
+        verify(encounterRepository, times(1)).save(any());
     }
 
     @Test
     void addParticipant_shouldReturnEncounterModelWithParticipantAdded_whenRequestHasNoBusinessRuleViolations() {
+        // Arrange
+        var encounterIdOwnedByUser = 1L;
+        var characterIdOwnedByUser = 1L;
+        var requestDto = mock(EncounterParticipantRequestDto.class);
+        var jwt = mock(Jwt.class);
+        var entity = encounterEntityBuilder.withState(EncounterState.GATHERING_PARTICIPANTS).build();
+        var userEntity = mock(UserEntity.class);
+        var characterModel = mock(CharacterModel.class);
 
+        // Here we really see the power of mocks! We don't have to manually instantiate all classes with actual data, only necessary properties are stubbed.
+        when(requestDto.characterId()).thenReturn(characterIdOwnedByUser);
+        when(characterModel.getId()).thenReturn(characterIdOwnedByUser);
+        when(characterModel.getAlignment()).thenReturn(CharacterAlignment.CHAOTIC_EVIL);
+        when(characterModel.getType()).thenReturn(mock(CharacterTypeModel.class));
+        when(characterModel.getRace()).thenReturn(mock(CharacterRaceModel.class));
+        when(characterModel.getCharacterClass()).thenReturn(mock(CharacterClassModel.class));
+
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
+        when(encounterRepository.findByIdAndUser(encounterIdOwnedByUser, userEntity)).thenReturn(Optional.of(entity));
+        when(encounterRepository.existsByParticipantAndState(eq(characterIdOwnedByUser), any())).thenReturn(false); // Can't mix matching and actual values, we have to use eq() around actual values
+        when(characterService.findByIdForUser(characterIdOwnedByUser, jwt)).thenReturn(characterModel);
+        when(encounterRepository.save(any())).thenReturn(entity);
+
+        // Act
+        var result = encounterService.addParticipant(encounterIdOwnedByUser, requestDto, jwt);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.getParticipants().stream().anyMatch(p ->
+                p.getCharacter().getId() == characterIdOwnedByUser
+        ));
+        verify(encounterRepository, times(1)).findByIdAndUser(encounterIdOwnedByUser, userEntity);
+        verify(encounterRepository, times(1)).existsByParticipantAndState(eq(characterIdOwnedByUser), any());
+        verify(characterService, times(1)).findByIdForUser(characterIdOwnedByUser, jwt);
+        verify(encounterRepository, times(1)).save(any());
+    }
+
+    @Test
+    void addParticipant_shouldThrowResourceNotFoundException_whenUserDoesNotOwnEncounter() {
+        // Arrange
+        var encounterIdNotOwnedByUser = 5L;
+        var requestDto = mock(EncounterParticipantRequestDto.class);
+        var jwt = mock(Jwt.class);
+        var userEntity = mock(UserEntity.class);
+
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
+        when(encounterRepository.findByIdAndUser(encounterIdNotOwnedByUser, userEntity)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> encounterService.addParticipant(encounterIdNotOwnedByUser, requestDto, jwt)
+        );
+    }
+
+    @Test
+    void addParticipant_shouldThrowResourceNotFoundException_whenUserDoesNotOwnCharacter() {
+        // Arrange
+        var encounterIdOwnedByUser = 1L;
+        var characterIdNotOwnedByUser = 100L;
+        var requestDto = mock(EncounterParticipantRequestDto.class);
+        var entity = encounterEntityBuilder.withState(EncounterState.GATHERING_PARTICIPANTS).build();
+        var jwt = mock(Jwt.class);
+        var userEntity = mock(UserEntity.class);
+
+        when(requestDto.characterId()).thenReturn(characterIdNotOwnedByUser);
+
+        when(userService.resolveUser(jwt)).thenReturn(userEntity);
+        when(encounterRepository.findByIdAndUser(encounterIdOwnedByUser, userEntity)).thenReturn(Optional.of(entity));
+        when(characterService.findByIdForUser(characterIdNotOwnedByUser, jwt)).thenThrow(new ResourceNotFoundException("Placeholder"));
+
+        // Act & Assert
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> encounterService.addParticipant(encounterIdOwnedByUser, requestDto, jwt)
+        );
     }
 
     @Test

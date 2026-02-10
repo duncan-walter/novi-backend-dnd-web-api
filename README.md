@@ -236,7 +236,7 @@ Ga naar "Manage Realms" en druk op "Create realm". Voeg in de pop-up het bestand
 8. **Start de applicatie**  
 Start de web-API vanuit de terminal in de root van het project met het volgende commando (afhankelijk van OS):
     ```bash
-    ./mvnw spring-boot:run
+    .\mvnw spring-boot:run
     ```
 
 > **_NOTITIE_**:  

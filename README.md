@@ -85,6 +85,8 @@ Bekijk hieronder de volledige mappenstructuur:
 ├───.idea
 ├───.mvn
 │   └───wrapper
+├───.documentation
+│   └───sequence-diagrams
 ├───keycloak
 ├───src
 │   ├───main
@@ -170,61 +172,68 @@ De volgende technieken en frameworks zijn gebruikt om de web-API te realiseren:
 ## Benodigdheden
 De onderstaande benodigdheden zijn nodig om deze applicatie te kunnen runnen. Zorg dat deze zijn geïnstalleerd voordat de installatiestappen worden opgevolgd.
 
-- Een LTS-versie van Java (25 is gebruikt als runtime tijdens development)
-- PostgreSQL 18.1
-- pgAdmin 4
-- Maven / Maven Wrapper (bijgeleverd)
-- IntelliJ IDEA
-- Postman (desktop app)
-- Je favoriete browser (voor Swagger)
-- Windows 11
-- Internetverbinding (tijdens het clonen)
-- Git
+| Benodigdheid       | Versie  | Opmerking                                  |
+|--------------------|---------|--------------------------------------------|
+| Java SDK           | LTS     | Java 25 is gebruikt tijdens development    |
+| PostgreSQL         | 18.1    | -                                          |
+| pgAdmin            | 4       | -                                          |
+| Maven              | 3.9.11  | Optioneel, Maven wrapper heeft de voorkeur |
+| Maven Wrapper      | -       | Wordt bijgeleverd in dit project           |
+| IntelliJ IDEA      | -       | -                                          |
+| Postman            | 11.84.0 | -                                          |
+| Windows 11         | -       | -                                          |
+| Internetverbinding | -       | Alleen nodig tijdens het clonen            |
+| Git                | -       | -                                          |
 
 > **_NOTITIE_**: Een ander besturingssysteem of IDE zijn toegestaan, maar daar wordt geen rekening mee gehouden tijdens de installatiestappen.
 
 > **TIP**: Tijdens de PostgreSQL-installatie moet een gebruikersnaam en wachtwoord worden opgegeven; onthoud deze goed. Deze zijn namelijk nodig om de applicatie te kunnen draaien.
+> Zijn deze vergeten? Dan moet PostgreSQL opnieuw geïnstalleerd worden.
 
 ## Installatie stappen
 
 1. **Installeer alle benodigdheden**  
-Zorg dat alle [benodigdheden](#benodigdheden) zijn geïnstalleerd.  
+Zorg dat alle [benodigdheden](#benodigdheden) zijn geïnstalleerd voordat je verdergaat. Deze installatiestappen zijn specifiek voor
+dit project en beschrijven niet hoe elke dependency afzonderlijk geïnstalleerd moet worden.
 
 2. **Maak een nieuwe database aan**  
 Open pgAdmin en login met de inloggegevens die tijdens de installatie van PostgreSQL zijn opgegeven.
-Maak een nieuwe database aan door met de rechtermuisknop op Databases (in Servers > PostgreSQL 18) te klikken. Geef de database een naam en druk op "save".
+Maak een nieuwe database aan door met de rechtermuisknop op Databases (in Servers > PostgreSQL 18) te klikken.
+Geef de database een naam, onthoud deze, en druk op "save".
 
 3. **Clone de repository**  
 Clone de source code naar de lokale machine via `git clone` of download het project op een andere manier.
 
 4. **Maak een `.env`-bestand aan**  
-Kopieer het bestand `.env.dist` uit dit project naar de root van het project en hernoem het naar `.env`.
+Kopieer het bestand `.env.dist` uit de root van dit project naar de root van dit project en hernoem het naar `.env`.
+Er staan nu twee env-bestanden, `.env` en `env.dist`.
 
 5. **Vul het `.env`-bestand met de juiste waarden**  
 Hoewel environment variabelen normaal gesproken niet openbaar gedeeld worden, zijn ze in dit geval
 toegevoegd zodat de applicatie correct kan functioneren tijdens de beoordeling. Voeg de onderstaande
-waarden toe aan het zojuist aangemaakte `.env`-bestand:
+waarden toe aan het zojuist aangemaakte `.env`-bestand en vul de waarden tussen de haakjes in:
    ```
    SERVER_PORT=8080
    SPRING_DATASOURCE_URL_HOST=localhost
-   SPRING_DATASOURCE_URL_PORT=5432
+   SPRING_DATASOURCE_URL_PORT=<poort die is opgegeven tijdens de PostgreSQL installatie, standaard: 5432>
    SPRING_DATASOURCE_URL_DATABASE_NAME=<naam van de database in stap 2>
-   SPRING_DATASOURCE_USERNAME=<gebruikersnaam opgegeven tijdens de PostgreSQL installatie>
-   SPRING_DATASOURCE_PASSWORD=<wachtwoord opgegeven tijdens de PostgreSQL installatie>
+   SPRING_DATASOURCE_USERNAME=<gebruikersnaam die is opgegeven tijdens de PostgreSQL installatie>
+   SPRING_DATASOURCE_PASSWORD=<wachtwoord die is opgegeven tijdens de PostgreSQL installatie>
    ```
    
 6. **Installeer en start Keycloak**  
 Download link: https://github.com/keycloak/keycloak/releases/download/26.5.2/keycloak-26.5.2.zip  
-Pak het zip-bestand uit in een locatie naar keuze. Navigeer in de terminal naar deze locatie en voer het volgende commando uit:  
+Pak het zip-bestand uit in een locatie naar keuze. Navigeer in de terminal naar deze locatie en voer het volgende commando uit
+op dezelfde locatie waarin de bin-folder zich bevindt:  
     ```bash
     bin\kc.bat start-dev --http-port 9090
     ```
 
 7. **Importeer het realm bestand**
-Navigeer in de browser naar http://localhost:9090/ en login met je logingegevens of maak deze aan als dit de eerste keer is dat deze installatie van Keycloak wordt opgestart.
+Navigeer in de browser naar http://localhost:9090/ wanneer Keycloak draait en login met je logingegevens of maak deze aan als dit de eerste keer is dat deze installatie van Keycloak wordt opgestart.
 Ga naar "Manage Realms" en druk op "Create realm". Voeg in de pop-up het bestand `/keycloak/dnd-app-realm.json` uit dit project toe als resource file en druk op "Create". 
 
-9. **Start de applicatie**  
+8. **Start de applicatie**  
 Start de web-API vanuit de terminal in de root van het project met het volgende commando (afhankelijk van OS):
     ```bash
     ./mvnw spring-boot:run
@@ -286,13 +295,16 @@ De applicatie kent 3 verschillende rollen, ieder moet hun eigen bevoegdheden.
 | Dungeon master | Characters beheren (CRUD), Encounters beheren (ophalen, aanmaken, participant toevoegen, starten, volgende beurt geven, sluiten), Join Request van Encounters beheren (ophalen en goed- of afkeuren), Equipment- en Weapon-informatie ophalen |
 | Admin          | Game information beheren (CRUD)                                                                                                                                                                                                               |
 
-Door de import van `dnd-app-realm.json` staan er standaard 3 gebruikers klaar om mee te testen: 
+Door de import van `dnd-app-realm.json` staan er standaard 6 gebruikers klaar om mee te testen: 
 
 | Gebruikersnaam  | Wachtwoord      | Toegewezen rol(len)           | Opmerking                                           |
 |-----------------|-----------------|-------------------------------|-----------------------------------------------------|
 | player1         | player1         | PLAYER                        | Heeft 5 characters klaar staan (id = 1, 2, 3, 4, 5) |
 | dungeon-master1 | dungeon-master1 | PLAYER, DUNGEON_MASTER        | Heeft 1 encounter klaar staan (id = 1)              |
 | admin1          | admin1          | PLAYER, DUNGEON_MASTER, ADMIN | Kan alles (binnen de business rules 😉)             |
+| player2         | player2         | PLAYER                        | Heeft geen data                                     |
+| dungeon-master2 | dungeon-master2 | PLAYER, DUNGEON_MASTER        | Heeft geen data                                     |
+| admin2          | admin2          | PLAYER, DUNGEON_MASTER, ADMIN | Kan alles (binnen de business rules 😉)             |
 
 ### Handmatig testen
 Dit project ondersteund officieel twee manieren om handmatig te testen.

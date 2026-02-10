@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>walter.duncan</groupId>
 	<artifactId>dnd-web-api</artifactId>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>dnd-web-api</name>
 	<description>dnd-web-api</description>
 	<url/>

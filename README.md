@@ -335,10 +335,34 @@ Voor het gemak hebben de volgende requests een voorbeeld request body geconfigur
 > Dit is wel mogelijk met Postman of andere verzoeken zoals via de browser zelf in een frontend-applicatie. Dit is een configuratie pijnpunt van Swagger.
 
 ### Geautomatiseerde testen
-Deze applicatie bevat geen line coverage van 100% over alle files. Maar het bevat wel...
+Deze applicatie bevat 100% line coverage over alle bestanden. Wel is er een line coverage van 100% behaald voor twee controllers (integratietests) en twee services (unit-tests)
+De WeaponController, EncounterController, WeaponService en EncounterService hebben allemaal een line coverage van 100%.
+
+De testen zijn bewust minder DRY geschreven om scenario's expliciet en duidelijk te houden. In dit geval is dat een feature,
+de flexibiliteit en onderhoudbaarheid van individuele scenario's blijven hierdoor hoog en overzichtelijk.
+
+De unit- en integratietesten kunnen met één commando vanuit de root van dit project gedraaid uitgevoerd:
+
+```bash
+.\mvnw clean verify "-Dspring.profiles.active=test"
+```
+
+Het is belangrijk om het argument `-Dspring.profiles.active=test` mee te geven. Zonder dit argument wordt het testprofiel niet gebruikt
+en zal Spring het productieprofiel `application.properties` gebruiken i.p.v. `application-test.properties`.
+
+Aan het einde van de testrun wordt een rapportage in de terminal weergegeven, bijvoorbeeld:
+
+> [INFO] Results:  
+> [INFO]   
+> [INFO] Tests run: 49, Failures: 0, Errors: 0, Skipped: 0
+
 #### Integratietests
+De integratietesten draaien tegen een H2 in-memory database. De testdata is voor iedere test gelijk en wordt geladen vanuit `dnd-web-api-test.sql`. 
+Tijdens deze testen wordt de volledige Spring context geladen om de samenwerking tussen alle componenten te testen.
 
 #### Unit-tests
+De unit-tests maken gebruik van mock-objecten voor request DTO's, business models en entities. Alleen de nodige properties om een "unit" te testen krijgen een stub met een waarde.
+Dit voorkomt onnodige overhead en zorgt ervoor dat de focus van de test ligt op het gedrag van de afzonderlijke unit.
 
 ### Overige toelichting
 De volgende entiteiten bestaan puur om het character gedeelte van de applicatie netjes op te splitsen: CharacterType, CharacterRace, CharacterClass.

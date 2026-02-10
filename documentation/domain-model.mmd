@@ -1,0 +1,175 @@
+%% This diagram renders correctly in Mermaid Live / GitHub. IntelliJ doesn't support all Mermaid features.
+%% It shows the domain model and leaves out the -Model suffix in classnames.
+classDiagram
+    class User:::UserManagement {
+        - id: int
+        - identityProviderId: string
+        - name: string
+        - email: string
+    }
+    class CharacterPortrait:::CharacterManagement {
+        - allowedFileTypes: static string[]
+        - originalFileName: string
+        - storedFileName: string
+        - mimeType: string
+    }
+    class CharacterAlignment:::CharacterManagement {
+        <<Enumeration>>
+        LAWFUL_GOOD
+        LAWFUL_NEUTRAL
+        LAWFUL_EVIL
+        NEUTRAL_GOOD
+        TRUE_NEUTRAL
+        NEUTRAL_EVIL
+        CHAOTIC_GOOD
+        CHAOTIC_NEUTRAL
+        CHAOTIC_EVIL
+    }
+    class Character:::CharacterManagement {
+        - id: int
+        - name: string
+        - charisma: int
+        - constitution: int
+        - dexterity: int
+        - intelligence: int
+        - strength: int
+        - wisdom: int
+        - maxHitPoints: int
+        - currentHitPoints: int
+        - experiencePoints: int
+        - size: string
+        - copperPieces: int
+        - silverPieces: int
+        - electrumPieces: int
+        - goldPieces: int
+        - platinumPieces: int
+        - notes: string
+    }
+    class CharacterType:::CharacterManagement {
+        - id: int
+        - name: string
+        - color: string
+    }
+    class CharacterRace:::CharacterManagement {
+        - id: int
+        - name: string
+        - description: string
+        - speed: int
+    }
+    class CharacterClass:::CharacterManagement {
+        - id: int
+        - name: string
+        - hitDie: string
+    }
+    class CharacterInventoryItemType:::CharacterManagement {
+        <<Enumeration>>
+        WEAPON
+        EQUIPMENT
+        CUSTOM
+    }
+    class CharacterInventoryItem:::CharacterManagement {
+        <<abstract>>
+        - id: int
+        - referenceId: int
+        - type: CharacterInventoryItemType
+        - name: string
+        - description: string
+        - valueInCopperPieces: int
+        - weightInLbs: double
+        - quantity: int
+    }
+    class WeaponCharacterInventoryItem:::CharacterManagement {
+        - weapon: Weapon
+    }
+    class EquipmentCharacterInventoryItem:::CharacterManagement {
+        - equipment: Equipment
+    }
+    class CustomCharacterInventoryItem:::CharacterManagement {
+
+    }
+    class GameInformation:::GameInformationManagement {
+        <<abstract>>
+        - id: int
+        - name: string
+        - description: string
+        - valueInCopperPieces: int
+        - weightInLbs: double
+    }
+    class Weapon:::GameInformationManagement {
+        - damageDice: string
+        - damageType: string
+        - rangeNormal: int
+        - rangeLong: int
+        - isTwoHanded: boolean
+    }
+    class Equipment:::GameInformationManagement {
+
+    }
+    class Encounter:::EncounterManagement {
+        - id: int
+        - title: string
+        - description: string
+        - roundNumber: int
+        - currentActor: EncounterParticipant
+    }
+    class EncounterJoinRequest:::EncounterManagement {
+        - id: int
+        - initiative: int
+    }
+    class EncounterParticipant:::EncounterManagement {
+        - id: int
+        - initiative: int
+    }
+    class EncounterState:::EncounterManagement {
+        <<Enumeration>>
+        GATHERING_PARTICIPANTS
+        IN_PROGRESS
+        COMPLETED
+    }
+    class EncounterJoinRequestState:::EncounterManagement {
+        <<Enumeration>>
+        PENDING
+        APPROVED
+        DECLINED
+    }
+    %% Relations:
+    Character "0..*" <--* "1" User
+    Character "1" *-- "0..1" CharacterPortrait
+    Character --o "1" CharacterType
+    Character --o "1" CharacterRace
+    Character --o "1" CharacterClass
+    Character "1" *--o "0..*" CharacterInventoryItem
+    Character --> "1" CharacterAlignment
+    CharacterInventoryItem --> "1" CharacterInventoryItemType
+    CharacterInventoryItem <|-- WeaponCharacterInventoryItem
+    CharacterInventoryItem <|-- EquipmentCharacterInventoryItem
+    CharacterInventoryItem <|-- CustomCharacterInventoryItem
+    WeaponCharacterInventoryItem --o "1" Weapon
+    EquipmentCharacterInventoryItem --o "1" Equipment
+    Weapon --|> GameInformation
+    Equipment --|> GameInformation
+    Encounter "0..1" <--* "1" User
+    Encounter --o "1" EncounterState
+    EncounterJoinRequest "0..*" --* "1" Encounter
+    EncounterJoinRequest --* "1" Character
+    EncounterJoinRequest --> "1" EncounterJoinRequestState
+    Encounter "1" *--o "0..*" EncounterParticipant
+    EncounterParticipant "1" <--* "1" Character
+    %% Class notes:
+    note for User "Identity is managed through Keycloak. The sub claim of
+    a user's JWT is stored in the identityProviderId property."
+    note for CharacterInventoryItem "A CharacterInventoryItem only has one reference to either
+    a Weapon, Equipment or Custom defined by its
+    CharacterInventoryItemType, which is resolved through its
+    referenceId. This relation is dynamic."
+    note for Character "A Character can only be an EncounterParticipant for one Encounter
+    that has an EncounterState of GATHERING_PARTICIPANTS or IN_PROGRESS."
+    note for EncounterJoinRequest "A Character can only have one EncounterJoinRequest that has an
+    EncounterJoinRequestState of PENDING. An EncounterJoinRequest
+    can only be created for a Character that does not have a
+    EncounterParticipant for an Encounter that has the state IN_PROGRESS."
+    %% Style:
+    classDef UserManagement stroke:#4C8BF5,fill:#EAF2FE,color:#1E3A8A
+    classDef CharacterManagement stroke:#E67E22,fill:#FEF3E6,color:#7B3E00
+    classDef EncounterManagement stroke:#2ECC71,fill:#E8F8F0,color:#145A32
+    classDef GameInformationManagement stroke:#708090,fill:#F0F2F5,color:#2C3E50

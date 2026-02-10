@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import walter.duncan.dndwebapi.config.openapi.annotations.encountermanagement.*;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestRequestDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestResponseDto;
 import walter.duncan.dndwebapi.dtos.encountermanagement.EncounterJoinRequestStateUpdateRequestDto;
@@ -15,6 +16,7 @@ import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.mappers.encountermanagement.EncounterJoinRequestResponseMapper;
 import walter.duncan.dndwebapi.services.encountermanagement.EncounterJoinRequestService;
 
+@EncounterManagementTag
 @RestController
 @RequestMapping("/encounters/{encounterId}/join-requests")
 public class EncounterJoinRequestController {
@@ -32,6 +34,7 @@ public class EncounterJoinRequestController {
         this.urlHelper = urlHelper;
     }
 
+    @GetEncounterJoinRequestDocs
     @GetMapping
     public ResponseEntity<@NonNull List<EncounterJoinRequestResponseDto>> get(
             @PathVariable Long encounterId,
@@ -40,6 +43,7 @@ public class EncounterJoinRequestController {
         return ResponseEntity.ok(this.mapper.toDtos(this.encounterJoinRequestService.findAllByEncounterId(encounterId, jwt)));
     }
 
+    @CreateEncounterJoinRequestDocs
     @PostMapping
     public ResponseEntity<@NonNull EncounterJoinRequestResponseDto> create(
             @PathVariable Long encounterId,
@@ -54,6 +58,7 @@ public class EncounterJoinRequestController {
                 .body(responseDto);
     }
 
+    @UpdateEncounterJoinRequestStateDocs
     @PatchMapping("/{id}")
     public ResponseEntity<@NonNull EncounterJoinRequestResponseDto> updateState(
             @PathVariable Long encounterId,

@@ -1,0 +1,56 @@
+sequenceDiagram
+    autonumber
+
+    box Process: Create a user-owned character
+        actor User as Actor
+        participant CharacterController
+        participant CharacterService
+        participant UserService
+        participant CharacterRepository
+        participant UserRepository
+    end
+
+    User->>+CharacterController: POST /characters<br/>body: { CharacterRequestDto }<br/>create(requestDto, jwt)
+    CharacterController->>CharacterController: Check authenticated
+    alt Not authenticated
+        CharacterController-->>User: 401 Unauthorized
+    else Authenticated
+        CharacterController->>CharacterController: Check role
+        alt Not Authorized
+            CharacterController-->>User: 403 Forbidden
+        else Authorized
+            CharacterController->>+CharacterService: create(requestDto, jwt)
+            CharacterService->>+UserService: resolveUser(jwt)
+            UserService->>UserService: Extract sub from JWT as subjectId
+            UserService->>+UserRepository: findByIdentityProviderId(subjectId)
+            UserRepository-->>UserService: Optional<UserEntity>
+            alt Found by subject ID
+                UserService-->>CharacterService: UserEntity
+            else Not found by subject ID
+                UserService->>UserService: Create new UserEntity based on JWT
+                UserService->>UserRepository: save(userEntity)
+                UserRepository->>UserRepository: Saves user to database
+                UserRepository-->>-UserService: UserEntity
+                UserService-->>-CharacterService: UserEntity
+            end
+            Note right of CharacterService: NOTE: Factory method .create()<br/>validates business rules internally.
+            CharacterService->>CharacterService: CharacterModel.create(requestDto, userEntity)
+            Note right of CharacterService: NOTE: Resolving inventory items<br/>is a separate process since the<br/>reference is dynamic based<br/>on the item type. See domain<br/> model for more information.
+            CharacterService->>CharacterService: Resolve and set inventory<br/> items on character
+            alt Business rule violation
+                CharacterService->>CharacterService: throw BusinessRuleViolationException
+                Note over CharacterService, CharacterController: Global exception handler<br/>catches exception.
+                CharacterController-->>User: 422 Unprocessable Content
+            else No business rule violations
+                CharacterService->>CharacterService: Map business model<br/>to entity
+                CharacterService->>+CharacterRepository: save(characterEntity)
+                CharacterRepository->>CharacterRepository: Saves character to database
+                CharacterRepository-->>-CharacterService: CharacterEntity
+                Note right of CharacterService: NOTE: Factory method .restore()<br/>bypasses validation by design since<br/>database state is assumed valid.
+                CharacterService->>CharacterService: CharacterModel.restore(entity)
+                CharacterService-->>-CharacterController: CharacterModel
+                CharacterController->>CharacterController: Map business model<br/> to responseDto
+                CharacterController-->>-User: 201 Created<br/>body: { CharacterResponseDto}<br/> location: /characters/{id}
+            end
+        end
+    end

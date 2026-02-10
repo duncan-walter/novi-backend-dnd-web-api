@@ -6,12 +6,14 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import walter.duncan.dndwebapi.config.openapi.annotations.gameinformation.*;
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponRequestDto;
 import walter.duncan.dndwebapi.dtos.gameinformation.weapon.WeaponResponseDto;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.mappers.gameinformation.weapon.WeaponResponseMapper;
 import walter.duncan.dndwebapi.services.gameinformation.WeaponService;
 
+@GameInformationTag
 @RestController
 @RequestMapping("/weapons")
 public class WeaponController {
@@ -25,6 +27,7 @@ public class WeaponController {
         this.urlHelper = urlHelper;
     }
 
+    @GetByIdGameInformationDocs
     @GetMapping("/{id}")
     public ResponseEntity<@NonNull WeaponResponseDto> getById(@PathVariable Long id) {
         var responseDto = this.mapper.toDto(this.weaponService.findById(id));
@@ -32,6 +35,7 @@ public class WeaponController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetGameInformationDocs
     @GetMapping
     public ResponseEntity<@NonNull List<WeaponResponseDto>> get() {
         var responseDtos = this.mapper.toDtos(this.weaponService.findAll());
@@ -39,6 +43,7 @@ public class WeaponController {
         return ResponseEntity.ok(responseDtos);
     }
 
+    @CreateWeaponDocs
     @PostMapping
     public ResponseEntity<@NonNull WeaponResponseDto> create(@RequestBody @Valid WeaponRequestDto requestDto) {
         var responseDto = this.mapper.toDto(this.weaponService.create(requestDto));
@@ -49,6 +54,7 @@ public class WeaponController {
                 .body(responseDto);
     }
 
+    @UpdateWeaponDocs
     @PutMapping("/{id}")
     public ResponseEntity<@NonNull WeaponResponseDto> update(@PathVariable Long id, @RequestBody @Valid WeaponRequestDto requestDto) {
         var responseDto = this.mapper.toDto(this.weaponService.update(id, requestDto));
@@ -60,6 +66,7 @@ public class WeaponController {
                 .body(responseDto);
     }
 
+    @DeleteGameInformationDocs
     @DeleteMapping("/{id}")
     public ResponseEntity<@NonNull Object> delete(@PathVariable Long id) {
         this.weaponService.deleteById(id);

@@ -718,7 +718,7 @@
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
     "secret" : "YzlNBLr20ObxvNkeflIKeorhnlsq4yCg",
-    "redirectUris" : [ "https://www.keycloak.org/app/*", "https://oauth.pstmn.io/v1/callback" ],
+    "redirectUris" : [ "http://localhost:8080/swagger-ui/oauth2-redirect.html", "https://www.keycloak.org/app/*", "https://oauth.pstmn.io/v1/callback" ],
     "webOrigins" : [ "*" ],
     "notBefore" : 0,
     "bearerOnly" : false,

@@ -1,17 +1,19 @@
 package walter.duncan.dndwebapi.controllers.gameinformation;
 
+import java.util.List;
 import jakarta.validation.Valid;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import walter.duncan.dndwebapi.config.openapi.annotations.gameinformation.*;
 import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentRequestDto;
 import walter.duncan.dndwebapi.dtos.gameinformation.equipment.EquipmentResponseDto;
 import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.mappers.gameinformation.equipment.EquipmentResponseMapper;
 import walter.duncan.dndwebapi.services.gameinformation.EquipmentService;
 
-import java.util.List;
-
+@GameInformationTag
 @RestController
 @RequestMapping("/equipment")
 public class EquipmentController {
@@ -25,6 +27,7 @@ public class EquipmentController {
         this.urlHelper = urlHelper;
     }
 
+    @GetByIdGameInformationDocs
     @GetMapping("/{id}")
     public ResponseEntity<@NonNull EquipmentResponseDto> getById(@PathVariable Long id) {
         var responseDto = this.mapper.toDto(this.equipmentService.findById(id));
@@ -32,6 +35,7 @@ public class EquipmentController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetGameInformationDocs
     @GetMapping
     public ResponseEntity<@NonNull List<EquipmentResponseDto>> getAll() {
         var responseDtos = this.mapper.toDtos(this.equipmentService.findAll());
@@ -39,6 +43,7 @@ public class EquipmentController {
         return ResponseEntity.ok(responseDtos);
     }
 
+    @CreateEquipmentDocs
     @PostMapping
     public ResponseEntity<@NonNull EquipmentResponseDto> create(@RequestBody @Valid EquipmentRequestDto requestDto) {
         var responseDto = this.mapper.toDto(this.equipmentService.create(requestDto));
@@ -49,6 +54,7 @@ public class EquipmentController {
                 .body(responseDto);
     }
 
+    @UpdateEquipmentDocs
     @PutMapping("/{id}")
     public ResponseEntity<@NonNull EquipmentResponseDto> update(@PathVariable Long id, @RequestBody @Valid EquipmentRequestDto requestDto) {
         var responseDto = this.mapper.toDto(this.equipmentService.update(id, requestDto));
@@ -60,6 +66,7 @@ public class EquipmentController {
                 .body(responseDto);
     }
 
+    @DeleteGameInformationDocs
     @DeleteMapping("/{id}")
     public ResponseEntity<@NonNull Object> delete(@PathVariable Long id) {
         this.equipmentService.deleteById(id);

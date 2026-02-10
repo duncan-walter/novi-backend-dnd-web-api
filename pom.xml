@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>walter.duncan</groupId>
 	<artifactId>dnd-web-api</artifactId>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>dnd-web-api</name>
 	<description>dnd-web-api</description>
 	<url/>
@@ -86,6 +86,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.0.1</version> <!-- For Spring 4.x.x version 3.x.x is required. Version 3.0.0 just got released at the time of this. Let's hope it's stable :) -->
         </dependency>
     </dependencies>
 

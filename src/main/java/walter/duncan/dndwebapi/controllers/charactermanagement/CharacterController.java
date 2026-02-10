@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import walter.duncan.dndwebapi.config.openapi.annotations.charactermanagement.*;
 import walter.duncan.dndwebapi.dtos.charactermanagement.CharacterRequestDto;
 import walter.duncan.dndwebapi.dtos.charactermanagement.CharacterResponseDto;
 import walter.duncan.dndwebapi.helpers.MimeTypeHelper;
@@ -19,6 +20,7 @@ import walter.duncan.dndwebapi.helpers.UrlHelper;
 import walter.duncan.dndwebapi.mappers.charactermanagement.CharacterResponseMapper;
 import walter.duncan.dndwebapi.services.charactermanagement.CharacterService;
 
+@CharacterManagementTag
 @RestController
 @RequestMapping("/characters")
 public class CharacterController {
@@ -39,6 +41,7 @@ public class CharacterController {
         this.mimeTypeHelper = mimeTypeHelper;
     }
 
+    @GetByIdCharacterDocs
     @GetMapping("/{id}")
     public ResponseEntity<@NonNull CharacterResponseDto> getById(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         var responseDto = this.mapper.toDto(this.characterService.findByIdForUser(id, jwt));
@@ -46,6 +49,7 @@ public class CharacterController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetCharacterDocs
     @GetMapping
     public ResponseEntity<@NonNull List<CharacterResponseDto>> get(@AuthenticationPrincipal Jwt jwt) {
         var responseDtos = this.mapper.toDtos(this.characterService.findAllForUser(jwt));
@@ -53,6 +57,7 @@ public class CharacterController {
         return ResponseEntity.ok(responseDtos);
     }
 
+    @CreateCharacterDocs
     @PostMapping
     public ResponseEntity<@NonNull CharacterResponseDto> create(@RequestBody @Valid CharacterRequestDto requestDto, @AuthenticationPrincipal Jwt jwt) {
         var responseDto = this.mapper.toDto(this.characterService.create(requestDto, jwt));
@@ -63,6 +68,7 @@ public class CharacterController {
                 .body(responseDto);
     }
 
+    @UpdateCharacterDocs
     @PutMapping("/{id}")
     public ResponseEntity<@NonNull CharacterResponseDto> update(@PathVariable Long id, @RequestBody @Valid CharacterRequestDto requestDto, @AuthenticationPrincipal Jwt jwt) {
         var responseDto = this.mapper.toDto(this.characterService.update(id, requestDto, jwt));
@@ -74,6 +80,7 @@ public class CharacterController {
                 .body(responseDto);
     }
 
+    @DeleteCharacterDocs
     @DeleteMapping("/{id}")
     public ResponseEntity<@NonNull Object> delete(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         this.characterService.deleteById(id, jwt);
@@ -81,6 +88,7 @@ public class CharacterController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetCharacterPortraitDocs
     @GetMapping("/{id}/portrait")
     public ResponseEntity<@NonNull Resource> getPortrait(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         var portrait = this.characterService.getPortrait(id, jwt);
@@ -93,6 +101,7 @@ public class CharacterController {
                 .body(portrait);
     }
 
+    @UploadCharacterPortraitDocs
     @PutMapping("/{id}/portrait")
     public ResponseEntity<@NonNull CharacterResponseDto> uploadPortrait(@PathVariable Long id, @RequestBody MultipartFile portrait, @AuthenticationPrincipal Jwt jwt) {
         var responseDto = this.mapper.toDto(this.characterService.updatePortrait(id, portrait, jwt));

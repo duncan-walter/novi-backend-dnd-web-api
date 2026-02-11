@@ -1,6 +1,7 @@
 package walter.duncan.dndwebapi.dtos.charactermanagement;
 
 import java.util.List;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import walter.duncan.dndwebapi.dtos.charactermanagement.inventory.CharacterInventoryItemRequestDto;
@@ -28,5 +29,5 @@ public record CharacterRequestDto(
         @NotNull Long typeId,
         @NotNull Long raceId,
         @NotNull Long classId,
-        List<CharacterInventoryItemRequestDto> inventory
+        @Valid List<CharacterInventoryItemRequestDto> inventory
 ) { }
